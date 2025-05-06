@@ -24,6 +24,10 @@
       <columns>
           <TableColumn fx:id="columnId" maxWidth="1200.0" minWidth="5.0" prefWidth="5.0" text="ID"/>
           <TableColumn fx:id="columnSurname" maxWidth="7500.0" minWidth="20.0" onEditCommit="#handleOnEditSurname"
+
+
+
+
                        prefWidth="100.0" text="Nachname"/>
           <TableColumn fx:id="columnFirstName" maxWidth="7500.0" onEditCommit="#handleOnEditFirstname"
                        prefWidth="75.0" text="Vorname"/>
@@ -58,7 +62,7 @@
                 <Insets/>
             </HBox.margin>
             <TextField fx:id="textFieldFirstName" minWidth="200.0" prefHeight="26.0" prefWidth="200.0"
-                       promptText="Vorname"/>
+                       promptText="Vorname 🤓"/>
             <TextField fx:id="textFieldSurname" minWidth="200.0" prefHeight="26.0" prefWidth="200.0"
                        promptText="Nachname" GridPane.columnIndex="1"/>
             <TextField fx:id="textFieldDateOfBirth" minWidth="160.0" prefWidth="160.0" promptText="Geburtstag"
