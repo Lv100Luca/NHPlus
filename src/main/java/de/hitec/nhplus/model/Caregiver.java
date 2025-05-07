@@ -1,20 +1,53 @@
 package de.hitec.nhplus.model;
 
-public class Caregiver extends Person {
-    private final String ID;
-    private String phoneNumber;
+import javafx.beans.property.SimpleLongProperty;
+import javafx.beans.property.SimpleStringProperty;
 
-    public Caregiver(String firstName, String lastName, String ID, String phoneNumber) {
-        super(firstName, lastName);
-        this.ID = ID;
-        this.phoneNumber = phoneNumber;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Caregiver extends Person {
+    private SimpleLongProperty ID;
+    private final SimpleStringProperty phoneNumber;
+    private List<Caregiver> allCaregivers = new ArrayList<>();
+
+    public Caregiver(String firstName, String surname, String phoneNumber) {
+        super(firstName, surname);
+        this.phoneNumber = new SimpleStringProperty(phoneNumber);
     }
 
-    public String getID() {
+    public Caregiver(long ID, String firstName, String surname, String phoneNumber) {
+        super(firstName, surname);
+        this.ID = new SimpleLongProperty(ID);
+        this.phoneNumber = new SimpleStringProperty(phoneNumber);
+    }
+
+    public long getID() {
+        return ID.get();
+    }
+
+    public SimpleLongProperty IDProperty() {
         return ID;
     }
 
     public String getPhoneNumber() {
+        return phoneNumber.get();
+    }
+
+    public SimpleStringProperty phoneNumberProperty() {
         return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber.set(phoneNumber);
+    }
+
+    public boolean add(Caregiver caregiver) {
+        if (this.allCaregivers.contains(caregiver)) {
+            return false;
+        } else {
+            this.allCaregivers.add(caregiver);
+            return true;
+        }
     }
 }
