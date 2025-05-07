@@ -9,7 +9,7 @@ import java.util.List;
 public class Caregiver extends Person {
     private SimpleLongProperty ID;
     private final SimpleStringProperty phoneNumber;
-    private List<Caregiver> allCaregivers = new ArrayList<>();
+    private final List<Caregiver> allCaregivers = new ArrayList<>();
 
     public Caregiver(String firstName, String surname, String phoneNumber) {
         super(firstName, surname);
@@ -40,14 +40,5 @@ public class Caregiver extends Person {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber.set(phoneNumber);
-    }
-
-    public boolean add(Caregiver caregiver) {
-        if (this.allCaregivers.contains(caregiver)) {
-            return false;
-        } else {
-            this.allCaregivers.add(caregiver);
-            return true;
-        }
     }
 }
