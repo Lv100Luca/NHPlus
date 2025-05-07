@@ -85,7 +85,7 @@ public class SetUpDB {
 
     private static void setUpTableCaregiver(Connection connection) {
         final String SQL = "CREATE TABLE IF NOT EXISTS caregiver (" +
-                "   cid INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "   ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "   firstname TEXT NOT NULL, " +
                 "   surname TEXT NOT NULL, " +
                 "   phoneNumber TEXT NOT NULL" +
