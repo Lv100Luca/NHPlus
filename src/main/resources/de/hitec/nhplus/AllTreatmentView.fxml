@@ -17,7 +17,7 @@
    <children>
       <TableView fx:id="tableView" editable="true" layoutX="31.0" layoutY="35.0" onMouseClicked="#handleMouseClick" prefHeight="364.0" prefWidth="825.0" AnchorPane.bottomAnchor="75.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="80.0">
         <columns>
-            <TableColumn fx:id="columnId" maxWidth="-1.0" minWidth="40.0" prefWidth="50.0" text="cid" />
+            <TableColumn fx:id="columnId" maxWidth="-1.0" minWidth="40.0" prefWidth="50.0" text="ID" />
             <TableColumn fx:id="columnPid" maxWidth="-1.0" minWidth="100.0" prefWidth="120.0" text="PatientID" />
           <TableColumn fx:id="columnDate" maxWidth="-1.0" minWidth="80.0" prefWidth="150.0" text="Datum" />
           <TableColumn fx:id="columnBegin" maxWidth="-1.0" minWidth="60.0" prefWidth="150.0" text="Beginn" />
