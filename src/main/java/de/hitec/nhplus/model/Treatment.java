@@ -13,6 +13,7 @@ public class Treatment {
     private LocalTime end;
     private String description;
     private String remarks;
+    private String caregiver;
 
     /**
      * Constructor to initiate an object of class <code>Treatment</code> with the given parameter. Use this constructor
@@ -26,13 +27,14 @@ public class Treatment {
      * @param remarks Remarks to the treatment.
      */
     public Treatment(long pid, LocalDate date, LocalTime begin,
-                     LocalTime end, String description, String remarks) {
+                     LocalTime end, String description, String remarks, String caregiver) {
         this.pid = pid;
         this.date = date;
         this.begin = begin;
         this.end = end;
         this.description = description;
         this.remarks = remarks;
+        this.caregiver = caregiver;
     }
 
     /**
@@ -48,7 +50,7 @@ public class Treatment {
      * @param remarks Remarks to the treatment.
      */
     public Treatment(long tid, long pid, LocalDate date, LocalTime begin,
-                     LocalTime end, String description, String remarks) {
+                     LocalTime end, String description, String remarks, String caregiver) {
         this.tid = tid;
         this.pid = pid;
         this.date = date;
@@ -56,6 +58,7 @@ public class Treatment {
         this.end = end;
         this.description = description;
         this.remarks = remarks;
+        this.caregiver = caregiver;
     }
 
     public long getTid() {
@@ -104,6 +107,14 @@ public class Treatment {
 
     public void setRemarks(String remarks) {
         this.remarks = remarks;
+    }
+
+    public String getCaregiver() {
+        return caregiver;
+    }
+
+    public void setCaregiver(String caregiver) {
+        this.caregiver = caregiver;
     }
 
     public String toString() {

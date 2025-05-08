@@ -22,6 +22,9 @@ public class TreatmentController {
     private Label labelCareLevel;
 
     @FXML
+    public TextField textFieldCaregiver;
+
+    @FXML
     private TextField textFieldBegin;
 
     @FXML
@@ -63,6 +66,7 @@ public class TreatmentController {
         this.textFieldEnd.setText(this.treatment.getEnd());
         this.textFieldDescription.setText(this.treatment.getDescription());
         this.textAreaRemarks.setText(this.treatment.getRemarks());
+        this.textFieldCaregiver.setText(treatment.getCaregiver());
     }
 
     @FXML
