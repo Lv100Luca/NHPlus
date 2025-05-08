@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Caregiver extends Person {
-    private SimpleLongProperty ID;
+    private SimpleLongProperty cid;
     private final SimpleStringProperty phoneNumber;
     private final List<Caregiver> allCaregivers = new ArrayList<>();
 
@@ -16,18 +16,18 @@ public class Caregiver extends Person {
         this.phoneNumber = new SimpleStringProperty(phoneNumber);
     }
 
-    public Caregiver(long ID, String firstName, String surname, String phoneNumber) {
+    public Caregiver(long cid, String firstName, String surname, String phoneNumber) {
         super(firstName, surname);
-        this.ID = new SimpleLongProperty(ID);
+        this.cid = new SimpleLongProperty(cid);
         this.phoneNumber = new SimpleStringProperty(phoneNumber);
     }
 
-    public long getID() {
-        return ID.get();
+    public long getCid() {
+        return cid.get();
     }
 
     public SimpleLongProperty IDProperty() {
-        return ID;
+        return cid;
     }
 
     public String getPhoneNumber() {

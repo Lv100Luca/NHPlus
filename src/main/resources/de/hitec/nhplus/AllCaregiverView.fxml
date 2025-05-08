@@ -13,7 +13,7 @@
     <TableView fx:id="tableView" editable="true" layoutX="31.0" layoutY="40.0" AnchorPane.bottomAnchor="70.0"
                AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="80.0">
       <columns>
-          <TableColumn fx:id="columnId" maxWidth="1200.0" minWidth="5.0" prefWidth="5.0" text="ID"/>
+          <TableColumn fx:id="columnId" maxWidth="1200.0" minWidth="5.0" prefWidth="5.0" text="cid"/>
           <TableColumn fx:id="columnsurname" maxWidth="7500.0" minWidth="20.0" prefWidth="100.0"
                        onEditCommit="#handleOnEditsurname" text="Nachname"/>
           <TableColumn fx:id="columnFirstName" maxWidth="7500.0" prefWidth="75.0"
