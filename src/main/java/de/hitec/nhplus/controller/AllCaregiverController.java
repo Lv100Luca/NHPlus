@@ -48,7 +48,7 @@ public class AllCaregiverController {
     public void initialize() {
         this.readAllAndShowInTableView();
 
-        this.columnId.setCellValueFactory(new PropertyValueFactory<>("ID"));
+        this.columnId.setCellValueFactory(new PropertyValueFactory<>("cid"));
         this.columnFirstName.setCellValueFactory(new PropertyValueFactory<>("firstName"));
         this.columnFirstName.setCellFactory(TextFieldTableCell.forTableColumn());
         this.columnsurname.setCellValueFactory(new PropertyValueFactory<>("surname"));
@@ -92,7 +92,7 @@ public class AllCaregiverController {
         Caregiver selectedCaregiver = this.tableView.getSelectionModel().getSelectedItem();
         if (selectedCaregiver != null) {
             try {
-                DaoFactory.getDaoFactory().createCaregiverDAO().deleteById(selectedCaregiver.getID());
+                DaoFactory.getDaoFactory().createCaregiverDAO().deleteById(selectedCaregiver.getCid());
                 this.tableView.getItems().remove(selectedCaregiver);
             } catch (SQLException exception) {
                 exception.printStackTrace();
