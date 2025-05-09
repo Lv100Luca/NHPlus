@@ -88,7 +88,7 @@ public class SetUpDB {
         final String SQL = "CREATE TABLE IF NOT EXISTS medicine (" +
                 "   mid INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "   name TEXT NOT NULL, " +
-                "   storage TEXT NOT NULL" +
+                "   storage TEXT NOT NULL," +
                 "   expirationDate TEXT NOT NULL" +
                 ");";
 
