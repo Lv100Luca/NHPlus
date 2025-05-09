@@ -1,9 +1,7 @@
 package de.hitec.nhplus.utils;
 
-import de.hitec.nhplus.datastorage.ConnectionBuilder;
-import de.hitec.nhplus.datastorage.DaoFactory;
-import de.hitec.nhplus.datastorage.PatientDao;
-import de.hitec.nhplus.datastorage.TreatmentDao;
+import de.hitec.nhplus.datastorage.*;
+import de.hitec.nhplus.model.Medicine;
 import de.hitec.nhplus.model.Patient;
 import de.hitec.nhplus.model.Treatment;
 
@@ -31,8 +29,10 @@ public class SetUpDB {
         SetUpDB.wipeDb(connection);
         SetUpDB.setUpTablePatient(connection);
         SetUpDB.setUpTableTreatment(connection);
+        SetUpDB.setUpTableMedicine(connection);
         SetUpDB.setUpPatients();
         SetUpDB.setUpTreatments();
+        SetUpDB.setUpMedicines();
     }
 
     /**
@@ -42,6 +42,7 @@ public class SetUpDB {
         try (Statement statement = connection.createStatement()) {
             statement.execute("DROP TABLE patient");
             statement.execute("DROP TABLE treatment");
+            statement.execute("DROP TABLE medicine");
         } catch (SQLException exception) {
             System.out.println(exception.getMessage());
         }
@@ -83,6 +84,21 @@ public class SetUpDB {
         }
     }
 
+    private static void setUpTableMedicine(Connection connection) {
+        final String SQL = "CREATE TABLE IF NOT EXISTS medicine (" +
+                "   mid INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "   name TEXT NOT NULL, " +
+                "   storage TEXT NOT NULL" +
+                "   expirationDate TEXT NOT NULL" +
+                ");";
+
+        try (Statement statement = connection.createStatement()) {
+            statement.execute(SQL);
+        } catch (SQLException exception) {
+            System.out.println(exception.getMessage());
+        }
+    }
+
 
     private static void setUpPatients() {
         try {
@@ -111,6 +127,25 @@ public class SetUpDB {
             dao.create(new Treatment(14, 4, convertStringToLocalDate("2023-08-24"), convertStringToLocalTime("09:30"), convertStringToLocalTime("10:15"), "KG", "Lympfdrainage"));
             dao.create(new Treatment(16, 6, convertStringToLocalDate("2023-08-31"), convertStringToLocalTime("13:30"), convertStringToLocalTime("13:45"), "Toilettengang", "Hilfe beim Toilettengang; Patientin klagt über Schmerzen beim Stuhlgang. Gabe von Iberogast"));
             dao.create(new Treatment(17, 6, convertStringToLocalDate("2023-09-01"), convertStringToLocalTime("16:00"), convertStringToLocalTime("17:00"), "KG", "Massage der Extremitäten zur Verbesserung der Durchblutung"));
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+    }
+
+    private static void setUpMedicines() {
+        try {
+            MedicineDao dao = DaoFactory.getDaoFactory().createMedicineDAO();
+            dao.create(new Medicine("Amoxicillin 500mg", "Shelf A", "2026-03-15"));
+            dao.create(new Medicine("Lisinopril 10mg", "Shelf B", "2025-11-30"));
+            dao.create(new Medicine("Ibuprofen 200mg", "Shelf C", "2027-01-20"));
+            dao.create(new Medicine("Metformin 500mg", "Shelf A", "2025-08-10"));
+            dao.create(new Medicine("Simvastatin 20mg", "Shelf B", "2026-06-25"));
+            dao.create(new Medicine("Omeprazole 20mg", "Shelf C", "2025-12-05"));
+            dao.create(new Medicine("Albuterol Inhaler", "Shelf A", "2026-04-01"));
+            dao.create(new Medicine("Sertraline 50mg", "Shelf B", "2027-02-18"));
+            dao.create(new Medicine("Loratadine 10mg", "Shelf C", "2026-10-11"));
+            dao.create(new Medicine("Prednisone 5mg", "Shelf A", "2025-09-22"));
+
         } catch (SQLException exception) {
             exception.printStackTrace();
         }
