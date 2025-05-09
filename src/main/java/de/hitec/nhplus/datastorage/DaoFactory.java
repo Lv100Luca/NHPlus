@@ -21,4 +21,8 @@ public class DaoFactory {
     public PatientDao createPatientDAO() {
         return new PatientDao(ConnectionBuilder.getConnection());
     }
+
+    public MedicineDao createMedicineDAO() {
+        return new MedicineDao(ConnectionBuilder.getConnection());
+    }
 }
