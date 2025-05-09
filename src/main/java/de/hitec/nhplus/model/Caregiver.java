@@ -3,13 +3,9 @@ package de.hitec.nhplus.model;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Caregiver extends Person {
     private SimpleLongProperty cid;
     private final SimpleStringProperty phoneNumber;
-    private final List<Caregiver> allCaregivers = new ArrayList<>();
 
     public Caregiver(String firstName, String surname, String phoneNumber) {
         super(firstName, surname);
@@ -26,7 +22,7 @@ public class Caregiver extends Person {
         return cid.get();
     }
 
-    public SimpleLongProperty IDProperty() {
+    public SimpleLongProperty cidProperty() {
         return cid;
     }
 
