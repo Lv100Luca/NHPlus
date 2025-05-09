@@ -45,9 +45,6 @@ public class NewTreatmentController {
     private DatePicker datePicker;
 
     @FXML
-    public TextField textFieldCaregiver;
-
-    @FXML
     private ComboBox<String> comboBoxCaregiver;
 
     @FXML
