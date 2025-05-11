@@ -34,8 +34,8 @@ public class TreatmentDao extends DaoImp<Treatment> {
     protected PreparedStatement getCreateStatement(Treatment treatment) {
         PreparedStatement preparedStatement = null;
         try {
-            final String SQL = "INSERT INTO treatment (pid, treatment_date, begin, end, description, remark) " +
-                    "VALUES (?, ?, ?, ?, ?, ?)";
+            final String SQL = "INSERT INTO treatment (pid, treatment_date, begin, end, description, remark, mid) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?)";
             preparedStatement = this.connection.prepareStatement(SQL);
             preparedStatement.setLong(1, treatment.getPid());
             preparedStatement.setString(2, treatment.getDate());
@@ -43,6 +43,7 @@ public class TreatmentDao extends DaoImp<Treatment> {
             preparedStatement.setString(4, treatment.getEnd());
             preparedStatement.setString(5, treatment.getDescription());
             preparedStatement.setString(6, treatment.getRemarks());
+            preparedStatement.setLong(7, treatment.getMid());
         } catch (SQLException exception) {
             exception.printStackTrace();
         }
@@ -115,8 +116,15 @@ public class TreatmentDao extends DaoImp<Treatment> {
             LocalDate date = DateConverter.convertStringToLocalDate(result.getString(3));
             LocalTime begin = DateConverter.convertStringToLocalTime(result.getString(4));
             LocalTime end = DateConverter.convertStringToLocalTime(result.getString(5));
-            Treatment treatment = new Treatment(result.getLong(1), result.getLong(2),
-                    date, begin, end, result.getString(6), result.getString(7));
+            Treatment treatment = new Treatment(
+                    result.getLong(1),
+                    result.getLong(2),
+                    date,
+                    begin,
+                    end,
+                    result.getString(6),
+                    result.getString(7),
+                    result.getLong(8));
             list.add(treatment);
         }
         return list;
@@ -172,6 +180,7 @@ public class TreatmentDao extends DaoImp<Treatment> {
                             "end = ?, " +
                             "description = ?, " +
                             "remark = ? " +
+                            "mid = ? " +
                             "WHERE tid = ?";
             preparedStatement = this.connection.prepareStatement(SQL);
             preparedStatement.setLong(1, treatment.getPid());
@@ -180,7 +189,8 @@ public class TreatmentDao extends DaoImp<Treatment> {
             preparedStatement.setString(4, treatment.getEnd());
             preparedStatement.setString(5, treatment.getDescription());
             preparedStatement.setString(6, treatment.getRemarks());
-            preparedStatement.setLong(7, treatment.getTid());
+            preparedStatement.setLong(7, treatment.getMid());
+            preparedStatement.setLong(8, treatment.getTid());
         } catch (SQLException exception) {
             exception.printStackTrace();
         }
