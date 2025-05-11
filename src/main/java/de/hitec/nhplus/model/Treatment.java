@@ -8,7 +8,7 @@ import java.time.LocalTime;
 public class Treatment {
     private long tid;
     private final long pid;
-    private long mid;
+    private final long mid;
     private LocalDate date;
     private LocalTime begin;
     private LocalTime end;
@@ -73,7 +73,6 @@ public class Treatment {
         this.mid = mid;
     }
 
-
     public long getTid() {
         return tid;
     }
@@ -124,10 +123,6 @@ public class Treatment {
 
     public long getMid() {
         return mid;
-    }
-
-    public void setMid(long mid) {
-        this.mid = mid;
     }
 
     public String toString() {
