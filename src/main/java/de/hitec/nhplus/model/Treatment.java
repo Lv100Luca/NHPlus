@@ -8,6 +8,7 @@ import java.time.LocalTime;
 public class Treatment {
     private long tid;
     private final long pid;
+    private long mid;
     private LocalDate date;
     private LocalTime begin;
     private LocalTime end;
@@ -33,6 +34,7 @@ public class Treatment {
         this.end = end;
         this.description = description;
         this.remarks = remarks;
+        this.mid = 0;
     }
 
     /**
@@ -56,7 +58,21 @@ public class Treatment {
         this.end = end;
         this.description = description;
         this.remarks = remarks;
+        this.mid = 0;
     }
+
+    public Treatment(long tid, long pid, LocalDate date, LocalTime begin,
+                     LocalTime end, String description, String remarks, long mid) {
+        this.tid = tid;
+        this.pid = pid;
+        this.date = date;
+        this.begin = begin;
+        this.end = end;
+        this.description = description;
+        this.remarks = remarks;
+        this.mid = mid;
+    }
+
 
     public long getTid() {
         return tid;
@@ -106,9 +122,18 @@ public class Treatment {
         this.remarks = remarks;
     }
 
+    public long getMid() {
+        return mid;
+    }
+
+    public void setMid(long mid) {
+        this.mid = mid;
+    }
+
     public String toString() {
         return "\nBehandlung" + "\nTID: " + this.tid +
                 "\nPID: " + this.pid +
+                "\nMedicineID: " + this.mid +
                 "\nDate: " + this.date +
                 "\nBegin: " + this.begin +
                 "\nEnd: " + this.end +
