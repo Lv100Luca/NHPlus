@@ -2,8 +2,10 @@ package de.hitec.nhplus.controller;
 
 import de.hitec.nhplus.Main;
 import de.hitec.nhplus.datastorage.DaoFactory;
+import de.hitec.nhplus.datastorage.MedicineDao;
 import de.hitec.nhplus.datastorage.PatientDao;
 import de.hitec.nhplus.datastorage.TreatmentDao;
+import de.hitec.nhplus.model.Medicine;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -15,6 +17,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import de.hitec.nhplus.model.Patient;
 import de.hitec.nhplus.model.Treatment;
+import javafx.util.Callback;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -29,7 +32,7 @@ public class AllTreatmentController {
     private TableColumn<Treatment, Integer> columnId;
 
     @FXML
-    private TableColumn<Treatment, Integer> columnPid;
+    private TableColumn<Treatment, Long> columnPatient;
 
     @FXML
     private TableColumn<Treatment, String> columnDate;
@@ -44,14 +47,19 @@ public class AllTreatmentController {
     private TableColumn<Treatment, String> columnDescription;
 
     @FXML
+    public TableColumn<Treatment, Long> columnMedicine;
+
+    @FXML
     private ComboBox<String> comboBoxPatientSelection;
 
     @FXML
     private Button buttonDelete;
 
     private final ObservableList<Treatment> treatments = FXCollections.observableArrayList();
-    private TreatmentDao dao;
     private final ObservableList<String> patientSelection = FXCollections.observableArrayList();
+
+    private TreatmentDao dao;
+
     private ArrayList<Patient> patientList;
 
     public void initialize() {
@@ -60,11 +68,29 @@ public class AllTreatmentController {
         comboBoxPatientSelection.getSelectionModel().select(0);
 
         this.columnId.setCellValueFactory(new PropertyValueFactory<>("tid"));
-        this.columnPid.setCellValueFactory(new PropertyValueFactory<>("pid"));
+
+        this.columnPatient.setCellValueFactory(new PropertyValueFactory<>("pid"));
+        this.columnPatient.setCellFactory(col -> new TableCell<>() {
+            @Override
+            protected void updateItem(Long item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? null : getPatientNameByPid(item));
+            }
+        });
+
         this.columnDate.setCellValueFactory(new PropertyValueFactory<>("date"));
         this.columnBegin.setCellValueFactory(new PropertyValueFactory<>("begin"));
         this.columnEnd.setCellValueFactory(new PropertyValueFactory<>("end"));
         this.columnDescription.setCellValueFactory(new PropertyValueFactory<>("description"));
+
+        this.columnMedicine.setCellValueFactory((new PropertyValueFactory<>("mid")));
+        this.columnMedicine.setCellFactory(col -> new TableCell<>() {
+            @Override
+            protected void updateItem(Long item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? null : getMedicineNameByMid(item));
+            }
+        });
         this.tableView.setItems(this.treatments);
 
         // Disabling the button to delete treatments as long, as no treatment was selected.
@@ -209,5 +235,40 @@ public class AllTreatmentController {
         } catch (IOException exception) {
             exception.printStackTrace();
         }
+    }
+
+    public String getPatientNameByPid(long pid) {
+        Patient patient = getPatientByPid(pid);
+        return patient.getSurname() + " " + patient.getFirstName();
+    }
+
+    public Patient getPatientByPid(long pid) {
+        PatientDao dao = DaoFactory.getDaoFactory().createPatientDAO();
+        try {
+            return dao.read(pid);
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+        return null;
+    }
+
+    public String getMedicineNameByMid(long mid) {
+        Medicine medicine = getMedicineByMid(mid);
+
+        if (medicine == null) {
+            return "-";
+        }
+
+        return medicine.getName();
+    }
+
+    public Medicine getMedicineByMid(long mid) {
+        MedicineDao dao = DaoFactory.getDaoFactory().createMedicineDAO();
+        try {
+            return dao.read(mid);
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+        return null;
     }
 }
