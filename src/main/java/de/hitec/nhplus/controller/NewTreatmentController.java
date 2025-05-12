@@ -19,7 +19,6 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.concurrent.atomic.AtomicLong;
 
 public class NewTreatmentController {
 
@@ -115,13 +114,12 @@ public class NewTreatmentController {
         LocalTime end = DateConverter.convertStringToLocalTime(textFieldEnd.getText());
         String description = textFieldDescription.getText();
         String remarks = textAreaRemarks.getText();
-        AtomicLong caregiver = new AtomicLong();
-        caregiverList.forEach(cg -> {
-            if (cg.getSurname().equals(comboBoxCaregiver.getSelectionModel().getSelectedItem())) {
-                caregiver.set(cg.getCid());
-            }
-        });
-        Treatment treatment = new Treatment(patient.getPid(), date, begin, end, description, remarks, caregiver.get());
+
+        int index = comboBoxCaregiver.getSelectionModel().getSelectedIndex();
+
+        Caregiver caregiver = caregiverList.get(index);
+
+        Treatment treatment = new Treatment(patient.getPid(), date, begin, end, description, remarks, caregiver.getCid());
         createTreatment(treatment);
         controller.readAllAndShowInTableView();
         stage.close();
