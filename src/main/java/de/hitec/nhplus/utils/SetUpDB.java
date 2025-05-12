@@ -29,9 +29,9 @@ public class SetUpDB {
         SetUpDB.wipeDb(connection);
         SetUpDB.setUpTablePatient(connection);
         SetUpDB.setUpTableCaregiver(connection);
-        SetUpDB.setUpCaregivers();
         SetUpDB.setUpTableTreatment(connection);
         SetUpDB.setUpPatients();
+        SetUpDB.setUpCaregivers();
         SetUpDB.setUpTreatments();
     }
 
