@@ -33,7 +33,8 @@ public class MainWindowController {
         }
     }
 
-    public void handleShowAllMedicine(ActionEvent actionEvent) {
+    @FXML
+    private void handleShowAllMedicine(ActionEvent actionEvent) {
         FXMLLoader loader = new FXMLLoader(Main.class.getResource("/de/hitec/nhplus/AllMedicineView.fxml"));
         try {
             mainBorderPane.setCenter(loader.load());
