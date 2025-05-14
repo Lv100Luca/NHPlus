@@ -22,6 +22,11 @@ public class DaoFactory {
         return new PatientDao(ConnectionBuilder.getConnection());
     }
 
+    /**
+     * Creates a new instance of class <code>MedicineDao</code>.
+     *
+     * @return Instance of class <code>MedicineDao</code>.
+     */
     public MedicineDao createMedicineDAO() {
         return new MedicineDao(ConnectionBuilder.getConnection());
     }

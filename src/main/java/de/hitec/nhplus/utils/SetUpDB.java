@@ -86,6 +86,11 @@ public class SetUpDB {
         }
     }
 
+    /**
+     * Creates a new table <code>medicine</code> in the database.
+     *
+     * @param connection Object of class <code>Connection</code>.
+     */
     private static void setUpTableMedicine(Connection connection) {
         final String SQL = "CREATE TABLE IF NOT EXISTS medicine (" +
                 "   mid INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -134,6 +139,9 @@ public class SetUpDB {
         }
     }
 
+    /**
+     * Fills the database with some medicines.
+     */
     private static void setUpMedicines() {
         try {
             MedicineDao dao = DaoFactory.getDaoFactory().createMedicineDAO();

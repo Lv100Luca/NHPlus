@@ -121,6 +121,13 @@ public class MedicineDao extends DaoImp<Medicine> {
         return preparedStatement;
     }
 
+    /**
+     * Returns the name of the medicine with the given medicine id.
+     * If the medicine does not exist, the method returns "-".
+     *
+     * @param mid ID of the medicine
+     * @return name of the medicine or "-" if the medicine does not exist
+     */
     public String getMedicineNameByMid(long mid) {
         Medicine medicine;
         try {

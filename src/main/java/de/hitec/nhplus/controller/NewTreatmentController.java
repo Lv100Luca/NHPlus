@@ -84,6 +84,10 @@ public class NewTreatmentController {
         this.setComboBoxData();
     }
 
+    /**
+     * Reloads all medicines to the combo box by clearing the list of all medicines and filling it again by all
+     * persisted medicines, delivered by {@link MedicineDao}.
+     */
     private void setComboBoxData() {
         MedicineDao medicineDao = DaoFactory.getDaoFactory().createMedicineDAO();
         try {
