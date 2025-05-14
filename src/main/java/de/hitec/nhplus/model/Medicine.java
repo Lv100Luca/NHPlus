@@ -16,8 +16,8 @@ public class Medicine {
      * Constructor to initiate an object of class <code>Medicine</code> with the given parameter. Use this constructor
      * to initiate objects, which are not persisted yet, because it will not have a medicine id (mid).
      *
-     * @param name Name of the medicine.
-     * @param storage Storage of the medicine.
+     * @param name           Name of the medicine.
+     * @param storage        Storage of the medicine.
      * @param expirationDate Expiration date of the medicine.
      */
     public Medicine(String name, String storage, String expirationDate) {
@@ -30,9 +30,9 @@ public class Medicine {
      * Constructor to initiate an object of class <code>Medicine</code> with the given parameter. Use this constructor
      * to initiate objects, which are already persisted and have a medicine id (mid).
      *
-     * @param mid Medicine id.
-     * @param name Name of the medicine.
-     * @param storage Storage of the medicine.
+     * @param mid            Medicine id.
+     * @param name           Name of the medicine.
+     * @param storage        Storage of the medicine.
      * @param expirationDate Expiration date of the medicine.
      */
     public Medicine(long mid, String name, String storage, String expirationDate) {
@@ -79,10 +79,6 @@ public class Medicine {
     }
 
     public String toString() {
-        return "Medicine" + "\nMID: " + this.mid +
-                "\nName: " + this.name +
-                "\nStorage: " + this.storage +
-                "\nExpirationDate: " + this.expirationDate +
-                "\n";
+        return this.name.toString();
     }
 }

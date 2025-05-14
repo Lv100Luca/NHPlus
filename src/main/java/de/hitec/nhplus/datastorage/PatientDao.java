@@ -173,4 +173,20 @@ public class PatientDao extends DaoImp<Patient> {
         }
         return preparedStatement;
     }
+
+    public String getPatientNameByPid(long pid) {
+        Patient patient;
+        try {
+            patient = read(pid);
+        }
+        catch (SQLException e) {
+            return "-";
+        }
+
+        if (patient == null) {
+            return "-";
+        }
+
+        return patient.getSurname() + " " + patient.getFirstName();
+    }
 }

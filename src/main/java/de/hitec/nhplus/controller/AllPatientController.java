@@ -112,7 +112,8 @@ public class AllPatientController {
         this.buttonDelete.setDisable(true);
         this.tableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Patient>() {
             @Override
-            public void changed(ObservableValue<? extends Patient> observableValue, Patient oldPatient, Patient newPatient) {;
+            public void changed(ObservableValue<? extends Patient> observableValue, Patient oldPatient, Patient newPatient) {
+                ;
                 AllPatientController.this.buttonDelete.setDisable(newPatient == null);
             }
         });
@@ -178,7 +179,7 @@ public class AllPatientController {
      * @param event Event including the changed object and the change.
      */
     @FXML
-    public void handleOnEditRoomNumber(TableColumn.CellEditEvent<Patient, String> event){
+    public void handleOnEditRoomNumber(TableColumn.CellEditEvent<Patient, String> event) {
         event.getRowValue().setRoomNumber(event.getNewValue());
         this.doUpdate(event);
     }
@@ -189,7 +190,7 @@ public class AllPatientController {
      * @param event Event including the changed object and the change.
      */
     @FXML
-    public void handleOnEditAssets(TableColumn.CellEditEvent<Patient, String> event){
+    public void handleOnEditAssets(TableColumn.CellEditEvent<Patient, String> event) {
         event.getRowValue().setAssets(event.getNewValue());
         this.doUpdate(event);
     }

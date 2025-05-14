@@ -73,8 +73,9 @@ public class AllTreatmentController {
         this.columnPatient.setCellFactory(col -> new TableCell<>() {
             @Override
             protected void updateItem(Long item, boolean empty) {
+                PatientDao patientDAO = DaoFactory.getDaoFactory().createPatientDAO();
                 super.updateItem(item, empty);
-                setText(empty || item == null ? null : getPatientNameByPid(item));
+                setText(empty || item == null ? null : patientDAO.getPatientNameByPid(item));
             }
         });
 
@@ -87,8 +88,9 @@ public class AllTreatmentController {
         this.columnMedicine.setCellFactory(col -> new TableCell<>() {
             @Override
             protected void updateItem(Long item, boolean empty) {
+                MedicineDao medicineDAO = DaoFactory.getDaoFactory().createMedicineDAO();
                 super.updateItem(item, empty);
-                setText(empty || item == null ? null : getMedicineNameByMid(item));
+                setText(empty || item == null ? null : medicineDAO.getMedicineNameByMid(item));
             }
         });
         this.tableView.setItems(this.treatments);
@@ -118,7 +120,7 @@ public class AllTreatmentController {
         try {
             patientList = (ArrayList<Patient>) dao.readAll();
             this.patientSelection.add("alle");
-            for (Patient patient: patientList) {
+            for (Patient patient : patientList) {
                 this.patientSelection.add(patient.getSurname());
             }
         } catch (SQLException exception) {
@@ -142,7 +144,7 @@ public class AllTreatmentController {
         }
 
         Patient patient = searchInList(selectedPatient);
-        if (patient !=null) {
+        if (patient != null) {
             try {
                 this.treatments.addAll(this.dao.readTreatmentsByPid(patient.getPid()));
             } catch (SQLException exception) {
@@ -174,11 +176,11 @@ public class AllTreatmentController {
 
     @FXML
     public void handleNewTreatment() {
-        try{
+        try {
             String selectedPatient = this.comboBoxPatientSelection.getSelectionModel().getSelectedItem();
             Patient patient = searchInList(selectedPatient);
             newTreatmentWindow(patient);
-        } catch (NullPointerException exception){
+        } catch (NullPointerException exception) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Information");
             alert.setHeaderText("Patient für die Behandlung fehlt!");
@@ -218,7 +220,7 @@ public class AllTreatmentController {
         }
     }
 
-    public void treatmentWindow(Treatment treatment){
+    public void treatmentWindow(Treatment treatment) {
         try {
             FXMLLoader loader = new FXMLLoader(Main.class.getResource("/de/hitec/nhplus/TreatmentView.fxml"));
             AnchorPane pane = loader.load();
@@ -235,40 +237,5 @@ public class AllTreatmentController {
         } catch (IOException exception) {
             exception.printStackTrace();
         }
-    }
-
-    public String getPatientNameByPid(long pid) {
-        Patient patient = getPatientByPid(pid);
-        return patient.getSurname() + " " + patient.getFirstName();
-    }
-
-    public Patient getPatientByPid(long pid) {
-        PatientDao dao = DaoFactory.getDaoFactory().createPatientDAO();
-        try {
-            return dao.read(pid);
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-        }
-        return null;
-    }
-
-    public String getMedicineNameByMid(long mid) {
-        Medicine medicine = getMedicineByMid(mid);
-
-        if (medicine == null) {
-            return "-";
-        }
-
-        return medicine.getName();
-    }
-
-    public Medicine getMedicineByMid(long mid) {
-        MedicineDao dao = DaoFactory.getDaoFactory().createMedicineDAO();
-        try {
-            return dao.read(mid);
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-        }
-        return null;
     }
 }

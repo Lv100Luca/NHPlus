@@ -1,8 +1,10 @@
 package de.hitec.nhplus.controller;
 
 import de.hitec.nhplus.datastorage.DaoFactory;
+import de.hitec.nhplus.datastorage.MedicineDao;
 import de.hitec.nhplus.datastorage.PatientDao;
 import de.hitec.nhplus.datastorage.TreatmentDao;
+import de.hitec.nhplus.model.Medicine;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
@@ -20,6 +22,9 @@ public class TreatmentController {
 
     @FXML
     private Label labelCareLevel;
+
+    @FXML
+    private Label labelMedicine;
 
     @FXML
     private TextField textFieldBegin;
@@ -40,13 +45,16 @@ public class TreatmentController {
     private Stage stage;
     private Patient patient;
     private Treatment treatment;
+    private Medicine medicine;
 
     public void initializeController(AllTreatmentController controller, Stage stage, Treatment treatment) {
         this.stage = stage;
         this.controller= controller;
-        PatientDao pDao = DaoFactory.getDaoFactory().createPatientDAO();
+        PatientDao patientDAO = DaoFactory.getDaoFactory().createPatientDAO();
+        MedicineDao medicineDAO = DaoFactory.getDaoFactory().createMedicineDAO();
         try {
-            this.patient = pDao.read((int) treatment.getPid());
+            this.patient = patientDAO.read((int) treatment.getPid());
+            this.medicine = medicineDAO.read((int) treatment.getMid());
             this.treatment = treatment;
             showData();
         } catch (SQLException exception) {
@@ -63,6 +71,7 @@ public class TreatmentController {
         this.textFieldEnd.setText(this.treatment.getEnd());
         this.textFieldDescription.setText(this.treatment.getDescription());
         this.textAreaRemarks.setText(this.treatment.getRemarks());
+        this.labelMedicine.setText(medicine.getName());
     }
 
     @FXML

@@ -1,8 +1,12 @@
 package de.hitec.nhplus.controller;
 
 import de.hitec.nhplus.datastorage.DaoFactory;
+import de.hitec.nhplus.datastorage.MedicineDao;
 import de.hitec.nhplus.datastorage.TreatmentDao;
+import de.hitec.nhplus.model.Medicine;
 import javafx.beans.value.ChangeListener;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
@@ -14,6 +18,7 @@ import javafx.util.StringConverter;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 
 public class NewTreatmentController {
 
@@ -22,6 +27,11 @@ public class NewTreatmentController {
 
     @FXML
     private Label labelSurname;
+
+    @FXML
+    private ComboBox<Medicine> comboBoxMedicine;
+
+    private final ObservableList<Medicine> medications = FXCollections.observableArrayList();
 
     @FXML
     private TextField textFieldBegin;
@@ -46,7 +56,7 @@ public class NewTreatmentController {
     private Stage stage;
 
     public void initialize(AllTreatmentController controller, Stage stage, Patient patient) {
-        this.controller= controller;
+        this.controller = controller;
         this.patient = patient;
         this.stage = stage;
 
@@ -70,21 +80,49 @@ public class NewTreatmentController {
             }
         });
         this.showPatientData();
+
+        this.setComboBoxData();
     }
 
-    private void showPatientData(){
+    private void setComboBoxData() {
+        MedicineDao medicineDao = DaoFactory.getDaoFactory().createMedicineDAO();
+        try {
+            this.medications.addAll(medicineDao.readAll());
+
+            this.comboBoxMedicine.setItems(this.medications);
+            this.comboBoxMedicine.setConverter(new StringConverter<>() {
+                @Override
+                public String toString(Medicine medicine) {
+                    if (medicine == null)
+                        return "";
+
+                    return medicine.getName();
+                }
+
+                @Override
+                public Medicine fromString(String name) {
+                    return comboBoxMedicine.getSelectionModel().getSelectedItem();
+                }
+            });
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+    }
+
+    private void showPatientData() {
         this.labelFirstName.setText(patient.getFirstName());
         this.labelSurname.setText(patient.getSurname());
     }
 
     @FXML
-    public void handleAdd(){
+    public void handleAdd() {
         LocalDate date = this.datePicker.getValue();
         LocalTime begin = DateConverter.convertStringToLocalTime(textFieldBegin.getText());
         LocalTime end = DateConverter.convertStringToLocalTime(textFieldEnd.getText());
         String description = textFieldDescription.getText();
         String remarks = textAreaRemarks.getText();
-        Treatment treatment = new Treatment(patient.getPid(), date, begin, end, description, remarks);
+        Medicine medicine = comboBoxMedicine.getSelectionModel().getSelectedItem();
+        Treatment treatment = new Treatment(patient.getPid(), date, begin, end, description, remarks, medicine.getMid());
         createTreatment(treatment);
         controller.readAllAndShowInTableView();
         stage.close();
@@ -100,7 +138,7 @@ public class NewTreatmentController {
     }
 
     @FXML
-    public void handleCancel(){
+    public void handleCancel() {
         stage.close();
     }
 

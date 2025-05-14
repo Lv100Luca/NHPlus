@@ -120,4 +120,19 @@ public class MedicineDao extends DaoImp<Medicine> {
         }
         return preparedStatement;
     }
+
+    public String getMedicineNameByMid(long mid) {
+        Medicine medicine;
+        try {
+            medicine = read(mid);
+        } catch (SQLException e) {
+            return "-";
+        }
+
+        if (medicine == null) {
+            return "-";
+        }
+
+        return medicine.getName();
+    }
 }
