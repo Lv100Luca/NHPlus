@@ -117,9 +117,14 @@ public class NewTreatmentController {
 
         int index = comboBoxCaregiver.getSelectionModel().getSelectedIndex();
 
-        Caregiver caregiver = caregiverList.get(index);
+        Treatment treatment;
+        try {
+            Caregiver caregiver = caregiverList.get(index);
+            treatment = new Treatment(patient.getPid(), date, begin, end, description, remarks, caregiver.getCid());
+        } catch (Exception e) {
+            treatment = new Treatment(patient.getPid(), date, begin, end, description, remarks, 0);
+        }
 
-        Treatment treatment = new Treatment(patient.getPid(), date, begin, end, description, remarks, caregiver.getCid());
         createTreatment(treatment);
         controller.readAllAndShowInTableView();
         stage.close();

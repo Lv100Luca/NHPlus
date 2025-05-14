@@ -63,7 +63,11 @@ public class TreatmentController {
         Caregiver cg = getCaregiver();
         this.labelPatientName.setText(patient.getSurname()+", "+patient.getFirstName());
         this.labelCareLevel.setText(patient.getCareLevel());
-        this.labelCaregiver.setText(cg.getSurname()+", "+cg.getFirstName());
+        if (cg != null) {
+            this.labelCaregiver.setText(cg.getSurname()+", "+cg.getFirstName());
+        } else {
+            this.labelCaregiver.setText("Keine Pflegekraft zugewiesen");
+        }
         LocalDate date = DateConverter.convertStringToLocalDate(treatment.getDate());
         this.datePicker.setValue(date);
         this.textFieldBegin.setText(this.treatment.getBegin());

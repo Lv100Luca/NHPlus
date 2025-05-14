@@ -75,7 +75,6 @@ public class SetUpDB {
                 "   remark TEXT NOT NULL," +
                 "   cid INTEGER NOT NULL, " +
                 "   FOREIGN KEY (pid) REFERENCES patient (pid) ON DELETE CASCADE " +
-                "   FOREIGN KEY (cid) REFERENCES caregiver (cid) ON DELETE CASCADE " +
                 ");";
 
         try (Statement statement = connection.createStatement()) {
