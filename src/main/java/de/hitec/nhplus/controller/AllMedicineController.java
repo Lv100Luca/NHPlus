@@ -110,7 +110,7 @@ public class AllMedicineController {
         }
 
         loadMedicines();
-        clearTextfields();
+        clearTextFields();
     }
 
     public void handleDelete(ActionEvent actionEvent) {
@@ -127,7 +127,7 @@ public class AllMedicineController {
         }
     }
 
-    private void clearTextfields() {
+    private void clearTextFields() {
         this.textFieldName.clear();
         this.textFieldStorage.clear();
         this.textFieldExpirationDate.clear();
