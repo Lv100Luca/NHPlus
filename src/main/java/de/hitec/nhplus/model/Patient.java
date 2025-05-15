@@ -18,7 +18,6 @@ public class Patient extends Person {
     private final SimpleStringProperty dateOfBirth;
     private final SimpleStringProperty careLevel;
     private final SimpleStringProperty roomNumber;
-    private final SimpleStringProperty assets;
     private final List<Treatment> allTreatments = new ArrayList<>();
 
     /**
@@ -29,9 +28,8 @@ public class Patient extends Person {
      * @param firstName   First name of the patient.
      * @param surname     Last name of the patient.
      * @param dateOfBirth Date of birth of the patient.
-     * @param careLevel   Care level of the patient.
-     * @param roomNumber  Room number of the patient.
-     * @param assets      Assets of the patient.
+     * @param careLevel Care level of the patient.
+     * @param roomNumber Room number of the patient.
      */
     private Patient(long id, String firstName, String surname, LocalDate dateOfBirth, String careLevel, String roomNumber, String assets) {
         super(firstName, surname);
@@ -39,7 +37,6 @@ public class Patient extends Person {
         this.dateOfBirth = new SimpleStringProperty(DateConverter.convertLocalDateToString(dateOfBirth));
         this.careLevel = new SimpleStringProperty(careLevel);
         this.roomNumber = new SimpleStringProperty(roomNumber);
-        this.assets = new SimpleStringProperty(assets);
     }
 
     public static Patient fromResultSet(ResultSet result) throws SQLException {
@@ -98,18 +95,6 @@ public class Patient extends Person {
         this.roomNumber.set(roomNumber);
     }
 
-    public String getAssets() {
-        return assets.get();
-    }
-
-    public SimpleStringProperty assetsProperty() {
-        return assets;
-    }
-
-    public void setAssets(String assets) {
-        this.assets.set(assets);
-    }
-
     /**
      * Adds a treatment to the list of treatments, if the list does not already contain the treatment.
      *
@@ -131,7 +116,6 @@ public class Patient extends Person {
                 "\nBirthday: " + this.dateOfBirth +
                 "\nCarelevel: " + this.careLevel +
                 "\nRoomnumber: " + this.roomNumber +
-                "\nAssets: " + this.assets +
                 "\n";
     }
 }

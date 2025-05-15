@@ -35,8 +35,8 @@ public class TreatmentDao extends DaoImp<Treatment, TreatmentCreationData> {
     protected PreparedStatement getCreateStatement(TreatmentCreationData treatment) {
         PreparedStatement preparedStatement = null;
         try {
-            final String SQL = "INSERT INTO treatment (pid, treatment_date, begin, end, description, remark) " +
-                    "VALUES (?, ?, ?, ?, ?, ?)";
+            final String SQL = "INSERT INTO treatment (id, treatment_date, begin, end, description, remark, cid) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?)";
             preparedStatement = this.connection.prepareStatement(SQL);
             preparedStatement.setLong(1, treatment.patientId());
             preparedStatement.setString(2, treatment.date().toString());
@@ -44,6 +44,7 @@ public class TreatmentDao extends DaoImp<Treatment, TreatmentCreationData> {
             preparedStatement.setString(4, treatment.end().toString());
             preparedStatement.setString(5, treatment.description());
             preparedStatement.setString(6, treatment.remarks());
+            preparedStatement.setLong(7, treatment.cid());
         } catch (SQLException exception) {
             exception.printStackTrace();
         }
@@ -166,6 +167,7 @@ public class TreatmentDao extends DaoImp<Treatment, TreatmentCreationData> {
                             "end = ?, " +
                             "description = ?, " +
                             "remark = ? " +
+                            "caregiver = ?" +
                             "WHERE id = ?";
             preparedStatement = this.connection.prepareStatement(SQL);
             preparedStatement.setLong(1, treatment.getPid());
@@ -174,6 +176,7 @@ public class TreatmentDao extends DaoImp<Treatment, TreatmentCreationData> {
             preparedStatement.setString(4, treatment.getEnd());
             preparedStatement.setString(5, treatment.getDescription());
             preparedStatement.setString(6, treatment.getRemarks());
+            preparedStatement.setLong(7, treatment.getCid());
             preparedStatement.setLong(7, treatment.getId());
         } catch (SQLException exception) {
             exception.printStackTrace();

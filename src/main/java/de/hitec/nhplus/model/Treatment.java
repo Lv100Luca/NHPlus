@@ -18,6 +18,7 @@ public class Treatment implements Entity {
     private LocalTime end;
     private String description;
     private String remarks;
+    private long cid;
 
     /**
      * Private constructor to initiate an object of class <code>Treatment</code> from the database.
@@ -31,7 +32,7 @@ public class Treatment implements Entity {
      * @param remarks     Remarks to the treatment.
      */
     private Treatment(long id, long pid, LocalDate date, LocalTime begin,
-                      LocalTime end, String description, String remarks) {
+                      LocalTime end, String description, String remarks, long cid) {
         this.id = id;
         this.pid = pid;
         this.date = date;
@@ -39,6 +40,7 @@ public class Treatment implements Entity {
         this.end = end;
         this.description = description;
         this.remarks = remarks;
+        this.cid = cid;
     }
 
     public static Treatment fromResultSet(ResultSet result) throws SQLException {
@@ -46,7 +48,7 @@ public class Treatment implements Entity {
                 DateConverter.convertStringToLocalDate(result.getString(3)),
                 DateConverter.convertStringToLocalTime(result.getString(4)),
                 DateConverter.convertStringToLocalTime(result.getString(5)),
-                result.getString(6), result.getString(7));
+                result.getString(6), result.getString(7), result.getLong(8));
     }
 
 
@@ -96,6 +98,14 @@ public class Treatment implements Entity {
 
     public void setRemarks(String remarks) {
         this.remarks = remarks;
+    }
+
+    public long getCid() {
+        return cid;
+    }
+
+    public void setCid(long cid) {
+        this.cid = cid;
     }
 
     public String toString() {
