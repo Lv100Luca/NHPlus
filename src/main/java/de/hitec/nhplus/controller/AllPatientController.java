@@ -2,6 +2,7 @@ package de.hitec.nhplus.controller;
 
 import de.hitec.nhplus.datastorage.DaoFactory;
 import de.hitec.nhplus.datastorage.PatientDao;
+import de.hitec.nhplus.model.CreationData.PatientCreationData;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -16,7 +17,6 @@ import javafx.scene.control.cell.TextFieldTableCell;
 import de.hitec.nhplus.model.Patient;
 import de.hitec.nhplus.utils.DateConverter;
 
-import java.sql.SQLException;
 import java.time.LocalDate;
 
 
@@ -84,7 +84,7 @@ public class AllPatientController {
     public void initialize() {
         this.readAllAndShowInTableView();
 
-        this.columnId.setCellValueFactory(new PropertyValueFactory<>("pid"));
+        this.columnId.setCellValueFactory(new PropertyValueFactory<>("id"));
 
         // CellValueFactory to show property values in TableView
         this.columnFirstName.setCellValueFactory(new PropertyValueFactory<>("firstName"));
@@ -199,12 +199,8 @@ public class AllPatientController {
      *
      * @param event Event including the changed object and the change.
      */
-    private void doUpdate(TableColumn.CellEditEvent<Patient, String> event) {
-        try {
-            this.dao.update(event.getRowValue());
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-        }
+    private Patient doUpdate(TableColumn.CellEditEvent<Patient, String> event) {
+        return this.dao.update(event.getRowValue());
     }
 
     /**
@@ -214,11 +210,8 @@ public class AllPatientController {
     private void readAllAndShowInTableView() {
         this.patients.clear();
         this.dao = DaoFactory.getDaoFactory().createPatientDAO();
-        try {
-            this.patients.addAll(this.dao.readAll());
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-        }
+
+        this.patients.addAll(this.dao.getAll());
     }
 
     /**
@@ -229,14 +222,12 @@ public class AllPatientController {
     @FXML
     public void handleDelete() {
         Patient selectedItem = this.tableView.getSelectionModel().getSelectedItem();
-        if (selectedItem != null) {
-            try {
-                DaoFactory.getDaoFactory().createPatientDAO().deleteById(selectedItem.getPid());
-                this.tableView.getItems().remove(selectedItem);
-            } catch (SQLException exception) {
-                exception.printStackTrace();
-            }
-        }
+
+        if (selectedItem == null)
+            return;
+
+        DaoFactory.getDaoFactory().createPatientDAO().delete(selectedItem.getId());
+        this.tableView.getItems().remove(selectedItem);
     }
 
     /**
@@ -253,12 +244,12 @@ public class AllPatientController {
         String careLevel = this.textFieldCareLevel.getText();
         String roomNumber = this.textFieldRoomNumber.getText();
         String assets = this.textFieldAssets.getText();
-        try {
-            this.dao.create(new Patient(firstName, surname, date, careLevel, roomNumber, assets));
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-        }
-        readAllAndShowInTableView();
+
+        var data = new PatientCreationData(firstName, surname, date, careLevel, roomNumber, assets);
+        Patient patient = this.dao.create(data);
+
+        patients.add(patient);
+        
         clearTextfields();
     }
 

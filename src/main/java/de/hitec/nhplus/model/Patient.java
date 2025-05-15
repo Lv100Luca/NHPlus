@@ -12,7 +12,7 @@ import java.util.List;
  * Patients live in a NURSING home and are treated by nurses.
  */
 public class Patient extends Person {
-    private SimpleLongProperty pid;
+    private SimpleLongProperty id;
     private final SimpleStringProperty dateOfBirth;
     private final SimpleStringProperty careLevel;
     private final SimpleStringProperty roomNumber;
@@ -42,7 +42,7 @@ public class Patient extends Person {
      * Constructor to initiate an object of class <code>Patient</code> with the given parameter. Use this constructor
      * to initiate objects, which are already persisted and have a patient id (pid).
      *
-     * @param pid Patient id.
+     * @param id Patient id.
      * @param firstName First name of the patient.
      * @param surname Last name of the patient.
      * @param dateOfBirth Date of birth of the patient.
@@ -50,21 +50,21 @@ public class Patient extends Person {
      * @param roomNumber Room number of the patient.
      * @param assets Assets of the patient.
      */
-    public Patient(long pid, String firstName, String surname, LocalDate dateOfBirth, String careLevel, String roomNumber, String assets) {
+    public Patient(long id, String firstName, String surname, LocalDate dateOfBirth, String careLevel, String roomNumber, String assets) {
         super(firstName, surname);
-        this.pid = new SimpleLongProperty(pid);
+        this.id = new SimpleLongProperty(id);
         this.dateOfBirth = new SimpleStringProperty(DateConverter.convertLocalDateToString(dateOfBirth));
         this.careLevel = new SimpleStringProperty(careLevel);
         this.roomNumber = new SimpleStringProperty(roomNumber);
         this.assets = new SimpleStringProperty(assets);
     }
 
-    public long getPid() {
-        return pid.get();
+    public long getId() {
+        return id.get();
     }
 
     public SimpleLongProperty pidProperty() {
-        return pid;
+        return id;
     }
 
     public String getDateOfBirth() {
@@ -136,7 +136,7 @@ public class Patient extends Person {
     }
 
     public String toString() {
-        return "Patient" + "\nMNID: " + this.pid +
+        return "Patient" + "\nMNID: " + this.id +
                 "\nFirstname: " + this.getFirstName() +
                 "\nSurname: " + this.getSurname() +
                 "\nBirthday: " + this.dateOfBirth +

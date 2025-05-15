@@ -2,7 +2,7 @@ package de.hitec.nhplus.model;
 
 import javafx.beans.property.SimpleStringProperty;
 
-public abstract class Person {
+public abstract class Person implements Entity {
     private final SimpleStringProperty firstName;
     private final SimpleStringProperty surname;
 

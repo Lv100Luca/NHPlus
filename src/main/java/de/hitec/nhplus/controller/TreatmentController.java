@@ -45,13 +45,16 @@ public class TreatmentController {
         this.stage = stage;
         this.controller= controller;
         PatientDao pDao = DaoFactory.getDaoFactory().createPatientDAO();
-        try {
-            this.patient = pDao.read((int) treatment.getPid());
-            this.treatment = treatment;
-            showData();
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-        }
+
+        var patient = pDao.getById(treatment.getPid());
+
+        if (patient.isEmpty())
+            throw new RuntimeException("Patient not found");
+
+        this.patient = patient.get();
+
+        this.treatment = treatment;
+        showData();
     }
 
     private void showData(){
@@ -79,11 +82,8 @@ public class TreatmentController {
 
     private void doUpdate(){
         TreatmentDao dao = DaoFactory.getDaoFactory().createTreatmentDao();
-        try {
-            dao.update(treatment);
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-        }
+
+        dao.update(treatment);
     }
 
     @FXML

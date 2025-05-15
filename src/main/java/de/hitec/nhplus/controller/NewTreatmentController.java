@@ -2,6 +2,7 @@ package de.hitec.nhplus.controller;
 
 import de.hitec.nhplus.datastorage.DaoFactory;
 import de.hitec.nhplus.datastorage.TreatmentDao;
+import de.hitec.nhplus.model.CreationData.TreatmentCreationData;
 import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -79,24 +80,24 @@ public class NewTreatmentController {
 
     @FXML
     public void handleAdd(){
+        TreatmentDao dao = DaoFactory.getDaoFactory().createTreatmentDao();
+
         LocalDate date = this.datePicker.getValue();
         LocalTime begin = DateConverter.convertStringToLocalTime(textFieldBegin.getText());
         LocalTime end = DateConverter.convertStringToLocalTime(textFieldEnd.getText());
         String description = textFieldDescription.getText();
         String remarks = textAreaRemarks.getText();
-        Treatment treatment = new Treatment(patient.getPid(), date, begin, end, description, remarks);
-        createTreatment(treatment);
+
+        var data = new TreatmentCreationData(patient, date, begin, end, description, remarks);
+
+        Treatment treatment = dao.create(data);
+
         controller.readAllAndShowInTableView();
         stage.close();
     }
 
     private void createTreatment(Treatment treatment) {
-        TreatmentDao dao = DaoFactory.getDaoFactory().createTreatmentDao();
-        try {
-            dao.create(treatment);
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-        }
+
     }
 
     @FXML

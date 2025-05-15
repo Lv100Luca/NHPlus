@@ -1,5 +1,6 @@
 package de.hitec.nhplus.datastorage;
 
+import de.hitec.nhplus.model.CreationData.PatientCreationData;
 import de.hitec.nhplus.model.Patient;
 import de.hitec.nhplus.utils.DateConverter;
 
@@ -11,7 +12,7 @@ import java.util.ArrayList;
  * Implements the Interface <code>DaoImp</code>. Overrides methods to generate specific <code>PreparedStatements</code>,
  * to execute the specific SQL Statements.
  */
-public class PatientDao extends DaoImp<Patient> {
+public class PatientDao extends DaoImp<Patient, PatientCreationData> {
 
     /**
      * The constructor initiates an object of <code>PatientDao</code> and passes the connection to its super class.
@@ -29,18 +30,18 @@ public class PatientDao extends DaoImp<Patient> {
      * @return <code>PreparedStatement</code> to insert the given patient.
      */
     @Override
-    protected PreparedStatement getCreateStatement(Patient patient) {
+    protected PreparedStatement getCreateStatement(PatientCreationData patient) {
         PreparedStatement preparedStatement = null;
         try {
             final String SQL = "INSERT INTO patient (firstname, surname, dateOfBirth, carelevel, roomnumber, assets) " +
                     "VALUES (?, ?, ?, ?, ?, ?)";
             preparedStatement = this.connection.prepareStatement(SQL);
-            preparedStatement.setString(1, patient.getFirstName());
-            preparedStatement.setString(2, patient.getSurname());
-            preparedStatement.setString(3, patient.getDateOfBirth());
-            preparedStatement.setString(4, patient.getCareLevel());
-            preparedStatement.setString(5, patient.getRoomNumber());
-            preparedStatement.setString(6, patient.getAssets());
+            preparedStatement.setString(1, patient.firstName());
+            preparedStatement.setString(2, patient.surname());
+            preparedStatement.setString(3, patient.dateOfBirth().toString());
+            preparedStatement.setString(4, patient.careLevel());
+            preparedStatement.setString(5, patient.roomNumber());
+            preparedStatement.setString(6, patient.assets());
         } catch (SQLException exception) {
             exception.printStackTrace();
         }
@@ -57,7 +58,7 @@ public class PatientDao extends DaoImp<Patient> {
     protected PreparedStatement getReadByIDStatement(long pid) {
         PreparedStatement preparedStatement = null;
         try {
-            final String SQL = "SELECT * FROM patient WHERE pid = ?";
+            final String SQL = "SELECT * FROM patient WHERE id = ?";
             preparedStatement = this.connection.prepareStatement(SQL);
             preparedStatement.setLong(1, pid);
         } catch (SQLException exception) {
@@ -140,7 +141,7 @@ public class PatientDao extends DaoImp<Patient> {
                             "carelevel = ?, " +
                             "roomnumber = ?, " +
                             "assets = ? " +
-                            "WHERE pid = ?";
+                            "WHERE id = ?";
             preparedStatement = this.connection.prepareStatement(SQL);
             preparedStatement.setString(1, patient.getFirstName());
             preparedStatement.setString(2, patient.getSurname());
@@ -148,7 +149,7 @@ public class PatientDao extends DaoImp<Patient> {
             preparedStatement.setString(4, patient.getCareLevel());
             preparedStatement.setString(5, patient.getRoomNumber());
             preparedStatement.setString(6, patient.getAssets());
-            preparedStatement.setLong(7, patient.getPid());
+            preparedStatement.setLong(7, patient.getId());
         } catch (SQLException exception) {
             exception.printStackTrace();
         }
@@ -165,7 +166,7 @@ public class PatientDao extends DaoImp<Patient> {
     protected PreparedStatement getDeleteStatement(long pid) {
         PreparedStatement preparedStatement = null;
         try {
-            final String SQL = "DELETE FROM patient WHERE pid = ?";
+            final String SQL = "DELETE FROM patient WHERE id = ?";
             preparedStatement = this.connection.prepareStatement(SQL);
             preparedStatement.setLong(1, pid);
         } catch (SQLException exception) {

@@ -5,8 +5,8 @@ import de.hitec.nhplus.utils.DateConverter;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-public class Treatment {
-    private long tid;
+public class Treatment implements Entity {
+    private long id;
     private final long pid;
     private LocalDate date;
     private LocalTime begin;
@@ -39,7 +39,7 @@ public class Treatment {
      * Constructor to initiate an object of class <code>Treatment</code> with the given parameter. Use this constructor
      * to initiate objects, which are already persisted and have a treatment id (tid).
      *
-     * @param tid Id of the treatment.
+     * @param id Id of the treatment.
      * @param pid Id of the treated patient.
      * @param date Date of the Treatment.
      * @param begin Time of the start of the treatment in format "hh:MM"
@@ -47,9 +47,9 @@ public class Treatment {
      * @param description Description of the treatment.
      * @param remarks Remarks to the treatment.
      */
-    public Treatment(long tid, long pid, LocalDate date, LocalTime begin,
+    public Treatment(long id, long pid, LocalDate date, LocalTime begin,
                      LocalTime end, String description, String remarks) {
-        this.tid = tid;
+        this.id = id;
         this.pid = pid;
         this.date = date;
         this.begin = begin;
@@ -58,8 +58,8 @@ public class Treatment {
         this.remarks = remarks;
     }
 
-    public long getTid() {
-        return tid;
+    public long getId() {
+        return id;
     }
 
     public long getPid() {
@@ -107,7 +107,7 @@ public class Treatment {
     }
 
     public String toString() {
-        return "\nBehandlung" + "\nTID: " + this.tid +
+        return "\nBehandlung" + "\nTID: " + this.id +
                 "\nPID: " + this.pid +
                 "\nDate: " + this.date +
                 "\nBegin: " + this.begin +
