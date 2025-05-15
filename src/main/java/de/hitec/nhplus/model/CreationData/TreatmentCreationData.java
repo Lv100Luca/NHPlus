@@ -17,18 +17,4 @@ import java.time.LocalTime;
  * @param remarks remarks to the treatment
  */
 public record TreatmentCreationData (long patientId, LocalDate date, LocalTime begin, LocalTime end, String description, String remarks, long caregiverId) {
-
-    /**
-     * Overloaded constructor with patient model.
-     *
-     * @param patient patient model
-     * @param date date of the treatment
-     * @param begin time of the start of the treatment in format "hh:MM"
-     * @param end time of the end of the treatment in format "hh:MM".
-     * @param description description of the treatment
-     * @param remarks remarks to the treatment
-     */
-    public TreatmentCreationData(Patient patient, LocalDate date, LocalTime begin, LocalTime end, String description, String remarks, Caregiver caregiver) {
-        this(patient.getId(), date, begin, end, description, remarks, caregiver.getId());
-    }
 }
