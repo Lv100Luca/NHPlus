@@ -20,6 +20,7 @@ import de.hitec.nhplus.model.Treatment;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Optional;
 
 public class AllTreatmentController {
 
@@ -30,7 +31,7 @@ public class AllTreatmentController {
     private TableColumn<Treatment, Integer> columnId;
 
     @FXML
-    private TableColumn<Treatment, Integer> columnPid;
+    private TableColumn<Treatment, Long> columnPid;
 
     @FXML
     private TableColumn<Treatment, String> columnDate;
@@ -45,7 +46,7 @@ public class AllTreatmentController {
     private TableColumn<Treatment, String> columnDescription;
 
     @FXML
-    private TableColumn<Treatment, String> columnCaregiver;
+    private TableColumn<Treatment, Long> columnCaregiver;
 
     @FXML
     private ComboBox<String> comboBoxPatientSelection;
@@ -75,11 +76,27 @@ public class AllTreatmentController {
 
         this.columnId.setCellValueFactory(new PropertyValueFactory<>("id"));
         this.columnPid.setCellValueFactory(new PropertyValueFactory<>("pid"));
+        this.columnPid.setCellFactory(col -> new TableCell<>() {
+            @Override
+            public void updateItem(Long item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(getDisplayText(item, empty));
+            }
+        });
+
         this.columnDate.setCellValueFactory(new PropertyValueFactory<>("date"));
         this.columnBegin.setCellValueFactory(new PropertyValueFactory<>("begin"));
         this.columnEnd.setCellValueFactory(new PropertyValueFactory<>("end"));
         this.columnDescription.setCellValueFactory(new PropertyValueFactory<>("description"));
         this.columnCaregiver.setCellValueFactory(new PropertyValueFactory<>("cid"));
+        this.columnCaregiver.setCellFactory(col -> new TableCell<>() {
+            @Override
+            public void updateItem(Long item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(getDisplayText(item, empty));
+            }
+        });
+
         this.tableView.setItems(this.treatments);
 
         // Disabling the button to delete treatments as long, as no treatment was selected.
@@ -89,6 +106,15 @@ public class AllTreatmentController {
                         AllTreatmentController.this.buttonDelete.setDisable(newTreatment == null));
 
         this.createComboBoxData();
+    }
+
+    private String getDisplayText(Long item, boolean empty) {
+        if (empty) return "";
+
+        return Optional.ofNullable(item)
+                .flatMap(patientDao::getById)
+                .map(Patient::getFullName)
+                .orElse(" - ");
     }
 
     public void readAllAndShowInTableView() {
