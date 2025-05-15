@@ -45,11 +45,7 @@ public class CaregiverDao extends DaoImp<Caregiver, CaregiverCreationData>{
 
     @Override
     protected Caregiver getInstanceFromResultSet(ResultSet result) throws SQLException {
-        String firstName = result.getString("firstname");
-        String surname = result.getString("surname");
-        String phoneNumber = result.getString("phoneNumber");
-        long id = result.getLong("id");
-        return new Caregiver(id, firstName, surname, phoneNumber);
+        return Caregiver.fromResultSet(result);
     }
 
     @Override
