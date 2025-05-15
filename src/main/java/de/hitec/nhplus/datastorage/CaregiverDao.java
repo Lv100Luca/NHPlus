@@ -34,7 +34,7 @@ public class CaregiverDao extends DaoImp<Caregiver, CaregiverCreationData>{
     protected PreparedStatement getReadByIDStatement(long key) {
         PreparedStatement preparedStatement = null;
         try {
-            final String SQL = "SELECT * FROM caregiver WHERE cid = ?";
+            final String SQL = "SELECT * FROM caregiver WHERE id = ?";
             preparedStatement = this.connection.prepareStatement(SQL);
             preparedStatement.setLong(1, key);
         } catch (SQLException exception) {
@@ -48,7 +48,7 @@ public class CaregiverDao extends DaoImp<Caregiver, CaregiverCreationData>{
         String firstName = result.getString("firstname");
         String surname = result.getString("surname");
         String phoneNumber = result.getString("phoneNumber");
-        long id = result.getLong("cid");
+        long id = result.getLong("id");
         return new Caregiver(id, firstName, surname, phoneNumber);
     }
 
@@ -97,7 +97,7 @@ public class CaregiverDao extends DaoImp<Caregiver, CaregiverCreationData>{
     protected PreparedStatement getDeleteStatement(long key) {
         PreparedStatement preparedStatement = null;
         try {
-            final String SQL = "DELETE FROM caregiver WHERE cid = ?";
+            final String SQL = "DELETE FROM caregiver WHERE id = ?";
             preparedStatement = this.connection.prepareStatement(SQL);
             preparedStatement.setLong(1, key);
         } catch (SQLException exception) {
