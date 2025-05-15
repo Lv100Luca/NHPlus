@@ -44,63 +44,71 @@ public class TreatmentController {
 
     private AllTreatmentController controller;
     private Stage stage;
+
+    private TreatmentDao treatmentDao;
+
+    private CaregiverDao caregiverDao;
+    private PatientDao patientDao;
+
     private Patient patient;
     private Treatment treatment;
 
     public void initializeController(AllTreatmentController controller, Stage stage, Treatment treatment) {
+        treatmentDao = DaoFactory.getDaoFactory().createTreatmentDao();
+        caregiverDao = DaoFactory.getDaoFactory().createCaregiverDAO();
+        patientDao = DaoFactory.getDaoFactory().createPatientDAO();
+
         this.stage = stage;
-        this.controller= controller;
-        PatientDao pDao = DaoFactory.getDaoFactory().createPatientDAO();
+        this.controller = controller;
+        this.treatment = treatment;
 
-        var patient = pDao.getById(treatment.getPid());
+        var patient = patientDao.getById(treatment.getPid());
 
-        if (patient.isEmpty())
-            throw new RuntimeException("Patient not found");
+        if (patient.isEmpty()) {
+            handleCancel();
+            return;
+        }
+
 
         this.patient = patient.get();
 
-        this.treatment = treatment;
         showData();
     }
 
     private void showData() {
-        var dao = DaoFactory.getDaoFactory().createCaregiverDAO();
-
-        var cg = dao.getById(treatment.getCid());
-
-        if (cg.isEmpty())
-            throw new RuntimeException("Caregiver not found");
-
-        this.labelPatientName.setText(patient.getSurname()+", "+patient.getFirstName());
-        this.labelCareLevel.setText(patient.getCareLevel());
         LocalDate date = DateConverter.convertStringToLocalDate(treatment.getDate());
+
+        this.labelPatientName.setText(patient.getSurname() + ", " + patient.getFirstName());
+        this.labelCareLevel.setText(patient.getCareLevel());
         this.datePicker.setValue(date);
         this.textFieldBegin.setText(this.treatment.getBegin());
         this.textFieldEnd.setText(this.treatment.getEnd());
         this.textFieldDescription.setText(this.treatment.getDescription());
         this.textAreaRemarks.setText(this.treatment.getRemarks());
+
+        var text = caregiverDao.getById(treatment.getCid())
+                .map(cg -> cg.getFirstName() + " " + cg.getSurname())
+                .orElse(" - ");
+
+        this.labelCaregiver.setText(text);
     }
 
     @FXML
-    public void handleChange(){
+    public void handleChange() {
         this.treatment.setDate(this.datePicker.getValue().toString());
         this.treatment.setBegin(textFieldBegin.getText());
         this.treatment.setEnd(textFieldEnd.getText());
         this.treatment.setDescription(textFieldDescription.getText());
         this.treatment.setRemarks(textAreaRemarks.getText());
-        doUpdate();
+
+        treatmentDao.update(treatment);
+
         controller.readAllAndShowInTableView();
         stage.close();
     }
 
-    private void doUpdate(){
-        TreatmentDao dao = DaoFactory.getDaoFactory().createTreatmentDao();
-
-        dao.update(treatment);
-    }
-
     @FXML
-    public void handleCancel(){
+    public void handleCancel() {
         stage.close();
     }
 }
