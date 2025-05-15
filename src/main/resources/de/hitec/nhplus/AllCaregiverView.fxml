@@ -14,7 +14,7 @@
                AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="80.0">
       <columns>
           <TableColumn fx:id="columnId" maxWidth="1200.0" minWidth="5.0" prefWidth="5.0" text="ID"/>
-          <TableColumn fx:id="columnsurname" maxWidth="7500.0" minWidth="20.0" prefWidth="100.0"
+          <TableColumn fx:id="columnSurname" maxWidth="7500.0" minWidth="20.0" prefWidth="100.0"
                        onEditCommit="#handleOnEditsurname" text="Nachname"/>
           <TableColumn fx:id="columnFirstName" maxWidth="7500.0" prefWidth="75.0"
                        onEditCommit="#handleOnEditFirstName" text="Vorname"/>
@@ -27,7 +27,7 @@
     </TableView>
     <HBox layoutX="420.0" layoutY="450.0" spacing="10.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0"
           AnchorPane.rightAnchor="15.0">
-        <TextField fx:id="textFieldsurname" prefHeight="26.0" prefWidth="220.0" promptText="Nachname"/>
+        <TextField fx:id="textFieldSurname" prefHeight="26.0" prefWidth="220.0" promptText="Nachname"/>
         <TextField fx:id="textFieldFirstName" prefHeight="26.0" prefWidth="220.0" promptText="Vorname"/>
         <TextField fx:id="textFieldPhoneNumber" prefWidth="160.0" promptText="Telefonnummer"/>
         <Button fx:id="buttonAdd" mnemonicParsing="false" prefWidth="90.0" onAction="#handleAdd" text="Hinzufügen"/>

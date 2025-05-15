@@ -4,6 +4,8 @@ import de.hitec.nhplus.utils.DateConverter;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +14,7 @@ import java.util.List;
  * Patients live in a NURSING home and are treated by nurses.
  */
 public class Patient extends Person {
-    private SimpleLongProperty pid;
+    private SimpleLongProperty id;
     private final SimpleStringProperty dateOfBirth;
     private final SimpleStringProperty careLevel;
     private final SimpleStringProperty roomNumber;
@@ -20,46 +22,35 @@ public class Patient extends Person {
 
     /**
      * Constructor to initiate an object of class <code>Patient</code> with the given parameter. Use this constructor
-     * to initiate objects, which are not persisted yet, because it will not have a patient id (pid).
-     *
-     * @param firstName First name of the patient.
-     * @param surname Last name of the patient.
-     * @param dateOfBirth Date of birth of the patient.
-     * @param careLevel Care level of the patient.
-     * @param roomNumber Room number of the patient.
-     */
-    public Patient(String firstName, String surname, LocalDate dateOfBirth, String careLevel, String roomNumber) {
-        super(firstName, surname);
-        this.dateOfBirth = new SimpleStringProperty(DateConverter.convertLocalDateToString(dateOfBirth));
-        this.careLevel = new SimpleStringProperty(careLevel);
-        this.roomNumber = new SimpleStringProperty(roomNumber);
-    }
-
-    /**
-     * Constructor to initiate an object of class <code>Patient</code> with the given parameter. Use this constructor
      * to initiate objects, which are already persisted and have a patient id (pid).
      *
-     * @param pid Patient id.
-     * @param firstName First name of the patient.
-     * @param surname Last name of the patient.
+     * @param id          Patient id.
+     * @param firstName   First name of the patient.
+     * @param surname     Last name of the patient.
      * @param dateOfBirth Date of birth of the patient.
      * @param careLevel Care level of the patient.
      * @param roomNumber Room number of the patient.
      */
-    public Patient(long pid, String firstName, String surname, LocalDate dateOfBirth, String careLevel, String roomNumber) {
+    private Patient(long id, String firstName, String surname, LocalDate dateOfBirth, String careLevel, String roomNumber) {
         super(firstName, surname);
-        this.pid = new SimpleLongProperty(pid);
+        this.id = new SimpleLongProperty(id);
         this.dateOfBirth = new SimpleStringProperty(DateConverter.convertLocalDateToString(dateOfBirth));
         this.careLevel = new SimpleStringProperty(careLevel);
         this.roomNumber = new SimpleStringProperty(roomNumber);
     }
 
-    public long getPid() {
-        return pid.get();
+    public static Patient fromResultSet(ResultSet result) throws SQLException {
+        return new Patient(result.getInt(1), result.getString(2),
+                result.getString(3), DateConverter.convertStringToLocalDate(result.getString(4)),
+                result.getString(5), result.getString(6));
+    }
+
+    public long getId() {
+        return id.get();
     }
 
     public SimpleLongProperty pidProperty() {
-        return pid;
+        return id;
     }
 
     public String getDateOfBirth() {
@@ -119,7 +110,7 @@ public class Patient extends Person {
     }
 
     public String toString() {
-        return "Patient" + "\nMNID: " + this.pid +
+        return "Patient" + "\nMNID: " + this.id +
                 "\nFirstname: " + this.getFirstName() +
                 "\nSurname: " + this.getSurname() +
                 "\nBirthday: " + this.dateOfBirth +
