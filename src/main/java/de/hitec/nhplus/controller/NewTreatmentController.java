@@ -16,10 +16,8 @@ import de.hitec.nhplus.model.Treatment;
 import de.hitec.nhplus.utils.DateConverter;
 import javafx.util.StringConverter;
 
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
 
 public class NewTreatmentController {
 
@@ -93,6 +91,9 @@ public class NewTreatmentController {
         this.comboBoxCaregiver.setConverter(new StringConverter<>() {
             @Override
             public String toString(Caregiver caregiver) {
+                if (caregiver == null)
+                    return " - ";
+
                 return caregiver.getFirstName() + " " + caregiver.getSurname();
             }
 
