@@ -1,8 +1,12 @@
 package de.hitec.nhplus.controller;
 
+import de.hitec.nhplus.datastorage.CaregiverDao;
 import de.hitec.nhplus.datastorage.DaoFactory;
 import de.hitec.nhplus.datastorage.TreatmentDao;
+import de.hitec.nhplus.model.Caregiver;
 import javafx.beans.value.ChangeListener;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
@@ -14,6 +18,7 @@ import javafx.util.StringConverter;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 
 public class NewTreatmentController {
 
@@ -39,16 +44,22 @@ public class NewTreatmentController {
     private DatePicker datePicker;
 
     @FXML
+    private ComboBox<String> comboBoxCaregiver;
+
+    @FXML
     private Button buttonAdd;
 
     private AllTreatmentController controller;
     private Patient patient;
     private Stage stage;
+    private final ObservableList<String> caregiverSelection = FXCollections.observableArrayList();
+    private ArrayList<Caregiver> caregiverList;
 
     public void initialize(AllTreatmentController controller, Stage stage, Patient patient) {
         this.controller= controller;
         this.patient = patient;
         this.stage = stage;
+        this.comboBoxCaregiver.setItems(caregiverSelection);
 
         this.buttonAdd.setDisable(true);
         ChangeListener<String> inputNewPatientListener = (observableValue, oldText, newText) ->
@@ -69,7 +80,20 @@ public class NewTreatmentController {
                 return DateConverter.convertStringToLocalDate(localDate);
             }
         });
+        this.createComboBoxData();
         this.showPatientData();
+    }
+
+    private void createComboBoxData() {
+        CaregiverDao caregiverDao = DaoFactory.getDaoFactory().createCaregiverDAO();
+        try {
+            caregiverList = (ArrayList<Caregiver>) caregiverDao.readAll();
+            for (Caregiver caregiver : caregiverList) {
+                this.caregiverSelection.add(caregiver.getSurname());
+            }
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
     }
 
     private void showPatientData(){
@@ -78,13 +102,29 @@ public class NewTreatmentController {
     }
 
     @FXML
-    public void handleAdd(){
+    public void handleAdd() {
+        CaregiverDao caregiverDao = DaoFactory.getDaoFactory().createCaregiverDAO();
+        try {
+            caregiverList = (ArrayList<Caregiver>) caregiverDao.readAll();
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
         LocalDate date = this.datePicker.getValue();
         LocalTime begin = DateConverter.convertStringToLocalTime(textFieldBegin.getText());
         LocalTime end = DateConverter.convertStringToLocalTime(textFieldEnd.getText());
         String description = textFieldDescription.getText();
         String remarks = textAreaRemarks.getText();
-        Treatment treatment = new Treatment(patient.getPid(), date, begin, end, description, remarks);
+
+        int index = comboBoxCaregiver.getSelectionModel().getSelectedIndex();
+
+        Treatment treatment;
+        try {
+            Caregiver caregiver = caregiverList.get(index);
+            treatment = new Treatment(patient.getPid(), date, begin, end, description, remarks, caregiver.getCid());
+        } catch (Exception e) {
+            treatment = new Treatment(patient.getPid(), date, begin, end, description, remarks, 0);
+        }
+
         createTreatment(treatment);
         controller.readAllAndShowInTableView();
         stage.close();
