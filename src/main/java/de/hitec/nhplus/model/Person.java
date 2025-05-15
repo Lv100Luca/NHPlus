@@ -34,4 +34,8 @@ public abstract class Person implements Entity {
     public void setSurname(String surname) {
         this.surname.set(surname);
     }
+
+    public String getFullName() {
+        return this.getSurname() + " " + this.getFirstName();
+    }
 }
