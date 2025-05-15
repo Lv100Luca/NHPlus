@@ -2,11 +2,16 @@ package de.hitec.nhplus.model;
 
 import de.hitec.nhplus.utils.DateConverter;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+/**
+ * Represents a treatment in the database.
+ */
 public class Treatment implements Entity {
-    private long id;
+    private final long id;
     private final long pid;
     private LocalDate date;
     private LocalTime begin;
@@ -15,40 +20,18 @@ public class Treatment implements Entity {
     private String remarks;
 
     /**
-     * Constructor to initiate an object of class <code>Treatment</code> with the given parameter. Use this constructor
-     * to initiate objects, which are not persisted yet, because it will not have a treatment id (tid).
+     * Private constructor to initiate an object of class <code>Treatment</code> from the database.
      *
-     * @param pid Id of the treated patient.
-     * @param date Date of the Treatment.
-     * @param begin Time of the start of the treatment in format "hh:MM"
-     * @param end Time of the end of the treatment in format "hh:MM".
+     * @param id          Id of the treatment.
+     * @param pid         Id of the treated patient.
+     * @param date        Date of the Treatment.
+     * @param begin       Time of the start of the treatment in format "hh:MM"
+     * @param end         Time of the end of the treatment in format "hh:MM".
      * @param description Description of the treatment.
-     * @param remarks Remarks to the treatment.
+     * @param remarks     Remarks to the treatment.
      */
-    public Treatment(long pid, LocalDate date, LocalTime begin,
-                     LocalTime end, String description, String remarks) {
-        this.pid = pid;
-        this.date = date;
-        this.begin = begin;
-        this.end = end;
-        this.description = description;
-        this.remarks = remarks;
-    }
-
-    /**
-     * Constructor to initiate an object of class <code>Treatment</code> with the given parameter. Use this constructor
-     * to initiate objects, which are already persisted and have a treatment id (tid).
-     *
-     * @param id Id of the treatment.
-     * @param pid Id of the treated patient.
-     * @param date Date of the Treatment.
-     * @param begin Time of the start of the treatment in format "hh:MM"
-     * @param end Time of the end of the treatment in format "hh:MM".
-     * @param description Description of the treatment.
-     * @param remarks Remarks to the treatment.
-     */
-    public Treatment(long id, long pid, LocalDate date, LocalTime begin,
-                     LocalTime end, String description, String remarks) {
+    private Treatment(long id, long pid, LocalDate date, LocalTime begin,
+                      LocalTime end, String description, String remarks) {
         this.id = id;
         this.pid = pid;
         this.date = date;
@@ -57,6 +40,15 @@ public class Treatment implements Entity {
         this.description = description;
         this.remarks = remarks;
     }
+
+    public static Treatment fromResultSet(ResultSet result) throws SQLException {
+        return new Treatment(result.getLong(1), result.getLong(2),
+                DateConverter.convertStringToLocalDate(result.getString(3)),
+                DateConverter.convertStringToLocalTime(result.getString(4)),
+                DateConverter.convertStringToLocalTime(result.getString(5)),
+                result.getString(6), result.getString(7));
+    }
+
 
     public long getId() {
         return id;
@@ -83,11 +75,11 @@ public class Treatment implements Entity {
     }
 
     public void setBegin(String begin) {
-        this.begin = DateConverter.convertStringToLocalTime(begin);;
+        this.begin = DateConverter.convertStringToLocalTime(begin);
     }
 
     public void setEnd(String end) {
-        this.end = DateConverter.convertStringToLocalTime(end);;
+        this.end = DateConverter.convertStringToLocalTime(end);
     }
 
     public String getDescription() {
