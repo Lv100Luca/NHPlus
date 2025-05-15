@@ -1,10 +1,11 @@
 package de.hitec.nhplus.datastorage;
 
 import de.hitec.nhplus.model.Entity;
+import de.hitec.nhplus.model.Exceptions.CreateException;
+import de.hitec.nhplus.model.Exceptions.UpdateException;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -30,13 +31,13 @@ public abstract class DaoImp<T extends Entity, TCreationData> implements Dao<T, 
 
             Optional<T> entity = getById(insertedId);
             if (entity.isEmpty())
-                throw new RuntimeException("Could not create new entity");
+                throw new CreateException("Could not create new entity");
 
             return entity.get();
         } catch (SQLException exception) {
             // creating a new object _should_ never fail
             // highlights underlying issue
-            throw new RuntimeException(exception);
+            throw new CreateException(exception.getMessage());
         }
     }
 
@@ -71,9 +72,7 @@ public abstract class DaoImp<T extends Entity, TCreationData> implements Dao<T, 
             getUpdateStatement(entity).executeUpdate();
             return entity;
         } catch (SQLException exception) {
-            // updating an existing object _should_ never fail
-            // highlights underlying issue
-            throw new RuntimeException(exception);
+            throw new UpdateException(exception.getMessage());
         }
     }
 
