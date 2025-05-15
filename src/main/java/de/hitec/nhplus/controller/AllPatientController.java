@@ -68,7 +68,7 @@ public class AllPatientController {
     private TextField textFieldRoomNumber;
 
     private final ObservableList<Patient> patients = FXCollections.observableArrayList();
-    private PatientDao dao;
+    private PatientDao patientDao;
 
     /**
      * When <code>initialize()</code> gets called, all fields are already initialized. For example from the FXMLLoader
@@ -76,6 +76,8 @@ public class AllPatientController {
      * configured.
      */
     public void initialize() {
+        patientDao = DaoFactory.getDaoFactory().createPatientDAO();
+
         this.readAllAndShowInTableView();
 
         this.columnId.setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -179,7 +181,7 @@ public class AllPatientController {
      * @param event Event including the changed object and the change.
      */
     private Patient doUpdate(TableColumn.CellEditEvent<Patient, String> event) {
-        return this.dao.update(event.getRowValue());
+        return this.patientDao.update(event.getRowValue());
     }
 
     /**
@@ -188,9 +190,8 @@ public class AllPatientController {
      */
     private void readAllAndShowInTableView() {
         this.patients.clear();
-        this.dao = DaoFactory.getDaoFactory().createPatientDAO();
 
-        this.patients.addAll(this.dao.getAll());
+        this.patients.addAll(this.patientDao.getAll());
     }
 
     /**
@@ -205,7 +206,6 @@ public class AllPatientController {
         if (selectedItem == null)
             return;
 
-        DaoFactory.getDaoFactory().createPatientDAO().delete(selectedItem.getId());
         this.tableView.getItems().remove(selectedItem);
     }
 
@@ -224,7 +224,7 @@ public class AllPatientController {
         String roomNumber = this.textFieldRoomNumber.getText();
 
         var data = new PatientCreationData(firstName, surname, birthDate, careLevel, roomNumber);
-        Patient patient = this.dao.create(data);
+        Patient patient = this.patientDao.create(data);
 
         patients.add(patient);
 

@@ -16,8 +16,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 
-import java.sql.SQLException;
-
 public class AllCaregiverController {
 
     @FXML
@@ -27,7 +25,7 @@ public class AllCaregiverController {
     @FXML
     private TableColumn<Caregiver, String> columnFirstName;
     @FXML
-    private TableColumn<Caregiver, String> columnsurname;
+    private TableColumn<Caregiver, String> columnSurname;
     @FXML
     private TableColumn<Caregiver, String> columnPhoneNumber;
 
@@ -39,7 +37,7 @@ public class AllCaregiverController {
     @FXML
     private TextField textFieldFirstName;
     @FXML
-    private TextField textFieldsurname;
+    private TextField textFieldSurname;
     @FXML
     private TextField textFieldPhoneNumber;
 
@@ -47,13 +45,15 @@ public class AllCaregiverController {
     private CaregiverDao caregiverDao;
 
     public void initialize() {
+        caregiverDao = DaoFactory.getDaoFactory().createCaregiverDAO();
+
         this.readAllAndShowInTableView();
 
         this.columnId.setCellValueFactory(new PropertyValueFactory<>("cid"));
         this.columnFirstName.setCellValueFactory(new PropertyValueFactory<>("firstName"));
         this.columnFirstName.setCellFactory(TextFieldTableCell.forTableColumn());
-        this.columnsurname.setCellValueFactory(new PropertyValueFactory<>("surname"));
-        this.columnsurname.setCellFactory(TextFieldTableCell.forTableColumn());
+        this.columnSurname.setCellValueFactory(new PropertyValueFactory<>("surname"));
+        this.columnSurname.setCellFactory(TextFieldTableCell.forTableColumn());
         this.columnPhoneNumber.setCellValueFactory(new PropertyValueFactory<>("phoneNumber"));
         this.columnPhoneNumber.setCellFactory(TextFieldTableCell.forTableColumn());
 
@@ -66,7 +66,7 @@ public class AllCaregiverController {
         ChangeListener<String> inputNewCaregiverListener = (observableValue, oldValue, newValue) ->
                 AllCaregiverController.this.buttonAdd.setDisable(!AllCaregiverController.this.areInputDataValid());
         this.textFieldFirstName.textProperty().addListener(inputNewCaregiverListener);
-        this.textFieldsurname.textProperty().addListener(inputNewCaregiverListener);
+        this.textFieldSurname.textProperty().addListener(inputNewCaregiverListener);
         this.textFieldPhoneNumber.textProperty().addListener(inputNewCaregiverListener);
     }
 
@@ -90,10 +90,8 @@ public class AllCaregiverController {
 
     @FXML
     private void handleDelete() {
-        var doa = DaoFactory.getDaoFactory().createCaregiverDAO();
-
         var selectedIndex = this.tableView.getSelectionModel().getSelectedIndex();
-        var deleted = doa.delete(selectedIndex);
+        var deleted = caregiverDao.delete(selectedIndex);
 
         deleted.ifPresent(this.caregivers::remove);
     }
@@ -101,7 +99,7 @@ public class AllCaregiverController {
     @FXML
     private void handleAdd() {
         String firstName = this.textFieldFirstName.getText();
-        String surname = this.textFieldsurname.getText();
+        String surname = this.textFieldSurname.getText();
         String phoneNumber = this.textFieldPhoneNumber.getText();
         this.caregiverDao.create(new CaregiverCreationData(firstName, surname, phoneNumber));
 
@@ -111,7 +109,7 @@ public class AllCaregiverController {
 
     private void clearTextFields() {
         this.textFieldFirstName.clear();
-        this.textFieldsurname.clear();
+        this.textFieldSurname.clear();
         this.textFieldPhoneNumber.clear();
     }
 
@@ -122,12 +120,10 @@ public class AllCaregiverController {
     private boolean areInputDataValid() {
         return PhoneNumberUtil.isValidPhoneNumber(this.textFieldPhoneNumber.getText())
                 && !this.textFieldFirstName.getText().isEmpty()
-                && !this.textFieldsurname.getText().isEmpty();
+                && !this.textFieldSurname.getText().isEmpty();
     }
 
     private void readAllAndShowInTableView() {
-        this.caregiverDao = DaoFactory.getDaoFactory().createCaregiverDAO();
-
         this.caregivers.clear();
 
         this.caregivers.addAll(this.caregiverDao.getAll());

@@ -1,6 +1,7 @@
 package de.hitec.nhplus.controller;
 
 import de.hitec.nhplus.Main;
+import de.hitec.nhplus.datastorage.CaregiverDao;
 import de.hitec.nhplus.datastorage.DaoFactory;
 import de.hitec.nhplus.datastorage.PatientDao;
 import de.hitec.nhplus.datastorage.TreatmentDao;
@@ -49,15 +50,25 @@ public class AllTreatmentController {
     @FXML
     private ComboBox<String> comboBoxPatientSelection;
 
+    private final ObservableList<String> patientSelection = FXCollections.observableArrayList();
+
     @FXML
     private Button buttonDelete;
 
     private final ObservableList<Treatment> treatments = FXCollections.observableArrayList();
-    private TreatmentDao dao;
-    private final ObservableList<String> patientSelection = FXCollections.observableArrayList();
+
     private ArrayList<Patient> patientList;
 
+    private TreatmentDao treatmentDao;
+    private CaregiverDao caregiverDao;
+    private PatientDao patientDao;
+
+
     public void initialize() {
+        treatmentDao = DaoFactory.getDaoFactory().createTreatmentDao();
+        caregiverDao = DaoFactory.getDaoFactory().createCaregiverDAO();
+        patientDao = DaoFactory.getDaoFactory().createPatientDAO();
+
         readAllAndShowInTableView();
         comboBoxPatientSelection.setItems(patientSelection);
         comboBoxPatientSelection.getSelectionModel().select(0);
@@ -81,18 +92,14 @@ public class AllTreatmentController {
     }
 
     public void readAllAndShowInTableView() {
-        this.dao = DaoFactory.getDaoFactory().createTreatmentDao();
-
         this.treatments.clear();
         comboBoxPatientSelection.getSelectionModel().select(0);
 
-        this.treatments.addAll(dao.getAll());
+        this.treatments.addAll(treatmentDao.getAll());
     }
 
     private void createComboBoxData() {
-        PatientDao dao = DaoFactory.getDaoFactory().createPatientDAO();
-
-        patientList = dao.getAll();
+        patientList = patientDao.getAll();
         this.patientSelection.add("alle");
 
         for (Patient patient : patientList) {
@@ -105,16 +112,15 @@ public class AllTreatmentController {
     public void handleComboBox() {
         String selectedPatient = this.comboBoxPatientSelection.getSelectionModel().getSelectedItem();
         this.treatments.clear();
-        this.dao = DaoFactory.getDaoFactory().createTreatmentDao();
 
         if (selectedPatient.equals("alle")) {
-            this.treatments.addAll(this.dao.getAll());
+            this.treatments.addAll(this.treatmentDao.getAll());
         }
 
         Patient patient = searchInList(selectedPatient);
         if (patient != null) {
             try {
-                this.treatments.addAll(this.dao.readTreatmentsByPid(patient.getId()));
+                this.treatments.addAll(this.treatmentDao.readTreatmentsByPid(patient.getId()));
             } catch (SQLException exception) {
                 exception.printStackTrace();
             }
@@ -136,10 +142,8 @@ public class AllTreatmentController {
      */
     @FXML
     public void handleDelete() { //todo test me
-        TreatmentDao dao = DaoFactory.getDaoFactory().createTreatmentDao();
-
         var treatment = this.tableView.getSelectionModel().getSelectedItem();
-        var deleted = dao.delete(treatment.getId());
+        var deleted = treatmentDao.delete(treatment.getId());
 
         deleted.ifPresent(this.treatments::remove);
     }

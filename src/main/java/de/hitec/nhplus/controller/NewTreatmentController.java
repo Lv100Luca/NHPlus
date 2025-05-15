@@ -2,6 +2,7 @@ package de.hitec.nhplus.controller;
 
 import de.hitec.nhplus.datastorage.CaregiverDao;
 import de.hitec.nhplus.datastorage.DaoFactory;
+import de.hitec.nhplus.datastorage.PatientDao;
 import de.hitec.nhplus.datastorage.TreatmentDao;
 import de.hitec.nhplus.model.CreationData.TreatmentCreationData;
 import de.hitec.nhplus.model.Caregiver;
@@ -54,7 +55,15 @@ public class NewTreatmentController {
     private Patient patient;
     private Stage stage;
 
+    private TreatmentDao treatmentDao;
+    private CaregiverDao caregiverDao;
+    private PatientDao patientDao;
+
     public void initialize(AllTreatmentController controller, Stage stage, Patient patient) {
+        treatmentDao = DaoFactory.getDaoFactory().createTreatmentDao();
+        caregiverDao = DaoFactory.getDaoFactory().createCaregiverDAO();
+        patientDao = DaoFactory.getDaoFactory().createPatientDAO();
+
         this.controller = controller;
         this.patient = patient;
         this.stage = stage;
@@ -83,8 +92,6 @@ public class NewTreatmentController {
     }
 
     private void createComboBoxData() {
-        CaregiverDao caregiverDao = DaoFactory.getDaoFactory().createCaregiverDAO();
-
         this.caregiverSelection.addAll(caregiverDao.getAll());
 
         this.comboBoxCaregiver.setItems(this.caregiverSelection);
@@ -111,9 +118,6 @@ public class NewTreatmentController {
 
     @FXML
     public void handleAdd() {
-        TreatmentDao dao = DaoFactory.getDaoFactory().createTreatmentDao();
-        CaregiverDao caregiverDao = DaoFactory.getDaoFactory().createCaregiverDAO();
-
         LocalDate date = this.datePicker.getValue();
         LocalTime begin = DateConverter.convertStringToLocalTime(textFieldBegin.getText());
         LocalTime end = DateConverter.convertStringToLocalTime(textFieldEnd.getText());
@@ -122,7 +126,7 @@ public class NewTreatmentController {
         Caregiver caregiver = comboBoxCaregiver.getSelectionModel().getSelectedItem();
 
         var data = new TreatmentCreationData(patient, date, begin, end, description, remarks, caregiver);
-        Treatment treatment = dao.create(data);
+        Treatment treatment = treatmentDao.create(data);
 
         controller.readAllAndShowInTableView();
         stage.close();
