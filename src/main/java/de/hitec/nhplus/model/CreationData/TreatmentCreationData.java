@@ -1,5 +1,6 @@
 package de.hitec.nhplus.model.CreationData;
 
+import de.hitec.nhplus.model.Caregiver;
 import de.hitec.nhplus.model.Patient;
 
 import java.time.LocalDate;
@@ -15,7 +16,7 @@ import java.time.LocalTime;
  * @param description description of the treatment
  * @param remarks remarks to the treatment
  */
-public record TreatmentCreationData (long patientId, LocalDate date, LocalTime begin, LocalTime end, String description, String remarks) {
+public record TreatmentCreationData (long patientId, LocalDate date, LocalTime begin, LocalTime end, String description, String remarks, long caregiverId) {
 
     /**
      * Overloaded constructor with patient model.
@@ -27,7 +28,7 @@ public record TreatmentCreationData (long patientId, LocalDate date, LocalTime b
      * @param description description of the treatment
      * @param remarks remarks to the treatment
      */
-    public TreatmentCreationData(Patient patient, LocalDate date, LocalTime begin, LocalTime end, String description, String remarks) {
-        this(patient.getId(), date, begin, end, description, remarks);
+    public TreatmentCreationData(Patient patient, LocalDate date, LocalTime begin, LocalTime end, String description, String remarks, Caregiver caregiver) {
+        this(patient.getId(), date, begin, end, description, remarks, caregiver.getId());
     }
 }

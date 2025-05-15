@@ -41,7 +41,6 @@ public class PatientDao extends DaoImp<Patient, PatientCreationData> {
             preparedStatement.setString(3, patient.dateOfBirth().toString());
             preparedStatement.setString(4, patient.careLevel());
             preparedStatement.setString(5, patient.roomNumber());
-            preparedStatement.setString(6, patient.assets());
         } catch (SQLException exception) {
             exception.printStackTrace();
         }

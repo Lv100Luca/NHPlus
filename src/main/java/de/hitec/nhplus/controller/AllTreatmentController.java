@@ -81,10 +81,11 @@ public class AllTreatmentController {
     }
 
     public void readAllAndShowInTableView() {
-        this.treatments.clear();
-
-        comboBoxPatientSelection.getSelectionModel().select(0);
         this.dao = DaoFactory.getDaoFactory().createTreatmentDao();
+
+        this.treatments.clear();
+        comboBoxPatientSelection.getSelectionModel().select(0);
+
         this.treatments.addAll(dao.getAll());
     }
 
@@ -140,8 +141,7 @@ public class AllTreatmentController {
         var treatment = this.tableView.getSelectionModel().getSelectedItem();
         var deleted = dao.delete(treatment.getId());
 
-        if (deleted.isPresent())
-            this.treatments.remove(treatment);
+        deleted.ifPresent(this.treatments::remove);
     }
 
     @FXML

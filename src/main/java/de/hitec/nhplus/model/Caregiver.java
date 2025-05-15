@@ -4,7 +4,7 @@ import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 
 public class Caregiver extends Person {
-    private SimpleLongProperty cid;
+    private SimpleLongProperty id;
     private final SimpleStringProperty phoneNumber;
 
     public Caregiver(String firstName, String surname, String phoneNumber) {
@@ -14,16 +14,16 @@ public class Caregiver extends Person {
 
     public Caregiver(long cid, String firstName, String surname, String phoneNumber) {
         super(firstName, surname);
-        this.cid = new SimpleLongProperty(cid);
+        this.id = new SimpleLongProperty(cid);
         this.phoneNumber = new SimpleStringProperty(phoneNumber);
     }
 
-    public long getCid() {
-        return cid.get();
+    public long getId() {
+        return id.get();
     }
 
     public SimpleLongProperty cidProperty() {
-        return cid;
+        return id;
     }
 
     public String getPhoneNumber() {

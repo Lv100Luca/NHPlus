@@ -45,7 +45,9 @@ public class NewTreatmentController {
     private DatePicker datePicker;
 
     @FXML
-    private ComboBox<String> comboBoxCaregiver;
+    private ComboBox<Caregiver> comboBoxCaregiver;
+
+    private final ObservableList<Caregiver> caregiverSelection = FXCollections.observableArrayList();
 
     @FXML
     private Button buttonAdd;
@@ -53,14 +55,11 @@ public class NewTreatmentController {
     private AllTreatmentController controller;
     private Patient patient;
     private Stage stage;
-    private final ObservableList<String> caregiverSelection = FXCollections.observableArrayList();
-    private ArrayList<Caregiver> caregiverList;
 
     public void initialize(AllTreatmentController controller, Stage stage, Patient patient) {
-        this.controller= controller;
+        this.controller = controller;
         this.patient = patient;
         this.stage = stage;
-        this.comboBoxCaregiver.setItems(caregiverSelection);
 
         this.buttonAdd.setDisable(true);
         ChangeListener<String> inputNewPatientListener = (observableValue, oldText, newText) ->
@@ -87,40 +86,41 @@ public class NewTreatmentController {
 
     private void createComboBoxData() {
         CaregiverDao caregiverDao = DaoFactory.getDaoFactory().createCaregiverDAO();
-        try {
-            caregiverList = (ArrayList<Caregiver>) caregiverDao.readAll();
-            for (Caregiver caregiver : caregiverList) {
-                this.caregiverSelection.add(caregiver.getSurname());
+
+        this.caregiverSelection.addAll(caregiverDao.getAll());
+
+        this.comboBoxCaregiver.setItems(this.caregiverSelection);
+        this.comboBoxCaregiver.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(Caregiver caregiver) {
+                return caregiver.getFirstName() + " " + caregiver.getSurname();
             }
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-        }
+
+            @Override
+            public Caregiver fromString(String string) {
+                return comboBoxCaregiver.getSelectionModel().getSelectedItem();
+            }
+        });
     }
 
-    private void showPatientData(){
+    private void showPatientData() {
         this.labelFirstName.setText(patient.getFirstName());
         this.labelSurname.setText(patient.getSurname());
     }
 
     @FXML
-    public void handleAdd(){
+    public void handleAdd() {
         TreatmentDao dao = DaoFactory.getDaoFactory().createTreatmentDao();
         CaregiverDao caregiverDao = DaoFactory.getDaoFactory().createCaregiverDAO();
-
-//        try {
-//            caregiverList = (ArrayList<Caregiver>) caregiverDao.readAll();
-//        } catch (SQLException exception) {
-//            exception.printStackTrace();
-//        }
 
         LocalDate date = this.datePicker.getValue();
         LocalTime begin = DateConverter.convertStringToLocalTime(textFieldBegin.getText());
         LocalTime end = DateConverter.convertStringToLocalTime(textFieldEnd.getText());
         String description = textFieldDescription.getText();
         String remarks = textAreaRemarks.getText();
-        Caregiver caregiver;
+        Caregiver caregiver = comboBoxCaregiver.getSelectionModel().getSelectedItem();
 
-        var data = new TreatmentCreationData(patient.getId(), date, begin, end, description, remarks);
+        var data = new TreatmentCreationData(patient, date, begin, end, description, remarks, caregiver);
         Treatment treatment = dao.create(data);
 
         controller.readAllAndShowInTableView();
@@ -128,7 +128,7 @@ public class NewTreatmentController {
     }
 
     @FXML
-    public void handleCancel(){
+    public void handleCancel() {
         stage.close();
     }
 

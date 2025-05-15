@@ -3,6 +3,7 @@ package de.hitec.nhplus.controller;
 import de.hitec.nhplus.datastorage.CaregiverDao;
 import de.hitec.nhplus.datastorage.DaoFactory;
 import de.hitec.nhplus.model.Caregiver;
+import de.hitec.nhplus.model.CreationData.CaregiverCreationData;
 import de.hitec.nhplus.utils.PhoneNumberUtil;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
@@ -89,15 +90,12 @@ public class AllCaregiverController {
 
     @FXML
     private void handleDelete() {
-        Caregiver selectedCaregiver = this.tableView.getSelectionModel().getSelectedItem();
-        if (selectedCaregiver != null) {
-            try {
-                DaoFactory.getDaoFactory().createCaregiverDAO().deleteById(selectedCaregiver.getCid());
-                this.tableView.getItems().remove(selectedCaregiver);
-            } catch (SQLException exception) {
-                exception.printStackTrace();
-            }
-        }
+        var doa = DaoFactory.getDaoFactory().createCaregiverDAO();
+
+        var selectedIndex = this.tableView.getSelectionModel().getSelectedIndex();
+        var deleted = doa.delete(selectedIndex);
+
+        deleted.ifPresent(this.caregivers::remove);
     }
 
     @FXML
@@ -105,13 +103,10 @@ public class AllCaregiverController {
         String firstName = this.textFieldFirstName.getText();
         String surname = this.textFieldsurname.getText();
         String phoneNumber = this.textFieldPhoneNumber.getText();
-        try {
-            this.caregiverDao.create(new Caregiver(firstName, surname, phoneNumber));
-            this.readAllAndShowInTableView();
-            this.clearTextFields();
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-        }
+        this.caregiverDao.create(new CaregiverCreationData(firstName, surname, phoneNumber));
+
+        this.readAllAndShowInTableView();
+        this.clearTextFields();
     }
 
     private void clearTextFields() {
@@ -121,11 +116,7 @@ public class AllCaregiverController {
     }
 
     private void doUpdate(TableColumn.CellEditEvent<Caregiver, String> event) {
-        try {
-            this.caregiverDao.update(event.getRowValue());
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-        }
+        this.caregiverDao.update(event.getRowValue());
     }
 
     private boolean areInputDataValid() {
@@ -135,13 +126,11 @@ public class AllCaregiverController {
     }
 
     private void readAllAndShowInTableView() {
-        this.caregivers.clear();
         this.caregiverDao = DaoFactory.getDaoFactory().createCaregiverDAO();
-        try {
-            this.caregivers.addAll(this.caregiverDao.readAll());
-        } catch (Exception exception) {
-            exception.printStackTrace();
-        }
+
+        this.caregivers.clear();
+
+        this.caregivers.addAll(this.caregiverDao.getAll());
     }
 
 }

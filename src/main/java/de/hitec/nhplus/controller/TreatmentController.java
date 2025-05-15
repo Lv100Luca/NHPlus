@@ -14,6 +14,7 @@ import de.hitec.nhplus.utils.DateConverter;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.Optional;
 
 public class TreatmentController {
 
@@ -63,31 +64,21 @@ public class TreatmentController {
     }
 
     private void showData() {
-        Caregiver cg = getCaregiver();
+        var dao = DaoFactory.getDaoFactory().createCaregiverDAO();
+
+        var cg = dao.getById(treatment.getCid());
+
+        if (cg.isEmpty())
+            throw new RuntimeException("Caregiver not found");
+
         this.labelPatientName.setText(patient.getSurname()+", "+patient.getFirstName());
         this.labelCareLevel.setText(patient.getCareLevel());
-        if (cg != null) {
-            this.labelCaregiver.setText(cg.getSurname()+", "+cg.getFirstName());
-        } else {
-            this.labelCaregiver.setText("Keine Pflegekraft zugewiesen");
-        }
         LocalDate date = DateConverter.convertStringToLocalDate(treatment.getDate());
         this.datePicker.setValue(date);
         this.textFieldBegin.setText(this.treatment.getBegin());
         this.textFieldEnd.setText(this.treatment.getEnd());
         this.textFieldDescription.setText(this.treatment.getDescription());
         this.textAreaRemarks.setText(this.treatment.getRemarks());
-    }
-
-    private Caregiver getCaregiver(){
-        CaregiverDao caregiverDao = DaoFactory.getDaoFactory().createCaregiverDAO();
-        Caregiver caregiver = null;
-        try {
-            caregiver = caregiverDao.read((int) treatment.getCid());
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-        }
-        return caregiver;
     }
 
     @FXML

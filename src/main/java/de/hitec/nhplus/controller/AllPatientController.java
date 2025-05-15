@@ -216,14 +216,14 @@ public class AllPatientController {
      */
     @FXML
     public void handleAdd() {
-        String surname = this.textFieldSurname.getText();
         String firstName = this.textFieldFirstName.getText();
+        String surname = this.textFieldSurname.getText();
         String birthday = this.textFieldDateOfBirth.getText();
-        LocalDate date = DateConverter.convertStringToLocalDate(birthday);
+        LocalDate birthDate = DateConverter.convertStringToLocalDate(birthday);
         String careLevel = this.textFieldCareLevel.getText();
         String roomNumber = this.textFieldRoomNumber.getText();
 
-        var data = new PatientCreationData(firstName, surname, date, careLevel, roomNumber, assets);
+        var data = new PatientCreationData(firstName, surname, birthDate, careLevel, roomNumber);
         Patient patient = this.dao.create(data);
 
         patients.add(patient);
