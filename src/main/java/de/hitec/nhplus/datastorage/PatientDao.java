@@ -1,5 +1,6 @@
 package de.hitec.nhplus.datastorage;
 
+import de.hitec.nhplus.model.CreationData.PatientCreationData;
 import de.hitec.nhplus.model.Patient;
 import de.hitec.nhplus.utils.DateConverter;
 
@@ -11,7 +12,7 @@ import java.util.ArrayList;
  * Implements the Interface <code>DaoImp</code>. Overrides methods to generate specific <code>PreparedStatements</code>,
  * to execute the specific SQL Statements.
  */
-public class PatientDao extends DaoImp<Patient> {
+public class PatientDao extends DaoImp<Patient, PatientCreationData> {
 
     /**
      * The constructor initiates an object of <code>PatientDao</code> and passes the connection to its super class.
@@ -29,17 +30,17 @@ public class PatientDao extends DaoImp<Patient> {
      * @return <code>PreparedStatement</code> to insert the given patient.
      */
     @Override
-    protected PreparedStatement getCreateStatement(Patient patient) {
+    protected PreparedStatement getCreateStatement(PatientCreationData patient) {
         PreparedStatement preparedStatement = null;
         try {
             final String SQL = "INSERT INTO patient (firstname, surname, dateOfBirth, carelevel, roomnumber) " +
                     "VALUES (?, ?, ?, ?, ?)";
             preparedStatement = this.connection.prepareStatement(SQL);
-            preparedStatement.setString(1, patient.getFirstName());
-            preparedStatement.setString(2, patient.getSurname());
-            preparedStatement.setString(3, patient.getDateOfBirth());
-            preparedStatement.setString(4, patient.getCareLevel());
-            preparedStatement.setString(5, patient.getRoomNumber());
+            preparedStatement.setString(1, patient.firstName());
+            preparedStatement.setString(2, patient.surname());
+            preparedStatement.setString(3, patient.dateOfBirth().toString());
+            preparedStatement.setString(4, patient.careLevel());
+            preparedStatement.setString(5, patient.roomNumber());
         } catch (SQLException exception) {
             exception.printStackTrace();
         }
@@ -56,7 +57,7 @@ public class PatientDao extends DaoImp<Patient> {
     protected PreparedStatement getReadByIDStatement(long pid) {
         PreparedStatement preparedStatement = null;
         try {
-            final String SQL = "SELECT * FROM patient WHERE pid = ?";
+            final String SQL = "SELECT * FROM patient WHERE id = ?";
             preparedStatement = this.connection.prepareStatement(SQL);
             preparedStatement.setLong(1, pid);
         } catch (SQLException exception) {
@@ -73,13 +74,7 @@ public class PatientDao extends DaoImp<Patient> {
      */
     @Override
     protected Patient getInstanceFromResultSet(ResultSet result) throws SQLException {
-        return new Patient(
-                result.getInt(1),
-                result.getString(2),
-                result.getString(3),
-                DateConverter.convertStringToLocalDate(result.getString(4)),
-                result.getString(5),
-                result.getString(6));
+        return Patient.fromResultSet(result);
     }
 
     /**
@@ -110,10 +105,8 @@ public class PatientDao extends DaoImp<Patient> {
     protected ArrayList<Patient> getListFromResultSet(ResultSet result) throws SQLException {
         ArrayList<Patient> list = new ArrayList<>();
         while (result.next()) {
-            LocalDate date = DateConverter.convertStringToLocalDate(result.getString(4));
-            Patient patient = new Patient(result.getInt(1), result.getString(2),
-                    result.getString(3), date,
-                    result.getString(5), result.getString(6));
+            var patient = Patient.fromResultSet(result);
+
             list.add(patient);
         }
         return list;
@@ -137,14 +130,14 @@ public class PatientDao extends DaoImp<Patient> {
                             "dateOfBirth = ?, " +
                             "carelevel = ?, " +
                             "roomnumber = ? " +
-                            "WHERE pid = ?";
+                            "WHERE id = ?";
             preparedStatement = this.connection.prepareStatement(SQL);
             preparedStatement.setString(1, patient.getFirstName());
             preparedStatement.setString(2, patient.getSurname());
             preparedStatement.setString(3, patient.getDateOfBirth());
             preparedStatement.setString(4, patient.getCareLevel());
             preparedStatement.setString(5, patient.getRoomNumber());
-            preparedStatement.setLong(6, patient.getPid());
+            preparedStatement.setLong(6, patient.getId());
         } catch (SQLException exception) {
             exception.printStackTrace();
         }
@@ -161,7 +154,7 @@ public class PatientDao extends DaoImp<Patient> {
     protected PreparedStatement getDeleteStatement(long pid) {
         PreparedStatement preparedStatement = null;
         try {
-            final String SQL = "DELETE FROM patient WHERE pid = ?";
+            final String SQL = "DELETE FROM patient WHERE id = ?";
             preparedStatement = this.connection.prepareStatement(SQL);
             preparedStatement.setLong(1, pid);
         } catch (SQLException exception) {

@@ -3,27 +3,30 @@ package de.hitec.nhplus.model;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 public class Caregiver extends Person {
-    private SimpleLongProperty cid;
+    private SimpleLongProperty id;
     private final SimpleStringProperty phoneNumber;
 
-    public Caregiver(String firstName, String surname, String phoneNumber) {
+    private Caregiver(long id, String firstName, String surname, String phoneNumber) {
         super(firstName, surname);
+        this.id = new SimpleLongProperty(id);
         this.phoneNumber = new SimpleStringProperty(phoneNumber);
     }
 
-    public Caregiver(long cid, String firstName, String surname, String phoneNumber) {
-        super(firstName, surname);
-        this.cid = new SimpleLongProperty(cid);
-        this.phoneNumber = new SimpleStringProperty(phoneNumber);
+    public static Caregiver fromResultSet(ResultSet result) throws SQLException {
+        return new Caregiver(result.getLong(1), result.getString(2),
+                result.getString(3), result.getString(4));
     }
 
-    public long getCid() {
-        return cid.get();
+    public long getId() {
+        return id.get();
     }
 
     public SimpleLongProperty cidProperty() {
-        return cid;
+        return id;
     }
 
     public String getPhoneNumber() {

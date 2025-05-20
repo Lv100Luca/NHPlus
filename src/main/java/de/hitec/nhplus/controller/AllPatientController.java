@@ -2,6 +2,7 @@ package de.hitec.nhplus.controller;
 
 import de.hitec.nhplus.datastorage.DaoFactory;
 import de.hitec.nhplus.datastorage.PatientDao;
+import de.hitec.nhplus.model.CreationData.PatientCreationData;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -16,7 +17,6 @@ import javafx.scene.control.cell.TextFieldTableCell;
 import de.hitec.nhplus.model.Patient;
 import de.hitec.nhplus.utils.DateConverter;
 
-import java.sql.SQLException;
 import java.time.LocalDate;
 
 
@@ -68,7 +68,7 @@ public class AllPatientController {
     private TextField textFieldRoomNumber;
 
     private final ObservableList<Patient> patients = FXCollections.observableArrayList();
-    private PatientDao dao;
+    private PatientDao patientDao;
 
     /**
      * When <code>initialize()</code> gets called, all fields are already initialized. For example from the FXMLLoader
@@ -76,9 +76,11 @@ public class AllPatientController {
      * configured.
      */
     public void initialize() {
+        patientDao = DaoFactory.getDaoFactory().createPatientDAO();
+
         this.readAllAndShowInTableView();
 
-        this.columnId.setCellValueFactory(new PropertyValueFactory<>("pid"));
+        this.columnId.setCellValueFactory(new PropertyValueFactory<>("id"));
 
         // CellValueFactory to show property values in TableView
         this.columnFirstName.setCellValueFactory(new PropertyValueFactory<>("firstName"));
@@ -178,12 +180,8 @@ public class AllPatientController {
      *
      * @param event Event including the changed object and the change.
      */
-    private void doUpdate(TableColumn.CellEditEvent<Patient, String> event) {
-        try {
-            this.dao.update(event.getRowValue());
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-        }
+    private Patient doUpdate(TableColumn.CellEditEvent<Patient, String> event) {
+        return this.patientDao.update(event.getRowValue());
     }
 
     /**
@@ -192,12 +190,8 @@ public class AllPatientController {
      */
     private void readAllAndShowInTableView() {
         this.patients.clear();
-        this.dao = DaoFactory.getDaoFactory().createPatientDAO();
-        try {
-            this.patients.addAll(this.dao.readAll());
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-        }
+
+        this.patients.addAll(this.patientDao.getAll());
     }
 
     /**
@@ -208,14 +202,11 @@ public class AllPatientController {
     @FXML
     public void handleDelete() {
         Patient selectedItem = this.tableView.getSelectionModel().getSelectedItem();
-        if (selectedItem != null) {
-            try {
-                DaoFactory.getDaoFactory().createPatientDAO().deleteById(selectedItem.getPid());
-                this.tableView.getItems().remove(selectedItem);
-            } catch (SQLException exception) {
-                exception.printStackTrace();
-            }
-        }
+
+        if (selectedItem == null)
+            return;
+
+        this.tableView.getItems().remove(selectedItem);
     }
 
     /**
@@ -225,18 +216,18 @@ public class AllPatientController {
      */
     @FXML
     public void handleAdd() {
-        String surname = this.textFieldSurname.getText();
         String firstName = this.textFieldFirstName.getText();
+        String surname = this.textFieldSurname.getText();
         String birthday = this.textFieldDateOfBirth.getText();
-        LocalDate date = DateConverter.convertStringToLocalDate(birthday);
+        LocalDate birthDate = DateConverter.convertStringToLocalDate(birthday);
         String careLevel = this.textFieldCareLevel.getText();
         String roomNumber = this.textFieldRoomNumber.getText();
-        try {
-            this.dao.create(new Patient(firstName, surname, date, careLevel, roomNumber));
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-        }
-        readAllAndShowInTableView();
+
+        var data = new PatientCreationData(firstName, surname, birthDate, careLevel, roomNumber);
+        Patient patient = this.patientDao.create(data);
+
+        patients.add(patient);
+
         clearTextfields();
     }
 

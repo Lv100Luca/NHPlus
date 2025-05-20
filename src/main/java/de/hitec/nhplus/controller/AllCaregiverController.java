@@ -3,6 +3,7 @@ package de.hitec.nhplus.controller;
 import de.hitec.nhplus.datastorage.CaregiverDao;
 import de.hitec.nhplus.datastorage.DaoFactory;
 import de.hitec.nhplus.model.Caregiver;
+import de.hitec.nhplus.model.CreationData.CaregiverCreationData;
 import de.hitec.nhplus.utils.PhoneNumberUtil;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
@@ -15,8 +16,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 
-import java.sql.SQLException;
-
 public class AllCaregiverController {
 
     @FXML
@@ -26,7 +25,7 @@ public class AllCaregiverController {
     @FXML
     private TableColumn<Caregiver, String> columnFirstName;
     @FXML
-    private TableColumn<Caregiver, String> columnsurname;
+    private TableColumn<Caregiver, String> columnSurname;
     @FXML
     private TableColumn<Caregiver, String> columnPhoneNumber;
 
@@ -38,7 +37,7 @@ public class AllCaregiverController {
     @FXML
     private TextField textFieldFirstName;
     @FXML
-    private TextField textFieldsurname;
+    private TextField textFieldSurname;
     @FXML
     private TextField textFieldPhoneNumber;
 
@@ -46,13 +45,15 @@ public class AllCaregiverController {
     private CaregiverDao caregiverDao;
 
     public void initialize() {
+        caregiverDao = DaoFactory.getDaoFactory().createCaregiverDAO();
+
         this.readAllAndShowInTableView();
 
         this.columnId.setCellValueFactory(new PropertyValueFactory<>("cid"));
         this.columnFirstName.setCellValueFactory(new PropertyValueFactory<>("firstName"));
         this.columnFirstName.setCellFactory(TextFieldTableCell.forTableColumn());
-        this.columnsurname.setCellValueFactory(new PropertyValueFactory<>("surname"));
-        this.columnsurname.setCellFactory(TextFieldTableCell.forTableColumn());
+        this.columnSurname.setCellValueFactory(new PropertyValueFactory<>("surname"));
+        this.columnSurname.setCellFactory(TextFieldTableCell.forTableColumn());
         this.columnPhoneNumber.setCellValueFactory(new PropertyValueFactory<>("phoneNumber"));
         this.columnPhoneNumber.setCellFactory(TextFieldTableCell.forTableColumn());
 
@@ -65,7 +66,7 @@ public class AllCaregiverController {
         ChangeListener<String> inputNewCaregiverListener = (observableValue, oldValue, newValue) ->
                 AllCaregiverController.this.buttonAdd.setDisable(!AllCaregiverController.this.areInputDataValid());
         this.textFieldFirstName.textProperty().addListener(inputNewCaregiverListener);
-        this.textFieldsurname.textProperty().addListener(inputNewCaregiverListener);
+        this.textFieldSurname.textProperty().addListener(inputNewCaregiverListener);
         this.textFieldPhoneNumber.textProperty().addListener(inputNewCaregiverListener);
     }
 
@@ -89,59 +90,43 @@ public class AllCaregiverController {
 
     @FXML
     private void handleDelete() {
-        Caregiver selectedCaregiver = this.tableView.getSelectionModel().getSelectedItem();
-        if (selectedCaregiver != null) {
-            try {
-                DaoFactory.getDaoFactory().createCaregiverDAO().deleteById(selectedCaregiver.getCid());
-                this.tableView.getItems().remove(selectedCaregiver);
-            } catch (SQLException exception) {
-                exception.printStackTrace();
-            }
-        }
+        var selectedIndex = this.tableView.getSelectionModel().getSelectedIndex();
+        var deleted = caregiverDao.delete(selectedIndex);
+
+        deleted.ifPresent(this.caregivers::remove);
     }
 
     @FXML
     private void handleAdd() {
         String firstName = this.textFieldFirstName.getText();
-        String surname = this.textFieldsurname.getText();
+        String surname = this.textFieldSurname.getText();
         String phoneNumber = this.textFieldPhoneNumber.getText();
-        try {
-            this.caregiverDao.create(new Caregiver(firstName, surname, phoneNumber));
-            this.readAllAndShowInTableView();
-            this.clearTextFields();
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-        }
+        this.caregiverDao.create(new CaregiverCreationData(firstName, surname, phoneNumber));
+
+        this.readAllAndShowInTableView();
+        this.clearTextFields();
     }
 
     private void clearTextFields() {
         this.textFieldFirstName.clear();
-        this.textFieldsurname.clear();
+        this.textFieldSurname.clear();
         this.textFieldPhoneNumber.clear();
     }
 
     private void doUpdate(TableColumn.CellEditEvent<Caregiver, String> event) {
-        try {
-            this.caregiverDao.update(event.getRowValue());
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-        }
+        this.caregiverDao.update(event.getRowValue());
     }
 
     private boolean areInputDataValid() {
         return PhoneNumberUtil.isValidPhoneNumber(this.textFieldPhoneNumber.getText())
                 && !this.textFieldFirstName.getText().isEmpty()
-                && !this.textFieldsurname.getText().isEmpty();
+                && !this.textFieldSurname.getText().isEmpty();
     }
 
     private void readAllAndShowInTableView() {
         this.caregivers.clear();
-        this.caregiverDao = DaoFactory.getDaoFactory().createCaregiverDAO();
-        try {
-            this.caregivers.addAll(this.caregiverDao.readAll());
-        } catch (Exception exception) {
-            exception.printStackTrace();
-        }
+
+        this.caregivers.addAll(this.caregiverDao.getAll());
     }
 
 }
