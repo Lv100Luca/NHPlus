@@ -42,4 +42,14 @@ public class MainWindowController {
             exception.printStackTrace();
         }
     }
+
+    @FXML
+    private void handleShowAllMedicine(ActionEvent actionEvent) {
+        FXMLLoader loader = new FXMLLoader(Main.class.getResource("/de/hitec/nhplus/AllMedicineView.fxml"));
+        try {
+            mainBorderPane.setCenter(loader.load());
+        } catch (IOException exception) {
+            exception.printStackTrace();
+        }
+    }
 }

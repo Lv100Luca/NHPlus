@@ -24,6 +24,12 @@
                     <Insets bottom="50.0" left="10.0" right="10.0" top="50.0" />
                 </VBox.margin>
             </Button>
+            <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false"
+                    onAction="#handleShowAllMedicine" prefWidth="105.0" text="Medikamente">
+               <VBox.margin>
+                  <Insets bottom="50.0" left="10.0" right="10.0" top="50.0"/>
+               </VBox.margin>
+            </Button>
          </children>
       </VBox>
    </left>
