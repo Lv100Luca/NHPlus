@@ -31,8 +31,8 @@ public class Patient extends Person {
      * @param careLevel Care level of the patient.
      * @param roomNumber Room number of the patient.
      */
-    private Patient(long id, String firstName, String surname, LocalDate dateOfBirth, String careLevel, String roomNumber) {
-        super(firstName, surname);
+    private Patient(long id, String firstName, String surname, LocalDate dateOfBirth, String careLevel, String roomNumber, LocalDate archivedOn) {
+        super(firstName, surname, archivedOn);
         this.id = new SimpleLongProperty(id);
         this.dateOfBirth = new SimpleStringProperty(DateConverter.convertLocalDateToString(dateOfBirth));
         this.careLevel = new SimpleStringProperty(careLevel);
@@ -42,7 +42,7 @@ public class Patient extends Person {
     public static Patient fromResultSet(ResultSet result) throws SQLException {
         return new Patient(result.getInt(1), result.getString(2),
                 result.getString(3), DateConverter.convertStringToLocalDate(result.getString(4)),
-                result.getString(5), result.getString(6));
+                result.getString(5), result.getString(6), DateConverter.convertStringToLocalDate(result.getString(7)));
     }
 
     public long getId() {
