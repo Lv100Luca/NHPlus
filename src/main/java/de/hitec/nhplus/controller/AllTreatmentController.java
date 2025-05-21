@@ -2,8 +2,7 @@ package de.hitec.nhplus.controller;
 
 import de.hitec.nhplus.Main;
 import de.hitec.nhplus.datastorage.*;
-import de.hitec.nhplus.model.Caregiver;
-import de.hitec.nhplus.model.Medicine;
+import de.hitec.nhplus.model.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -13,13 +12,12 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import de.hitec.nhplus.model.Patient;
-import de.hitec.nhplus.model.Treatment;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.function.Function;
 
 public class AllTreatmentController {
 
@@ -84,7 +82,7 @@ public class AllTreatmentController {
             @Override
             public void updateItem(Long item, boolean empty) {
                 super.updateItem(item, empty);
-                setText(getPatientDisplayText(item, empty));
+                setText(getDisplayText(item, empty, patientDao, Patient::getFullName));
             }
         });
 
@@ -98,7 +96,7 @@ public class AllTreatmentController {
             @Override
             public void updateItem(Long item, boolean empty) {
                 super.updateItem(item, empty);
-                setText(getCaregiverDisplayText(item, empty));
+                setText(getDisplayText(item, empty, caregiverDao, Caregiver::getFullName));
             }
         });
 
@@ -107,7 +105,7 @@ public class AllTreatmentController {
             @Override
             protected void updateItem(Long item, boolean empty) {
                 super.updateItem(item, empty);
-                setText(getMedicineDisplayText(item, empty));
+                setText(getDisplayText(item, empty, medicineDao, Medicine::getName));
             }
         });
 
@@ -122,30 +120,12 @@ public class AllTreatmentController {
         this.createComboBoxData();
     }
 
-    private String getPatientDisplayText(Long item, boolean empty) {
+    // todo: move to utils and reuse
+    private <T extends Entity> String getDisplayText(Long item, boolean empty, Dao<T, ?> dao, Function<T, String> valueFunction) {
         if (empty) return "";
-
         return Optional.ofNullable(item)
-                .flatMap(patientDao::getById)
-                .map(Patient::getFullName)
-                .orElse(" - ");
-    }
-
-    private String getMedicineDisplayText(Long item, boolean empty) {
-        if (empty) return "";
-
-        return Optional.ofNullable(item)
-                .flatMap(medicineDao::getById)
-                .map(Medicine::getName)
-                .orElse(" - ");
-    }
-
-    private String getCaregiverDisplayText(Long item, boolean empty) {
-        if (empty) return "";
-
-        return Optional.ofNullable(item)
-                .flatMap(caregiverDao::getById)
-                .map(Caregiver::getFullName)
+                .flatMap(dao::getById)
+                .map(valueFunction)
                 .orElse(" - ");
     }
 
