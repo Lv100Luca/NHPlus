@@ -35,8 +35,8 @@ public class TreatmentDao extends DaoImp<Treatment, TreatmentCreationData> {
     protected PreparedStatement getCreateStatement(TreatmentCreationData treatment) {
         PreparedStatement preparedStatement = null;
         try {
-            final String SQL = "INSERT INTO treatment (patientId, treatment_date, begin, end, description, remark, caregiverId) " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?)";
+            final String SQL = "INSERT INTO treatment (patientId, treatment_date, begin, end, description, remark, caregiverId, medicineId) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
             preparedStatement = this.connection.prepareStatement(SQL);
             preparedStatement.setLong(1, treatment.patientId());
             preparedStatement.setString(2, treatment.date().toString());
@@ -45,6 +45,7 @@ public class TreatmentDao extends DaoImp<Treatment, TreatmentCreationData> {
             preparedStatement.setString(5, treatment.description());
             preparedStatement.setString(6, treatment.remarks());
             preparedStatement.setLong(7, treatment.caregiverId());
+            preparedStatement.setLong(8, treatment.medicineId());
         } catch (SQLException exception) {
             exception.printStackTrace();
         }
