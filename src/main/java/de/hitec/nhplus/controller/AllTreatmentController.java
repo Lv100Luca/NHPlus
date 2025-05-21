@@ -2,6 +2,7 @@ package de.hitec.nhplus.controller;
 
 import de.hitec.nhplus.Main;
 import de.hitec.nhplus.datastorage.*;
+import de.hitec.nhplus.model.Caregiver;
 import de.hitec.nhplus.model.Medicine;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -83,7 +84,7 @@ public class AllTreatmentController {
             @Override
             public void updateItem(Long item, boolean empty) {
                 super.updateItem(item, empty);
-                setText(getDisplayText(item, empty));
+                setText(getPatientDisplayText(item, empty));
             }
         });
 
@@ -97,7 +98,7 @@ public class AllTreatmentController {
             @Override
             public void updateItem(Long item, boolean empty) {
                 super.updateItem(item, empty);
-                setText(getDisplayText(item, empty));
+                setText(getCaregiverDisplayText(item, empty));
             }
         });
 
@@ -121,7 +122,7 @@ public class AllTreatmentController {
         this.createComboBoxData();
     }
 
-    private String getDisplayText(Long item, boolean empty) {
+    private String getPatientDisplayText(Long item, boolean empty) {
         if (empty) return "";
 
         return Optional.ofNullable(item)
@@ -133,14 +134,19 @@ public class AllTreatmentController {
     private String getMedicineDisplayText(Long item, boolean empty) {
         if (empty) return "";
 
-        if (item == null)
-            return " - ";
+        return Optional.ofNullable(item)
+                .flatMap(medicineDao::getById)
+                .map(Medicine::getName)
+                .orElse(" - ");
+    }
 
-        var medicine = medicineDao.getById(item);
-        if (medicine.isEmpty())
-            return " - ";
+    private String getCaregiverDisplayText(Long item, boolean empty) {
+        if (empty) return "";
 
-        return medicine.get().getName();
+        return Optional.ofNullable(item)
+                .flatMap(caregiverDao::getById)
+                .map(Caregiver::getFullName)
+                .orElse(" - ");
     }
 
     public void readAllAndShowInTableView() {
