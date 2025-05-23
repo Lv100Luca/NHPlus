@@ -40,9 +40,11 @@ public class Patient extends Person {
     }
 
     public static Patient fromResultSet(ResultSet result) throws SQLException {
+        var archivedOn = result.getString(7) == null ? null : DateConverter.convertStringToLocalDate(result.getString(7));
+
         return new Patient(result.getInt(1), result.getString(2),
                 result.getString(3), DateConverter.convertStringToLocalDate(result.getString(4)),
-                result.getString(5), result.getString(6), DateConverter.convertStringToLocalDate(result.getString(7)));
+                result.getString(5), result.getString(6), archivedOn);
     }
 
     public long getId() {

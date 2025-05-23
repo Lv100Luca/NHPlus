@@ -33,14 +33,15 @@ public class PatientDao extends DaoImp<Patient, PatientCreationData> {
     protected PreparedStatement getCreateStatement(PatientCreationData patient) {
         PreparedStatement preparedStatement = null;
         try {
-            final String SQL = "INSERT INTO patient (firstname, surname, dateOfBirth, carelevel, roomnumber) " +
-                    "VALUES (?, ?, ?, ?, ?)";
+            final String SQL = "INSERT INTO patient (firstname, surname, dateOfBirth, carelevel, roomnumber, archivedOn)" +
+                    "VALUES (?, ?, ?, ?, ?, ?)";
             preparedStatement = this.connection.prepareStatement(SQL);
             preparedStatement.setString(1, patient.firstName());
             preparedStatement.setString(2, patient.surname());
             preparedStatement.setString(3, patient.dateOfBirth().toString());
             preparedStatement.setString(4, patient.careLevel());
             preparedStatement.setString(5, patient.roomNumber());
+            preparedStatement.setString(6, patient.archivedOn() == null ? null : patient.archivedOn().toString());
         } catch (SQLException exception) {
             exception.printStackTrace();
         }
@@ -92,6 +93,32 @@ public class PatientDao extends DaoImp<Patient, PatientCreationData> {
             exception.printStackTrace();
         }
         return statement;
+    }
+
+    public ArrayList<Patient> getAllArchived() {
+        try {
+            final String SQL = "SELECT * FROM patient WHERE archivedOn IS NOT NULL";
+            ResultSet result = this.connection.prepareStatement(SQL).executeQuery();
+
+            return getListFromResultSet(result);
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+
+        return new ArrayList<>();
+    }
+
+    public ArrayList<Patient> getAllNotArchived() {
+        try {
+            final String SQL = "SELECT * FROM patient WHERE archivedOn IS NULL";
+            ResultSet result = this.connection.prepareStatement(SQL).executeQuery();
+
+            return getListFromResultSet(result);
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+
+        return new ArrayList<>();
     }
 
     /**
