@@ -64,7 +64,8 @@ public class SetUpDB {
                 "   surname TEXT NOT NULL, " +
                 "   dateOfBirth TEXT NOT NULL, " +
                 "   carelevel TEXT NOT NULL, " +
-                "   roomnumber TEXT NOT NULL " +
+                "   roomnumber TEXT NOT NULL, " +
+                "   archivedOn TEXT" +
                 ");";
         try (Statement statement = connection.createStatement()) {
             statement.execute(SQL);
@@ -107,16 +108,15 @@ public class SetUpDB {
         }
     }
 
-
     private static void setUpPatients() {
         PatientDao dao = DaoFactory.getDaoFactory().createPatientDAO();
         if (dao.getAll().isEmpty()) {
-            dao.create(new PatientCreationData("Seppl", "Herberger", convertStringToLocalDate("1945-12-01"), "4", "202"));
-            dao.create(new PatientCreationData("Martina", "Gerdsen", convertStringToLocalDate("1954-08-12"), "5", "010"));
-            dao.create(new PatientCreationData("Gertrud", "Franzen", convertStringToLocalDate("1949-04-16"), "3", "002"));
-            dao.create(new PatientCreationData("Ahmet", "Yilmaz", convertStringToLocalDate("1941-02-22"), "3", "013"));
-            dao.create(new PatientCreationData("Hans", "Neumann", convertStringToLocalDate("1955-12-12"), "2", "001"));
-            dao.create(new PatientCreationData("Elisabeth", "Müller", convertStringToLocalDate("1958-03-07"), "5", "110"));
+            dao.create(new PatientCreationData("Seppl", "Herberger", convertStringToLocalDate("1945-12-01"), "4", "202", null));
+            dao.create(new PatientCreationData("Martina", "Gerdsen", convertStringToLocalDate("1954-08-12"), "5", "010", null));
+            dao.create(new PatientCreationData("Gertrud", "Franzen", convertStringToLocalDate("1949-04-16"), "3", "002", null));
+            dao.create(new PatientCreationData("Ahmet", "Yilmaz", convertStringToLocalDate("1941-02-22"), "3", "013", convertStringToLocalDate("2023-06-03")));
+            dao.create(new PatientCreationData("Hans", "Neumann", convertStringToLocalDate("1955-12-12"), "2", "001", null));
+            dao.create(new PatientCreationData("Elisabeth", "Müller", convertStringToLocalDate("1958-03-07"), "5", "110", null));
         }
     }
 
