@@ -2,14 +2,19 @@ package de.hitec.nhplus.datastorage;
 
 import de.hitec.nhplus.model.Caregiver;
 import de.hitec.nhplus.model.CreationData.CaregiverCreationData;
+import de.hitec.nhplus.utils.DateConverter;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
+import static de.hitec.nhplus.datastorage.PatientDao.TABLE_NAME;
+
 public class CaregiverDao extends DaoImp<Caregiver, CaregiverCreationData>{
+    public static final String TABLE_NAME = "caregiver";
 
     public CaregiverDao(Connection connection) {
         super(connection);
@@ -19,11 +24,13 @@ public class CaregiverDao extends DaoImp<Caregiver, CaregiverCreationData>{
     protected PreparedStatement getCreateStatement(CaregiverCreationData caregiver) {
         PreparedStatement preparedStatement = null;
         try {
-            final String SQL = "INSERT INTO caregiver (firstname, surname, phoneNumber) VALUES (?, ?, ?)";
+            final String SQL = "INSERT INTO caregiver (firstname, surname, phoneNumber, archivedOn) " +
+                    "VALUES (?, ?, ?, ?)";
             preparedStatement = this.connection.prepareStatement(SQL);
             preparedStatement.setString(1, caregiver.firstName());
             preparedStatement.setString(2, caregiver.surname());
             preparedStatement.setString(3, caregiver.phoneNumber());
+            preparedStatement.setString(4, caregiver.archivedOn() == null ? null : caregiver.archivedOn().toString());
         } catch (SQLException exception) {
             exception.printStackTrace();
         }
@@ -58,6 +65,32 @@ public class CaregiverDao extends DaoImp<Caregiver, CaregiverCreationData>{
             exception.printStackTrace();
         }
         return preparedStatement;
+    }
+
+    public ArrayList<Caregiver> getAllArchived() {
+        try {
+            final String SQL = "SELECT * FROM caregiver WHERE archivedOn IS NOT NULL";
+            ResultSet result = this.connection.prepareStatement(SQL).executeQuery();
+
+            return getListFromResultSet(result);
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+
+        return new ArrayList<>();
+    }
+
+    public ArrayList<Caregiver> getAllNotArchived() {
+        try {
+            final String SQL = "SELECT * FROM caregiver WHERE archivedOn IS NULL";
+            ResultSet result = this.connection.prepareStatement(SQL).executeQuery();
+
+            return getListFromResultSet(result);
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+
+        return new ArrayList<>();
     }
 
     @Override
@@ -100,5 +133,13 @@ public class CaregiverDao extends DaoImp<Caregiver, CaregiverCreationData>{
             exception.printStackTrace();
         }
         return preparedStatement;
+    }
+
+    public void archive(long cid) {
+        super.archive(TABLE_NAME, cid);
+    }
+
+    public void restore(long cid) {
+        super.restore(TABLE_NAME, cid);
     }
 }
