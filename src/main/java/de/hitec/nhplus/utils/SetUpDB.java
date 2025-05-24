@@ -99,7 +99,7 @@ public class SetUpDB {
                 "   id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "   firstname TEXT NOT NULL, " +
                 "   surname TEXT NOT NULL, " +
-                "   phoneNumber TEXT NOT NULL" +
+                "   phoneNumber TEXT NOT NULL, " +
                 "   archivedOn TEXT" +
                 ");";
         try (Statement statement = connection.createStatement()) {
