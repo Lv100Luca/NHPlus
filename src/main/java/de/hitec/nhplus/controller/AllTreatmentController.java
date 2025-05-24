@@ -5,6 +5,8 @@ import de.hitec.nhplus.datastorage.CaregiverDao;
 import de.hitec.nhplus.datastorage.DaoFactory;
 import de.hitec.nhplus.datastorage.PatientDao;
 import de.hitec.nhplus.datastorage.TreatmentDao;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -50,6 +52,9 @@ public class AllTreatmentController {
 
     @FXML
     private ComboBox<String> comboBoxPatientSelection;
+
+    @FXML
+    private CheckBox checkBoxShowArchived;
 
     private final ObservableList<String> patientSelection = FXCollections.observableArrayList();
 
@@ -99,13 +104,37 @@ public class AllTreatmentController {
 
         this.tableView.setItems(this.treatments);
 
+        this.tableView.setRowFactory(tv -> new TableRow<>() {
+            @Override
+            protected void updateItem(Treatment treatment, boolean empty) {
+                super.updateItem(treatment, empty);
+                if (treatment == null || empty) {
+                    setStyle("");
+                } else if (treatment.isArchived()) {
+                    // Style for archived treatments
+                    setStyle("-fx-background-color: lightgray; -fx-font-style: italic;");
+                }
+            }
+        });
+
         // Disabling the button to delete treatments as long, as no treatment was selected.
         this.buttonDelete.setDisable(true);
-        this.tableView.getSelectionModel().selectedItemProperty().addListener(
-                (observableValue, oldTreatment, newTreatment) ->
-                        AllTreatmentController.this.buttonDelete.setDisable(newTreatment == null));
+        this.tableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Treatment>() {
+            @Override
+            public void changed(ObservableValue<? extends Treatment> observableValue, Treatment treatment, Treatment newTreatment) {
+                AllTreatmentController.this.buttonDelete.setDisable(newTreatment == null);
+                if (newTreatment == null)
+                    return;
+
+                AllTreatmentController.this.buttonDelete.setText(newTreatment.isArchived() ? "Wiederherstellen" : "Löschen");
+            }
+        });
 
         this.createComboBoxData();
+
+        this.checkBoxShowArchived.selectedProperty().addListener((observableValue, oldValue, newValue) -> {
+            this.readAllAndShowInTableView();
+        });
     }
 
     private String getDisplayText(Long item, boolean empty) {
@@ -121,11 +150,11 @@ public class AllTreatmentController {
         this.treatments.clear();
         comboBoxPatientSelection.getSelectionModel().select(0);
 
-        this.treatments.addAll(treatmentDao.getAll());
+        this.treatments.addAll(getTreatments());
     }
 
     private void createComboBoxData() {
-        patientList = patientDao.getAll();
+        patientList = patientDao.getAllNotArchived();
         this.patientSelection.add("alle");
 
         for (Patient patient : patientList) {
@@ -140,7 +169,7 @@ public class AllTreatmentController {
         this.treatments.clear();
 
         if (selectedPatient.equals("alle")) {
-            this.treatments.addAll(this.treatmentDao.getAll());
+            this.treatments.addAll(getTreatments());
         }
 
         Patient patient = searchInList(selectedPatient);
@@ -169,9 +198,16 @@ public class AllTreatmentController {
     @FXML
     public void handleDelete() { //todo test me
         var treatment = this.tableView.getSelectionModel().getSelectedItem();
-        var deleted = treatmentDao.delete(treatment.getId());
 
-        deleted.ifPresent(this.treatments::remove);
+        if (treatment == null)
+            return;
+
+        if (treatment.isArchived())
+            treatmentDao.restore(treatment.getId());
+        else
+            treatmentDao.archive(treatment.getId());
+
+        readAllAndShowInTableView();
     }
 
     @FXML
@@ -237,5 +273,16 @@ public class AllTreatmentController {
         } catch (IOException exception) {
             exception.printStackTrace();
         }
+    }
+
+    private ArrayList<Treatment> getTreatments() {
+        ArrayList<Treatment> treatments = new ArrayList<>();
+
+        if (checkBoxShowArchived.isSelected())
+            treatments.addAll(treatmentDao.getAll());
+        else
+            treatments.addAll(treatmentDao.getAllNotArchived());
+
+        return treatments;
     }
 }

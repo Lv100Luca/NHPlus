@@ -125,7 +125,7 @@ public class NewTreatmentController {
         String remarks = textAreaRemarks.getText();
         Caregiver caregiver = comboBoxCaregiver.getSelectionModel().getSelectedItem();
 
-        var data = new TreatmentCreationData(patient.getId(), date, begin, end, description, remarks, caregiver.getId());
+        var data = new TreatmentCreationData(patient.getId(), date, begin, end, description, remarks, caregiver.getId() , null);
         Treatment treatment = treatmentDao.create(data);
 
         controller.readAllAndShowInTableView();
