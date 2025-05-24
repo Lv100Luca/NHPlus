@@ -37,7 +37,7 @@
                 <Button fx:id="buttonDelete" mnemonicParsing="false" onAction="#handleDelete" prefWidth="90.0"
                         text="Löschen"/>
             </HBox>
-            <CheckBox mnemonicParsing="false" prefHeight="18.0" prefWidth="179.0"
+            <CheckBox mnemonicParsing="false" prefHeight="18.0" prefWidth="179.0" fx:id="checkBoxShowArchived"
                       text="Archivierte Daten anzeigen"/>
         </VBox>
     </HBox>
