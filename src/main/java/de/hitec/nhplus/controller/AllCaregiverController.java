@@ -118,10 +118,17 @@ public class AllCaregiverController {
 
     @FXML
     private void handleDelete() {
-        var selectedIndex = this.tableView.getSelectionModel().getSelectedIndex();
-        var deleted = caregiverDao.delete(selectedIndex);
+        var caregiver = this.tableView.getSelectionModel().getSelectedItem();
 
-        deleted.ifPresent(this.caregivers::remove);
+        if (caregiver == null)
+            return;
+
+        if (caregiver.isArchived())
+            caregiverDao.restore(caregiver.getId());
+        else
+            caregiverDao.archive(caregiver.getId());
+
+        readAllAndShowInTableView();
     }
 
     @FXML
