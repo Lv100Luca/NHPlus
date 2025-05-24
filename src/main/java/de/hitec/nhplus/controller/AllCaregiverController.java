@@ -6,6 +6,7 @@ import de.hitec.nhplus.model.Caregiver;
 import de.hitec.nhplus.model.CreationData.CaregiverCreationData;
 import de.hitec.nhplus.utils.PhoneNumberUtil;
 import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -59,8 +60,31 @@ public class AllCaregiverController {
 
         this.tableView.setItems(this.caregivers);
 
+        this.tableView.setRowFactory(tv -> new TableRow<>() {
+            @Override
+            protected void updateItem(Caregiver caregiver, boolean empty) {
+                super.updateItem(caregiver, empty);
+                if (caregiver == null || empty) {
+                    setStyle("");
+                } else if (caregiver.isArchived()) {
+                    // Style for archived caregivers
+                    setStyle("-fx-background-color: lightgray; -fx-font-style: italic;");
+                }
+            }
+        });;
+
         this.buttonDelete.setDisable(true);
-        this.tableView.getSelectionModel().selectedItemProperty().addListener((observableValue, caregiver, t1) -> AllCaregiverController.this.buttonDelete.setDisable(t1 == null));
+        this.tableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Caregiver>() {
+            @Override
+            public void changed(ObservableValue<? extends Caregiver> observableValue, Caregiver oldCaregiver, Caregiver newCaregiver) {
+                AllCaregiverController.this.buttonDelete.setDisable(newCaregiver == null);
+
+                if (newCaregiver == null)
+                    return;
+
+                AllCaregiverController.this.buttonDelete.setText(newCaregiver.isArchived() ? "Wiederherstellen" : "Löschen");
+            }
+        });
 
         this.buttonAdd.setDisable(true);
         ChangeListener<String> inputNewCaregiverListener = (observableValue, oldValue, newValue) ->
@@ -136,5 +160,4 @@ public class AllCaregiverController {
         else
             this.caregivers.addAll(this.caregiverDao.getAllNotArchived());
     }
-
 }
