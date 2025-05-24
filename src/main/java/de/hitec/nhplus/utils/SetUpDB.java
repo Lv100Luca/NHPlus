@@ -100,6 +100,7 @@ public class SetUpDB {
                 "   firstname TEXT NOT NULL, " +
                 "   surname TEXT NOT NULL, " +
                 "   phoneNumber TEXT NOT NULL" +
+                "   archivedOn TEXT" +
                 ");";
         try (Statement statement = connection.createStatement()) {
             statement.execute(SQL);
@@ -139,10 +140,10 @@ public class SetUpDB {
     private static void setUpCaregivers() {
         CaregiverDao dao = DaoFactory.getDaoFactory().createCaregiverDAO();
         if (dao.getAll().isEmpty()) {
-            dao.create(new CaregiverCreationData("Hans", "Müller", "+49 176 12345678"));
-            dao.create(new CaregiverCreationData("Peter", "Schmidt", "+49 176 23456789"));
-            dao.create(new CaregiverCreationData("Maria", "Meier", "+49 176 34567890"));
-            dao.create(new CaregiverCreationData("Anna", "Schneider", "+49 176 45678901"));
+            dao.create(new CaregiverCreationData("Hans", "Müller", "+49 176 12345678", null));
+            dao.create(new CaregiverCreationData("Peter", "Schmidt", "+49 176 23456789", null));
+            dao.create(new CaregiverCreationData("Maria", "Meier", "+49 176 34567890", null));
+            dao.create(new CaregiverCreationData("Anna", "Schneider", "+49 176 45678901", null));
         }
     }
 
