@@ -5,20 +5,22 @@ import javafx.beans.property.SimpleStringProperty;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 
 public class Caregiver extends Person {
     private SimpleLongProperty id;
     private final SimpleStringProperty phoneNumber;
 
-    private Caregiver(long id, String firstName, String surname, String phoneNumber) {
-        super(firstName, surname);
+    private Caregiver(long id, String firstName, String surname, String phoneNumber, LocalDate archivedOn) {
+        super(firstName, surname, archivedOn);
         this.id = new SimpleLongProperty(id);
         this.phoneNumber = new SimpleStringProperty(phoneNumber);
     }
 
     public static Caregiver fromResultSet(ResultSet result) throws SQLException {
         return new Caregiver(result.getLong(1), result.getString(2),
-                result.getString(3), result.getString(4));
+                result.getString(3), result.getString(4), null);
+        // todo pass null for now
     }
 
     public long getId() {

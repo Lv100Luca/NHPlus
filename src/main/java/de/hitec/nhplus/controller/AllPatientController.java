@@ -8,10 +8,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import de.hitec.nhplus.model.Patient;
@@ -67,6 +64,9 @@ public class AllPatientController {
     @FXML
     private TextField textFieldRoomNumber;
 
+    @FXML
+    private CheckBox checkBoxShowArchived;
+
     private final ObservableList<Patient> patients = FXCollections.observableArrayList();
     private PatientDao patientDao;
 
@@ -102,11 +102,29 @@ public class AllPatientController {
         //Anzeigen der Daten
         this.tableView.setItems(this.patients);
 
+        this.tableView.setRowFactory(tv -> new TableRow<>() {
+            @Override
+            protected void updateItem(Patient patient, boolean empty) {
+                super.updateItem(patient, empty);
+                if (patient == null || empty) {
+                    setStyle("");
+                } else if (patient.isArchived()) {
+                    // Style for archived patients
+                    setStyle("-fx-background-color: lightgray; -fx-font-style: italic;");
+                }
+            }
+        });
+
         this.buttonDelete.setDisable(true);
         this.tableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Patient>() {
             @Override
             public void changed(ObservableValue<? extends Patient> observableValue, Patient oldPatient, Patient newPatient) {;
                 AllPatientController.this.buttonDelete.setDisable(newPatient == null);
+
+                if (newPatient == null)
+                    return;
+
+                AllPatientController.this.buttonDelete.setText(newPatient.isArchived() ? "Wiederherstellen" : "Löschen");
             }
         });
 
@@ -118,6 +136,10 @@ public class AllPatientController {
         this.textFieldDateOfBirth.textProperty().addListener(inputNewPatientListener);
         this.textFieldCareLevel.textProperty().addListener(inputNewPatientListener);
         this.textFieldRoomNumber.textProperty().addListener(inputNewPatientListener);
+
+        this.checkBoxShowArchived.selectedProperty().addListener((observableValue, oldValue, newValue) -> {
+            this.readAllAndShowInTableView();
+        });
     }
 
     /**
@@ -191,7 +213,11 @@ public class AllPatientController {
     private void readAllAndShowInTableView() {
         this.patients.clear();
 
-        this.patients.addAll(this.patientDao.getAll());
+        if (this.checkBoxShowArchived.isSelected())
+            this.patients.addAll(this.patientDao.getAll());
+
+        else
+            this.patients.addAll(this.patientDao.getAllNotArchived());
     }
 
     /**
@@ -206,7 +232,20 @@ public class AllPatientController {
         if (selectedItem == null)
             return;
 
-        this.tableView.getItems().remove(selectedItem);
+        if (selectedItem.isArchived())
+            restorePatient(selectedItem);
+        else
+            archivePatient(selectedItem);
+
+        readAllAndShowInTableView();
+    }
+
+    private void archivePatient(Patient patient) {
+        patientDao.archive(patient.getId());
+    }
+
+    private void restorePatient(Patient patient) {
+        patientDao.restore(patient.getId());
     }
 
     /**
@@ -223,7 +262,8 @@ public class AllPatientController {
         String careLevel = this.textFieldCareLevel.getText();
         String roomNumber = this.textFieldRoomNumber.getText();
 
-        var data = new PatientCreationData(firstName, surname, birthDate, careLevel, roomNumber);
+        // pass null for archivedOn, since new patients are not archived
+        var data = new PatientCreationData(firstName, surname, birthDate, careLevel, roomNumber,  null);
         Patient patient = this.patientDao.create(data);
 
         patients.add(patient);
