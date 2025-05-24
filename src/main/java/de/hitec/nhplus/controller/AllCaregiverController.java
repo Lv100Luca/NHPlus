@@ -9,10 +9,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 
@@ -41,6 +38,9 @@ public class AllCaregiverController {
     @FXML
     private TextField textFieldPhoneNumber;
 
+    @FXML
+    private CheckBox checkBoxShowArchived;
+
     private final ObservableList<Caregiver> caregivers = FXCollections.observableArrayList();
     private CaregiverDao caregiverDao;
 
@@ -68,6 +68,10 @@ public class AllCaregiverController {
         this.textFieldFirstName.textProperty().addListener(inputNewCaregiverListener);
         this.textFieldSurname.textProperty().addListener(inputNewCaregiverListener);
         this.textFieldPhoneNumber.textProperty().addListener(inputNewCaregiverListener);
+
+        this.checkBoxShowArchived.selectedProperty().addListener((observableValue, oldValue, newValue) -> {
+            this.readAllAndShowInTableView();
+        });
     }
 
     @FXML
@@ -101,7 +105,7 @@ public class AllCaregiverController {
         String firstName = this.textFieldFirstName.getText();
         String surname = this.textFieldSurname.getText();
         String phoneNumber = this.textFieldPhoneNumber.getText();
-        this.caregiverDao.create(new CaregiverCreationData(firstName, surname, phoneNumber));
+        this.caregiverDao.create(new CaregiverCreationData(firstName, surname, phoneNumber, null));
 
         this.readAllAndShowInTableView();
         this.clearTextFields();
@@ -126,7 +130,11 @@ public class AllCaregiverController {
     private void readAllAndShowInTableView() {
         this.caregivers.clear();
 
-        this.caregivers.addAll(this.caregiverDao.getAll());
+        if (this.checkBoxShowArchived.isSelected())
+            this.caregivers.addAll(this.caregiverDao.getAll());
+
+        else
+            this.caregivers.addAll(this.caregiverDao.getAllNotArchived());
     }
 
 }
