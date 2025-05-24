@@ -76,6 +76,7 @@ public class AllTreatmentController {
         patientDao = DaoFactory.getDaoFactory().createPatientDAO();
 
         readAllAndShowInTableView();
+        patientSelection.add("alle");
         comboBoxPatientSelection.setItems(patientSelection);
         comboBoxPatientSelection.getSelectionModel().select(0);
 
@@ -133,7 +134,16 @@ public class AllTreatmentController {
         this.createComboBoxData();
 
         this.checkBoxShowArchived.selectedProperty().addListener((observableValue, oldValue, newValue) -> {
-            this.readAllAndShowInTableView();
+            // filter treatments based on patient selection
+            var filteredTreatments = getTreatments();
+            var patient = searchInList(comboBoxPatientSelection.getSelectionModel().getSelectedItem());
+
+            if (patient != null) {
+                filteredTreatments.removeIf(treatment -> treatment.getPid() != patient.getId());
+            }
+
+            this.treatments.clear();
+            this.treatments.addAll(filteredTreatments);
         });
     }
 
@@ -155,7 +165,6 @@ public class AllTreatmentController {
 
     private void createComboBoxData() {
         patientList = patientDao.getAllNotArchived();
-        this.patientSelection.add("alle");
 
         for (Patient patient : patientList) {
             this.patientSelection.add(patient.getSurname());
@@ -174,11 +183,7 @@ public class AllTreatmentController {
 
         Patient patient = searchInList(selectedPatient);
         if (patient != null) {
-            try {
-                this.treatments.addAll(this.treatmentDao.readTreatmentsByPid(patient.getId()));
-            } catch (SQLException exception) {
-                exception.printStackTrace();
-            }
+            this.treatments.addAll(getTreatmentsByPatient(patient));
         }
     }
 
@@ -282,6 +287,21 @@ public class AllTreatmentController {
             treatments.addAll(treatmentDao.getAll());
         else
             treatments.addAll(treatmentDao.getAllNotArchived());
+
+        return treatments;
+    }
+
+    private ArrayList<Treatment> getTreatmentsByPatient(Patient patient) {
+        ArrayList<Treatment> treatments = new ArrayList<>();
+
+        try {
+            treatments.addAll(treatmentDao.readTreatmentsByPid(patient.getId()));
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+
+        if (!checkBoxShowArchived.isSelected())
+            treatments.removeIf(Treatment::isArchived);
 
         return treatments;
     }
