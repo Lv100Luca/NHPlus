@@ -233,19 +233,11 @@ public class AllPatientController {
             return;
 
         if (selectedItem.isArchived())
-            restorePatient(selectedItem);
+            patientDao.restore(selectedItem.getId());
         else
-            archivePatient(selectedItem);
+            patientDao.archive(selectedItem.getId());
 
         readAllAndShowInTableView();
-    }
-
-    private void archivePatient(Patient patient) {
-        patientDao.archive(patient.getId());
-    }
-
-    private void restorePatient(Patient patient) {
-        patientDao.restore(patient.getId());
     }
 
     /**
