@@ -44,16 +44,6 @@ public abstract class Person implements Entity, Archivable {
     }
 
     @Override
-    public void archive() {
-        this.archivedOn = LocalDate.now();
-    }
-
-    @Override
-    public void restore() {
-        this.archivedOn = null;
-    }
-
-    @Override
     public boolean isArchived() {
         return archivedOn != null;
     }

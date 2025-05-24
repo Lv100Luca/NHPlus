@@ -1,6 +1,5 @@
 package de.hitec.nhplus.controller;
 
-import de.hitec.nhplus.Services.ArchiveService;
 import de.hitec.nhplus.datastorage.DaoFactory;
 import de.hitec.nhplus.datastorage.PatientDao;
 import de.hitec.nhplus.model.CreationData.PatientCreationData;
@@ -233,9 +232,20 @@ public class AllPatientController {
         if (selectedItem == null)
             return;
 
-        ArchiveService.archive(selectedItem);
+        if (selectedItem.isArchived())
+            restorePatient(selectedItem);
+        else
+            archivePatient(selectedItem);
 
-        this.tableView.getItems().remove(selectedItem);
+        readAllAndShowInTableView();
+    }
+
+    private void archivePatient(Patient patient) {
+        patientDao.archive(patient.getId());
+    }
+
+    private void restorePatient(Patient patient) {
+        patientDao.restore(patient.getId());
     }
 
     /**

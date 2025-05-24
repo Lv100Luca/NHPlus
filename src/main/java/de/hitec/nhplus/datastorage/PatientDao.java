@@ -189,4 +189,27 @@ public class PatientDao extends DaoImp<Patient, PatientCreationData> {
         }
         return preparedStatement;
     }
+
+    public void archive(long pid) {
+        try {
+            final String SQL = "UPDATE patient SET archivedOn = ? WHERE id = ?";
+            PreparedStatement preparedStatement = this.connection.prepareStatement(SQL);
+            preparedStatement.setString(1, DateConverter.convertLocalDateToString(LocalDate.now()));
+            preparedStatement.setLong(2, pid);
+            preparedStatement.executeUpdate();
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+    }
+
+    public void restore(long pid) {
+        try {
+            final String SQL = "UPDATE patient SET archivedOn = NULL WHERE id = ?";
+            PreparedStatement preparedStatement = this.connection.prepareStatement(SQL);
+            preparedStatement.setLong(1, pid);
+            preparedStatement.executeUpdate();
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+    }
 }
