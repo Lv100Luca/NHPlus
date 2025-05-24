@@ -125,10 +125,11 @@ public abstract class DaoImp<T extends Entity, TCreationData> implements Dao<T, 
      * @param archivedOn Date to set the archivedOn field to.
      */
     private void setArchivedOn(String tableName, long id, LocalDate archivedOn) {
+        String archivedOnString = archivedOn == null ? null : DateConverter.convertLocalDateToString(archivedOn);
         try {
             final String SQL = "UPDATE " + tableName + " SET archivedOn = ? WHERE id = ?";
             PreparedStatement preparedStatement = this.connection.prepareStatement(SQL);
-            preparedStatement.setString(1, DateConverter.convertLocalDateToString(archivedOn));
+            preparedStatement.setString(1, archivedOnString);
             preparedStatement.setLong(2, id);
             preparedStatement.executeUpdate();
         } catch (SQLException exception) {
