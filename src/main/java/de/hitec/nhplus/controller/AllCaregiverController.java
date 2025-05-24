@@ -71,7 +71,7 @@ public class AllCaregiverController {
                     setStyle("-fx-background-color: lightgray; -fx-font-style: italic;");
                 }
             }
-        });;
+        });
 
         this.buttonDelete.setDisable(true);
         this.tableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Caregiver>() {

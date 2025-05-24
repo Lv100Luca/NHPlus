@@ -1,5 +1,6 @@
 package de.hitec.nhplus.model;
 
+import de.hitec.nhplus.utils.DateConverter;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 
@@ -18,9 +19,10 @@ public class Caregiver extends Person {
     }
 
     public static Caregiver fromResultSet(ResultSet result) throws SQLException {
+        var archivedOn = result.getString(5) == null ? null : DateConverter.convertStringToLocalDate(result.getString(5));
+
         return new Caregiver(result.getLong(1), result.getString(2),
-                result.getString(3), result.getString(4), null);
-        // todo pass null for now
+                result.getString(3), result.getString(4), archivedOn);
     }
 
     public long getId() {
