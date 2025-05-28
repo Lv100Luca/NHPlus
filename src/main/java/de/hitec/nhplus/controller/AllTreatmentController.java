@@ -1,10 +1,9 @@
 package de.hitec.nhplus.controller;
 
 import de.hitec.nhplus.Main;
-import de.hitec.nhplus.datastorage.CaregiverDao;
-import de.hitec.nhplus.datastorage.DaoFactory;
-import de.hitec.nhplus.datastorage.PatientDao;
-import de.hitec.nhplus.datastorage.TreatmentDao;
+import de.hitec.nhplus.datastorage.*;
+import de.hitec.nhplus.model.Caregiver;
+import de.hitec.nhplus.model.Entity;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -23,6 +22,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.function.Function;
 
 public class AllTreatmentController {
 
@@ -86,7 +86,7 @@ public class AllTreatmentController {
             @Override
             public void updateItem(Long item, boolean empty) {
                 super.updateItem(item, empty);
-                setText(getDisplayText(item, empty));
+                setText(getDisplayText(item, empty, patientDao, Patient::getFullName));
             }
         });
 
@@ -99,7 +99,7 @@ public class AllTreatmentController {
             @Override
             public void updateItem(Long item, boolean empty) {
                 super.updateItem(item, empty);
-                setText(getDisplayText(item, empty));
+                setText(getDisplayText(item, empty, caregiverDao, Caregiver::getPhoneNumber));
             }
         });
 
@@ -147,12 +147,11 @@ public class AllTreatmentController {
         });
     }
 
-    private String getDisplayText(Long item, boolean empty) {
+    private <T extends Entity> String getDisplayText(Long item, boolean empty, Dao<T, ?> dao, Function<T, String> valueFunction) {
         if (empty) return "";
-
         return Optional.ofNullable(item)
-                .flatMap(patientDao::getById)
-                .map(Patient::getFullName)
+                .flatMap(dao::getById)
+                .map(valueFunction)
                 .orElse(" - ");
     }
 
