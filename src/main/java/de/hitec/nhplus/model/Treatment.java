@@ -129,6 +129,9 @@ public class Treatment implements Entity, Archivable {
 
     @Override
     public boolean canBeDeleted() {
+        if (archivedOn == null)
+            return false;
+
         return archivedOn.isBefore(LocalDate.now().minusYears(10));
     }
 }

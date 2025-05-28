@@ -99,7 +99,7 @@ public class AllTreatmentController {
             @Override
             public void updateItem(Long item, boolean empty) {
                 super.updateItem(item, empty);
-                setText(getDisplayText(item, empty, caregiverDao, Caregiver::getPhoneNumber));
+                setText(getDisplayText(item, empty, caregiverDao, Caregiver::getFullName));
             }
         });
 
