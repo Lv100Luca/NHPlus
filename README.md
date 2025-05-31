@@ -24,10 +24,10 @@ Vermögensstand:
 
 Archiving of Entries:
 
-| Testcase                                                                       | implementation | working |
-|--------------------------------------------------------------------------------|----------------|---------|
-| Entries younger than 10 years cant be deleted                                  | ✅              | ✅       |
-| Entries can be manually archived                                               | ✅              | ✅       |
-| Archived entries are read only                                                 | ✅              | ✅       |
-| Entries older than 10 years can be deleted<br/> **deletion will be automatic** | ❌              | ➖       |
-| Entries older than 10 years will be automatically deleted                      | ✅              | ✅       |
+| Testcase                                                                                     | implementation | working |
+|----------------------------------------------------------------------------------------------|----------------|---------|
+| Entries younger than 10 years cant be deleted                                                | ✅              | ✅       |
+| Entries can be manually archived                                                             | ✅              | ✅       |
+| Archived entries are read only                                                               | ✅              | ✅       |
+| Entries older than 10 years can be deleted<br/> **deletion will be automatic**               | ❌              | ➖       |
+| Entries older than 10 years will be automatically deleted<br/> see `ArchiveServiceTest.java` | ✅              | ✅       |
