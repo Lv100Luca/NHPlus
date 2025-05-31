@@ -151,7 +151,6 @@ public class AllPatientController {
             return;
 
         if( patient.isArchived()) {
-            // show message
             var alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Information");
             alert.setHeaderText("Patient ist archiviert!");

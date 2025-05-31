@@ -14,6 +14,8 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 
+import java.util.function.BiConsumer;
+
 public class AllCaregiverController {
 
     @FXML
@@ -89,9 +91,11 @@ public class AllCaregiverController {
         this.buttonAdd.setDisable(true);
         ChangeListener<String> inputNewCaregiverListener = (observableValue, oldValue, newValue) ->
                 AllCaregiverController.this.buttonAdd.setDisable(!AllCaregiverController.this.areInputDataValid());
-        this.textFieldFirstName.textProperty().addListener(inputNewCaregiverListener);
-        this.textFieldSurname.textProperty().addListener(inputNewCaregiverListener);
-        this.textFieldPhoneNumber.textProperty().addListener(inputNewCaregiverListener);
+
+        columnFirstName.setOnEditCommit(event -> handleOnEdit(event, Caregiver::setFirstName));
+        columnSurname.setOnEditCommit(event -> handleOnEdit(event, Caregiver::setSurname));
+        columnPhoneNumber.setOnEditCommit(event -> handleOnEdit(event, Caregiver::setPhoneNumber));
+
 
         this.checkBoxShowArchived.selectedProperty().addListener((observableValue, oldValue, newValue) -> {
             this.readAllAndShowInTableView();
@@ -99,20 +103,26 @@ public class AllCaregiverController {
     }
 
     @FXML
-    private void handleOnEditFirstName(TableColumn.CellEditEvent<Caregiver, String> event) {
-        event.getRowValue().setFirstName(event.getNewValue());
-        this.doUpdate(event);
-    }
+    public void handleOnEdit(TableColumn.CellEditEvent<Caregiver, String> event, BiConsumer<Caregiver, String> setter) {
+        var caregiver = event.getRowValue();
 
-    @FXML
-    private void handleOnEditsurname(TableColumn.CellEditEvent<Caregiver, String> event) {
-        event.getRowValue().setSurname(event.getNewValue());
-        this.doUpdate(event);
-    }
+        if (caregiver == null)
+            return;
 
-    @FXML
-    private void handleOnEditPhoneNumber(TableColumn.CellEditEvent<Caregiver, String> event) {
-        event.getRowValue().setPhoneNumber(event.getNewValue());
+        if( caregiver.isArchived()) {
+            var alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Information");
+            alert.setHeaderText("Caregiver ist archiviert!");
+            alert.setContentText("Archivierte Daten können nicht bearbeitet werden!");
+            alert.showAndWait();
+
+            // refresh the view
+            this.readAllAndShowInTableView();
+
+            return;
+        }
+
+        setter.accept(event.getRowValue(), event.getNewValue());
         this.doUpdate(event);
     }
 
