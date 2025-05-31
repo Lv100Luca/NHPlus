@@ -6,6 +6,8 @@ import de.hitec.nhplus.model.Caregiver;
 import de.hitec.nhplus.model.Entity;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import de.hitec.nhplus.datastorage.*;
+import de.hitec.nhplus.model.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -15,8 +17,6 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import de.hitec.nhplus.model.Patient;
-import de.hitec.nhplus.model.Treatment;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -33,7 +33,7 @@ public class AllTreatmentController {
     private TableColumn<Treatment, Integer> columnId;
 
     @FXML
-    private TableColumn<Treatment, Long> columnPid;
+    private TableColumn<Treatment, Long> columnPatient;
 
     @FXML
     private TableColumn<Treatment, String> columnDate;
@@ -49,6 +49,9 @@ public class AllTreatmentController {
 
     @FXML
     private TableColumn<Treatment, Long> columnCaregiver;
+
+    @FXML
+    private TableColumn<Medicine, Long> columnMedicine;
 
     @FXML
     private ComboBox<String> comboBoxPatientSelection;
@@ -68,12 +71,14 @@ public class AllTreatmentController {
     private TreatmentDao treatmentDao;
     private CaregiverDao caregiverDao;
     private PatientDao patientDao;
+    private MedicineDao medicineDao;
 
 
     public void initialize() {
         treatmentDao = DaoFactory.getDaoFactory().createTreatmentDao();
         caregiverDao = DaoFactory.getDaoFactory().createCaregiverDAO();
         patientDao = DaoFactory.getDaoFactory().createPatientDAO();
+        medicineDao = DaoFactory.getDaoFactory().createMedicineDAO();
 
         readAllAndShowInTableView();
         patientSelection.add("alle");
@@ -81,8 +86,8 @@ public class AllTreatmentController {
         comboBoxPatientSelection.getSelectionModel().select(0);
 
         this.columnId.setCellValueFactory(new PropertyValueFactory<>("id"));
-        this.columnPid.setCellValueFactory(new PropertyValueFactory<>("pid"));
-        this.columnPid.setCellFactory(col -> new TableCell<>() {
+        this.columnPatient.setCellValueFactory(new PropertyValueFactory<>("pid"));
+        this.columnPatient.setCellFactory(col -> new TableCell<>() {
             @Override
             public void updateItem(Long item, boolean empty) {
                 super.updateItem(item, empty);
@@ -94,12 +99,23 @@ public class AllTreatmentController {
         this.columnBegin.setCellValueFactory(new PropertyValueFactory<>("begin"));
         this.columnEnd.setCellValueFactory(new PropertyValueFactory<>("end"));
         this.columnDescription.setCellValueFactory(new PropertyValueFactory<>("description"));
+
         this.columnCaregiver.setCellValueFactory(new PropertyValueFactory<>("cid"));
         this.columnCaregiver.setCellFactory(col -> new TableCell<>() {
             @Override
             public void updateItem(Long item, boolean empty) {
                 super.updateItem(item, empty);
                 setText(getDisplayText(item, empty, caregiverDao, Caregiver::getFullName));
+                setText(getDisplayText(item, empty, caregiverDao, Caregiver::getFullName));
+            }
+        });
+
+        this.columnMedicine.setCellValueFactory(new PropertyValueFactory<>("mid"));
+        this.columnMedicine.setCellFactory(col -> new TableCell<>() {
+            @Override
+            protected void updateItem(Long item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(getDisplayText(item, empty, medicineDao, Medicine::getName));
             }
         });
 
@@ -147,6 +163,7 @@ public class AllTreatmentController {
         });
     }
 
+    // todo: move to utils and reuse
     private <T extends Entity> String getDisplayText(Long item, boolean empty, Dao<T, ?> dao, Function<T, String> valueFunction) {
         if (empty) return "";
         return Optional.ofNullable(item)

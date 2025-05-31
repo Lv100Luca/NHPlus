@@ -1,11 +1,9 @@
 package de.hitec.nhplus.controller;
 
-import de.hitec.nhplus.datastorage.CaregiverDao;
-import de.hitec.nhplus.datastorage.DaoFactory;
-import de.hitec.nhplus.datastorage.PatientDao;
-import de.hitec.nhplus.datastorage.TreatmentDao;
+import de.hitec.nhplus.datastorage.*;
 import de.hitec.nhplus.model.CreationData.TreatmentCreationData;
 import de.hitec.nhplus.model.Caregiver;
+import de.hitec.nhplus.model.Medicine;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -17,6 +15,7 @@ import de.hitec.nhplus.model.Treatment;
 import de.hitec.nhplus.utils.DateConverter;
 import javafx.util.StringConverter;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -27,6 +26,11 @@ public class NewTreatmentController {
 
     @FXML
     private Label labelSurname;
+
+    @FXML
+    private ComboBox<Medicine> comboBoxMedicine;
+
+    private final ObservableList<Medicine> medications = FXCollections.observableArrayList();
 
     @FXML
     private TextField textFieldBegin;
@@ -58,11 +62,13 @@ public class NewTreatmentController {
     private TreatmentDao treatmentDao;
     private CaregiverDao caregiverDao;
     private PatientDao patientDao;
+    private MedicineDao medicineDao;
 
     public void initialize(AllTreatmentController controller, Stage stage, Patient patient) {
         treatmentDao = DaoFactory.getDaoFactory().createTreatmentDao();
         caregiverDao = DaoFactory.getDaoFactory().createCaregiverDAO();
         patientDao = DaoFactory.getDaoFactory().createPatientDAO();
+        medicineDao = DaoFactory.getDaoFactory().createMedicineDAO();
 
         this.controller = controller;
         this.patient = patient;
@@ -87,8 +93,9 @@ public class NewTreatmentController {
                 return DateConverter.convertStringToLocalDate(localDate);
             }
         });
+        this.setComboBoxData();
         this.createComboBoxData();
-        this.showPatientData();
+        this.showPatientMedicine();
     }
 
     private void createComboBoxData() {
@@ -111,7 +118,7 @@ public class NewTreatmentController {
         });
     }
 
-    private void showPatientData() {
+    private void showPatientMedicine() {
         this.labelFirstName.setText(patient.getFirstName());
         this.labelSurname.setText(patient.getSurname());
     }
@@ -124,8 +131,9 @@ public class NewTreatmentController {
         String description = textFieldDescription.getText();
         String remarks = textAreaRemarks.getText();
         Caregiver caregiver = comboBoxCaregiver.getSelectionModel().getSelectedItem();
+        Medicine medicine = comboBoxMedicine.getSelectionModel().getSelectedItem();
 
-        var data = new TreatmentCreationData(patient.getId(), date, begin, end, description, remarks, caregiver.getId() , null);
+        var data = new TreatmentCreationData(patient.getId(), date, begin, end, description, remarks, caregiver.getId(),medicine.getId(), null);
         Treatment treatment = treatmentDao.create(data);
 
         controller.readAllAndShowInTableView();
@@ -151,5 +159,29 @@ public class NewTreatmentController {
             return true;
         }
         return this.textFieldDescription.getText().isBlank() || this.datePicker.getValue() == null;
+    }
+
+    /**
+     * Reloads all medicines to the combo box by clearing the list of all medicines and filling it again by all
+     * persisted medicines, delivered by {@link MedicineDao}.
+     */
+    private void setComboBoxData() {
+        this.medications.addAll(medicineDao.getAll());
+
+        this.comboBoxMedicine.setItems(this.medications);
+        this.comboBoxMedicine.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(Medicine medicine) {
+                if (medicine == null)
+                    return "";
+
+                return medicine.getName();
+            }
+
+            @Override
+            public Medicine fromString(String name) {
+                return comboBoxMedicine.getSelectionModel().getSelectedItem();
+            }
+        });
     }
 }

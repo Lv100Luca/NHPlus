@@ -5,12 +5,10 @@ import de.hitec.nhplus.datastorage.DaoFactory;
 import de.hitec.nhplus.datastorage.PatientDao;
 import de.hitec.nhplus.datastorage.TreatmentDao;
 import de.hitec.nhplus.model.CreationData.CaregiverCreationData;
+import de.hitec.nhplus.model.CreationData.MedicineCreationData;
 import de.hitec.nhplus.model.CreationData.PatientCreationData;
 import de.hitec.nhplus.model.CreationData.TreatmentCreationData;
 import de.hitec.nhplus.datastorage.*;
-import de.hitec.nhplus.model.Caregiver;
-import de.hitec.nhplus.model.Patient;
-import de.hitec.nhplus.model.Treatment;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -38,10 +36,12 @@ public class SetUpDB {
         SetUpDB.setUpTablePatient(connection);
         SetUpDB.setUpTableTreatment(connection);
         SetUpDB.setUpTableCaregiver(connection);
+        SetUpDB.setUpTableMedicine(connection);
 
         SetUpDB.setUpPatients();
         SetUpDB.setUpTreatments();
         SetUpDB.setUpCaregivers();
+        SetUpDB.setUpMedicines();
     }
 
     /**
@@ -84,6 +84,7 @@ public class SetUpDB {
                 "   description TEXT NOT NULL, " +
                 "   remark TEXT NOT NULL," +
                 "   caregiverId INTEGER NOT NULL," +
+                "   medicineId INTEGER," +
                 "   archivedOn TEXT," +
                 "   FOREIGN KEY (patientId) REFERENCES patient (id) ON DELETE CASCADE " +
                 ");";
@@ -110,6 +111,26 @@ public class SetUpDB {
         }
     }
 
+    /**
+     * Creates a new table <code>medicine</code> in the database.
+     *
+     * @param connection Object of class <code>Connection</code>.
+     */
+    private static void setUpTableMedicine(Connection connection) {
+        final String SQL = "CREATE TABLE IF NOT EXISTS medicine (" +
+                "   medicineId INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "   name TEXT NOT NULL, " +
+                "   storage TEXT NOT NULL," +
+                "   expirationDate TEXT NOT NULL" +
+                ");";
+
+        try (Statement statement = connection.createStatement()) {
+            statement.execute(SQL);
+        } catch (SQLException exception) {
+            System.out.println(exception.getMessage());
+        }
+    }
+
     private static void setUpPatients() {
         PatientDao dao = DaoFactory.getDaoFactory().createPatientDAO();
         if (dao.getAll().isEmpty()) {
@@ -125,16 +146,16 @@ public class SetUpDB {
     private static void setUpTreatments() {
         TreatmentDao dao = DaoFactory.getDaoFactory().createTreatmentDao();
         if (dao.getAll().isEmpty()) {
-            dao.create(new TreatmentCreationData(1, convertStringToLocalDate("2023-06-03"), convertStringToLocalTime("11:00"), convertStringToLocalTime("15:00"), "Gespräch", "Der Patient hat enorme Angstgefühle und glaubt, er sei überfallen worden. Ihm seien alle Wertsachen gestohlen worden.\nPatient beruhigt sich erst, als alle Wertsachen im Zimmer gefunden worden sind.", 0, null));
-            dao.create(new TreatmentCreationData(1, convertStringToLocalDate("2023-06-05"), convertStringToLocalTime("11:00"), convertStringToLocalTime("12:30"), "Gespräch", "Patient irrt auf der Suche nach gestohlenen Wertsachen durch die Etage und bezichtigt andere Bewohner des Diebstahls.\nPatient wird in seinen Raum zurückbegleitet und erhält Beruhigungsmittel.", 4, null));
-            dao.create(new TreatmentCreationData(2, convertStringToLocalDate("2023-06-04"), convertStringToLocalTime("07:30"), convertStringToLocalTime("08:00"), "Waschen", "Patient mit Waschlappen gewaschen und frisch angezogen. Patient gewendet.", 4, null));
-            dao.create(new TreatmentCreationData(1, convertStringToLocalDate("2023-06-06"), convertStringToLocalTime("15:10"), convertStringToLocalTime("16:00"), "Spaziergang", "Spaziergang im Park, Patient döst  im Rollstuhl ein", 3, null));
-            dao.create(new TreatmentCreationData(1, convertStringToLocalDate("2023-06-08"), convertStringToLocalTime("15:00"), convertStringToLocalTime("16:00"), "Spaziergang", "Parkspaziergang; Patient ist heute lebhafter und hat klare Momente; erzählt von seiner Tochter", 0, null));
-            dao.create(new TreatmentCreationData(2, convertStringToLocalDate("2023-06-07"), convertStringToLocalTime("11:00"), convertStringToLocalTime("11:30"), "Waschen", "Waschen per Dusche auf einem Stuhl; Patientin gewendet;", 2, null));
-            dao.create(new TreatmentCreationData(5, convertStringToLocalDate("2023-06-08"), convertStringToLocalTime("15:00"), convertStringToLocalTime("15:30"), "Physiotherapie", "Übungen zur Stabilisation und Mobilisierung der Rückenmuskulatur", 0, null));
-            dao.create(new TreatmentCreationData(4, convertStringToLocalDate("2023-08-24"), convertStringToLocalTime("09:30"), convertStringToLocalTime("10:15"), "KG", "Lympfdrainage", 3, null));
-            dao.create(new TreatmentCreationData(6, convertStringToLocalDate("2023-08-31"), convertStringToLocalTime("13:30"), convertStringToLocalTime("13:45"), "Toilettengang", "Hilfe beim Toilettengang; Patientin klagt über Schmerzen beim Stuhlgang. Gabe von Iberogast", 1, null));
-            dao.create(new TreatmentCreationData(6, convertStringToLocalDate("2023-09-01"), convertStringToLocalTime("16:00"), convertStringToLocalTime("17:00"), "KG", "Massage der Extremitäten zur Verbesserung der Durchblutung", 4, null));
+            dao.create(new TreatmentCreationData(1, convertStringToLocalDate("2023-06-03"), convertStringToLocalTime("11:00"), convertStringToLocalTime("15:00"), "Gespräch", "Der Patient hat enorme Angstgefühle und glaubt, er sei überfallen worden. Ihm seien alle Wertsachen gestohlen worden.\nPatient beruhigt sich erst, als alle Wertsachen im Zimmer gefunden worden sind.", 0, 1, null));
+            dao.create(new TreatmentCreationData(1, convertStringToLocalDate("2023-06-05"), convertStringToLocalTime("11:00"), convertStringToLocalTime("12:30"), "Gespräch", "Patient irrt auf der Suche nach gestohlenen Wertsachen durch die Etage und bezichtigt andere Bewohner des Diebstahls.\nPatient wird in seinen Raum zurückbegleitet und erhält Beruhigungsmittel.", 4, 0));
+            dao.create(new TreatmentCreationData(2, convertStringToLocalDate("2023-06-04"), convertStringToLocalTime("07:30"), convertStringToLocalTime("08:00"), "Waschen", "Patient mit Waschlappen gewaschen und frisch angezogen. Patient gewendet.", 5, 4));
+            dao.create(new TreatmentCreationData(1, convertStringToLocalDate("2023-06-06"), convertStringToLocalTime("15:10"), convertStringToLocalTime("16:00"), "Spaziergang", "Spaziergang im Park, Patient döst  im Rollstuhl ein", 3, 6));
+            dao.create(new TreatmentCreationData(1, convertStringToLocalDate("2023-06-08"), convertStringToLocalTime("15:00"), convertStringToLocalTime("16:00"), "Spaziergang", "Parkspaziergang; Patient ist heute lebhafter und hat klare Momente; erzählt von seiner Tochter", 0,4));
+            dao.create(new TreatmentCreationData(2, convertStringToLocalDate("2023-06-07"), convertStringToLocalTime("11:00"), convertStringToLocalTime("11:30"), "Waschen", "Waschen per Dusche auf einem Stuhl; Patientin gewendet;", 2,3));
+            dao.create(new TreatmentCreationData(5, convertStringToLocalDate("2023-06-08"), convertStringToLocalTime("15:00"), convertStringToLocalTime("15:30"), "Physiotherapie", "Übungen zur Stabilisation und Mobilisierung der Rückenmuskulatur", 0,7));
+            dao.create(new TreatmentCreationData(4, convertStringToLocalDate("2023-08-24"), convertStringToLocalTime("09:30"), convertStringToLocalTime("10:15"), "KG", "Lympfdrainage", 3,7));
+            dao.create(new TreatmentCreationData(6, convertStringToLocalDate("2023-08-31"), convertStringToLocalTime("13:30"), convertStringToLocalTime("13:45"), "Toilettengang", "Hilfe beim Toilettengang; Patientin klagt über Schmerzen beim Stuhlgang. Gabe von Iberogast", 5, 3));
+            dao.create(new TreatmentCreationData(6, convertStringToLocalDate("2023-09-01"), convertStringToLocalTime("16:00"), convertStringToLocalTime("17:00"), "KG", "Massage der Extremitäten zur Verbesserung der Durchblutung", 5,1));
         }
     }
 
@@ -146,6 +167,23 @@ public class SetUpDB {
             dao.create(new CaregiverCreationData("Maria", "Meier", "+49 176 34567890", null));
             dao.create(new CaregiverCreationData("Anna", "Schneider", "+49 176 45678901", null));
         }
+    }
+
+    /**
+     * Fills the database with some medicines.
+     */
+    private static void setUpMedicines() {
+        MedicineDao dao = DaoFactory.getDaoFactory().createMedicineDAO();
+        dao.create(new MedicineCreationData("Amoxicillin 500mg", "Shelf A", convertStringToLocalDate("2026-03-15")));
+        dao.create(new MedicineCreationData("Lisinopril 10mg", "Shelf B", convertStringToLocalDate("2025-11-30")));
+        dao.create(new MedicineCreationData("Ibuprofen 200mg", "Shelf C", convertStringToLocalDate("2027-01-20")));
+        dao.create(new MedicineCreationData("Metformin 500mg", "Shelf A", convertStringToLocalDate("2025-08-10")));
+        dao.create(new MedicineCreationData("Simvastatin 20mg", "Shelf B", convertStringToLocalDate("2026-06-25")));
+        dao.create(new MedicineCreationData("Omeprazole 20mg", "Shelf C", convertStringToLocalDate("2025-12-05")));
+        dao.create(new MedicineCreationData("Albuterol Inhaler", "Shelf A", convertStringToLocalDate("2026-04-01")));
+        dao.create(new MedicineCreationData("Sertraline 50mg", "Shelf B", convertStringToLocalDate("2027-02-18")));
+        dao.create(new MedicineCreationData("Loratadine 10mg", "Shelf C", convertStringToLocalDate("2026-10-11")));
+        dao.create(new MedicineCreationData("Prednisone 5mg", "Shelf A", convertStringToLocalDate("2025-09-22")));
     }
 
     public static void main(String[] args) {

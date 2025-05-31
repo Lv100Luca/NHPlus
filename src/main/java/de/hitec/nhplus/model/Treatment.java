@@ -19,6 +19,7 @@ public class Treatment implements Entity, Archivable {
     private String description;
     private String remarks;
     private long cid;
+    private long mid;
     private LocalDate archivedOn;
 
     /**
@@ -33,7 +34,7 @@ public class Treatment implements Entity, Archivable {
      * @param remarks     Remarks to the treatment.
      */
     private Treatment(long id, long pid, LocalDate date, LocalTime begin,
-                      LocalTime end, String description, String remarks, long cid, LocalDate archivedOn) {
+                      LocalTime end, String description, String remarks, long cid, long mid, LocalDate archivedOn) {
         this.id = id;
         this.pid = pid;
         this.date = date;
@@ -42,6 +43,7 @@ public class Treatment implements Entity, Archivable {
         this.description = description;
         this.remarks = remarks;
         this.cid = cid;
+        this.mid = mid;
         this.archivedOn = archivedOn;
     }
 
@@ -52,7 +54,7 @@ public class Treatment implements Entity, Archivable {
                 DateConverter.convertStringToLocalDate(result.getString(3)),
                 DateConverter.convertStringToLocalTime(result.getString(4)),
                 DateConverter.convertStringToLocalTime(result.getString(5)),
-                result.getString(6), result.getString(7), result.getLong(8), archivedOn);
+                result.getString(6), result.getString(7), result.getLong(8), result.getLong(9), archivedOn);
     }
 
 
@@ -110,6 +112,14 @@ public class Treatment implements Entity, Archivable {
 
     public void setCid(long cid) {
         this.cid = cid;
+    }
+
+    public long getMid() {
+        return mid;
+    }
+
+    public void setMid(long mid) {
+        this.mid = mid;
     }
 
     public String toString() {

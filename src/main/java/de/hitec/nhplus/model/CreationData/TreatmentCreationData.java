@@ -16,5 +16,5 @@ import java.time.LocalTime;
  * @param description description of the treatment
  * @param remarks remarks to the treatment
  */
-public record TreatmentCreationData (long patientId, LocalDate date, LocalTime begin, LocalTime end, String description, String remarks, long caregiverId, LocalDate archivedOn) {
+public record TreatmentCreationData (long patientId, LocalDate date, LocalTime begin, LocalTime end, String description, String remarks, long caregiverId, long mid, LocalDate archivedOn) {
 }
