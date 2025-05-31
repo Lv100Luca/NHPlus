@@ -17,6 +17,9 @@ import java.util.Optional;
 public class TreatmentController {
 
     @FXML
+    private Label labelTitle;
+
+    @FXML
     private Label labelPatientName;
 
     @FXML
@@ -74,6 +77,16 @@ public class TreatmentController {
         this.patient = patient.get();
 
         showData();
+
+        if (this.treatment.isArchived()) {
+            this.labelTitle.setText("Archivierte Behandlung");
+
+            this.textFieldBegin.setDisable(true);
+            this.textFieldEnd.setDisable(true);
+            this.textFieldDescription.setDisable(true);
+            this.textAreaRemarks.setDisable(true);
+            this.datePicker.setDisable(true);
+        }
     }
 
     private void showData() {

@@ -3,8 +3,10 @@ package de.hitec.nhplus.datastorage;
 import de.hitec.nhplus.model.Entity;
 import de.hitec.nhplus.model.Exceptions.CreateException;
 import de.hitec.nhplus.model.Exceptions.UpdateException;
+import de.hitec.nhplus.utils.DateConverter;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -113,5 +115,45 @@ public abstract class DaoImp<T extends Entity, TCreationData> implements Dao<T, 
             exception.printStackTrace();
         }
         return -1;
+    }
+
+    /**
+     * Sets the archivedOn field of the object with the given id to the given date.
+     *
+     * @param tableName Name of the table to set the archivedOn field.
+     * @param id        Id of the object to set the archivedOn field.
+     * @param archivedOn Date to set the archivedOn field to.
+     */
+    private void setArchivedOn(String tableName, long id, LocalDate archivedOn) {
+        String archivedOnString = archivedOn == null ? null : DateConverter.convertLocalDateToString(archivedOn);
+        try {
+            final String SQL = "UPDATE " + tableName + " SET archivedOn = ? WHERE id = ?";
+            PreparedStatement preparedStatement = this.connection.prepareStatement(SQL);
+            preparedStatement.setString(1, archivedOnString);
+            preparedStatement.setLong(2, id);
+            preparedStatement.executeUpdate();
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+    }
+
+    /**
+     * archives a object with the given id.
+     *
+     * @param tableName Name of the table to archive.
+     * @param id        Id of the object to archive.
+     */
+    public void archive(String tableName, long id) {
+        setArchivedOn(tableName, id, LocalDate.now());
+    }
+
+    /**
+     * restores a object with the given id.
+     *
+     * @param tableName Name of the table to restore.
+     * @param id        Id of the object to restore.
+     */
+    public void restore(String tableName, long id) {
+        setArchivedOn(tableName, id, null);
     }
 }

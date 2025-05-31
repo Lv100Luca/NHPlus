@@ -133,7 +133,7 @@ public class NewTreatmentController {
         Caregiver caregiver = comboBoxCaregiver.getSelectionModel().getSelectedItem();
         Medicine medicine = comboBoxMedicine.getSelectionModel().getSelectedItem();
 
-        var data = new TreatmentCreationData(patient.getId(), date, begin, end, description, remarks, caregiver.getId(), medicine.getId());
+        var data = new TreatmentCreationData(patient.getId(), date, begin, end, description, remarks, caregiver.getId(),medicine.getId(), null);
         Treatment treatment = treatmentDao.create(data);
 
         controller.readAllAndShowInTableView();

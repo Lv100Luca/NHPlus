@@ -16,7 +16,7 @@
    <children>
       <HBox alignment="TOP_CENTER" prefWidth="200.0" spacing="25.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="5.0">
          <children>
-            <Label alignment="CENTER" contentDisplay="CENTER" minWidth="400.0" text="Behandlung" textAlignment="CENTER">
+            <Label fx:id="labelTitle" alignment="CENTER" contentDisplay="CENTER" minWidth="400.0" text="Behandlung" textAlignment="CENTER">
                <font>
                   <Font size="36.0" />
                </font>

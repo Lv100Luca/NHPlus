@@ -13,6 +13,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
+<?import javafx.scene.control.CheckBox?>
 <AnchorPane prefHeight="500.0" prefWidth="855.0" xmlns="http://javafx.com/javafx/11.0.1"
             xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.hitec.nhplus.controller.AllTreatmentController">
     <TableView fx:id="tableView" editable="true" layoutX="31.0" layoutY="35.0" onMouseClicked="#handleMouseClick"
@@ -34,21 +35,20 @@
     </TableView>
     <HBox layoutX="623.0" layoutY="419.3999938964844" spacing="10.0" AnchorPane.bottomAnchor="15.0"
           AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0">
-        <GridPane hgap="10.0" vgap="10.0">
-            <columnConstraints>
-                <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" prefWidth="200.0"/>
-                <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="200.0" prefWidth="200.0"/>
-                <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="160.0"/>
-            </columnConstraints>
+            <GridPane hgap="10.0" vgap="10.0">
+              <columnConstraints>
+                <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" prefWidth="200.0" />
+                <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="200.0" prefWidth="200.0" />
+                  <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="160.0" />
+                  <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="160.0" />
+              </columnConstraints>
             <rowConstraints>
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
             </rowConstraints>
-            <Button mnemonicParsing="false" onAction="#handleNewTreatment"
-                    prefWidth="200.0" text="neue Behandlung anlegen" GridPane.columnIndex="1"/>
-            <ComboBox fx:id="comboBoxPatientSelection" minWidth="160.0" onAction="#handleComboBox"
-                      prefWidth="200.0"/>
-            <Button fx:id="buttonDelete" mnemonicParsing="false" onAction="#handleDelete" prefWidth="200.0"
-                    text="Löschen" GridPane.columnIndex="2"/>
+            <Button  mnemonicParsing="false" onAction="#handleNewTreatment" prefWidth="200.0" text="neue Behandlung anlegen" GridPane.columnIndex="1" />
+                  <ComboBox fx:id="comboBoxPatientSelection" minWidth="160.0" onAction="#handleComboBox" prefWidth="200.0" />
+                  <Button fx:id="buttonDelete" mnemonicParsing="false" onAction="#handleDelete" prefWidth="200.0" text="Löschen" GridPane.columnIndex="2" />
+                  <CheckBox fx:id="checkBoxShowArchived" mnemonicParsing="false" prefHeight="18.0" prefWidth="273.0" text="Archivierte Behandlungen anzeigen" GridPane.columnIndex="3" />
             <padding>
                 <Insets right="10.0"/>
             </padding>

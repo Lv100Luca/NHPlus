@@ -16,6 +16,8 @@ import java.util.List;
  */
 public class TreatmentDao extends DaoImp<Treatment, TreatmentCreationData> {
 
+    public static final String TABLE_NAME = "treatment";
+
     /**
      * The constructor initiates an object of <code>TreatmentDao</code> and passes the connection to its super class.
      *
@@ -35,8 +37,8 @@ public class TreatmentDao extends DaoImp<Treatment, TreatmentCreationData> {
     protected PreparedStatement getCreateStatement(TreatmentCreationData treatment) {
         PreparedStatement preparedStatement = null;
         try {
-            final String SQL = "INSERT INTO treatment (patientId, treatment_date, begin, end, description, remark, caregiverId, medicineId) " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            final String SQL = "INSERT INTO treatment (patientId, treatment_date, begin, end, description, remark, caregiverId, medicineId, archivedOn) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             preparedStatement = this.connection.prepareStatement(SQL);
             preparedStatement.setLong(1, treatment.patientId());
             preparedStatement.setString(2, treatment.date().toString());
@@ -46,6 +48,7 @@ public class TreatmentDao extends DaoImp<Treatment, TreatmentCreationData> {
             preparedStatement.setString(6, treatment.remarks());
             preparedStatement.setLong(7, treatment.caregiverId());
             preparedStatement.setLong(8, treatment.medicineId());
+            preparedStatement.setString(9, treatment.archivedOn() == null ? null : treatment.archivedOn().toString());
         } catch (SQLException exception) {
             exception.printStackTrace();
         }
@@ -97,6 +100,31 @@ public class TreatmentDao extends DaoImp<Treatment, TreatmentCreationData> {
             exception.printStackTrace();
         }
         return statement;
+    }
+
+    public ArrayList<Treatment> getAllArchived() {
+        try {
+            final String SQL = "SELECT * FROM treatment WHERE archivedOn IS NOT NULL";
+            ResultSet result = this.connection.prepareStatement(SQL).executeQuery();
+            return getListFromResultSet(result);
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+
+        return new ArrayList<>();
+    }
+
+    public ArrayList<Treatment> getAllNotArchived() {
+        try {
+            final String SQL = "SELECT * FROM treatment WHERE archivedOn IS NULL";
+            ResultSet result = this.connection.prepareStatement(SQL).executeQuery();
+
+            return getListFromResultSet(result);
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+
+        return new ArrayList<>();
     }
 
     /**
@@ -201,5 +229,13 @@ public class TreatmentDao extends DaoImp<Treatment, TreatmentCreationData> {
             exception.printStackTrace();
         }
         return preparedStatement;
+    }
+
+    public void archive(long tid) {
+        super.archive(TABLE_NAME, tid);
+    }
+
+    public void restore(long tid) {
+        super.restore(TABLE_NAME, tid);
     }
 }

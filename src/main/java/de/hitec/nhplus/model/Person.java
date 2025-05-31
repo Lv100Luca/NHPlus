@@ -2,13 +2,17 @@ package de.hitec.nhplus.model;
 
 import javafx.beans.property.SimpleStringProperty;
 
-public abstract class Person implements Entity {
+import java.time.LocalDate;
+
+public abstract class Person implements Entity, Archivable {
     private final SimpleStringProperty firstName;
     private final SimpleStringProperty surname;
+    private LocalDate archivedOn;
 
-    public Person(String firstName, String surname) {
+    public Person(String firstName, String surname, LocalDate archivedOn) {
         this.firstName = new SimpleStringProperty(firstName);
         this.surname = new SimpleStringProperty(surname);
+        this.archivedOn = archivedOn;
     }
 
     public String getFirstName() {
@@ -37,5 +41,18 @@ public abstract class Person implements Entity {
 
     public String getFullName() {
         return this.getSurname() + " " + this.getFirstName();
+    }
+
+    @Override
+    public boolean isArchived() {
+        return archivedOn != null;
+    }
+
+    @Override
+    public boolean canBeDeleted() {
+        if (archivedOn == null)
+            return false;
+
+        return archivedOn.isBefore(LocalDate.now().minusYears(10));
     }
 }
