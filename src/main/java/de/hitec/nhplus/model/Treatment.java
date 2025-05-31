@@ -48,7 +48,7 @@ public class Treatment implements Entity, Archivable {
     }
 
     public static Treatment fromResultSet(ResultSet result) throws SQLException {
-        var archivedOn = result.getString(9) == null ? null : DateConverter.convertStringToLocalDate(result.getString(9));
+        var archivedOn = result.getString(10) == null ? null : DateConverter.convertStringToLocalDate(result.getString(10));
 
         return new Treatment(result.getLong(1), result.getLong(2),
                 DateConverter.convertStringToLocalDate(result.getString(3)),

@@ -34,8 +34,8 @@ public class ArchiveServiceTest {
 
     /**
      * @throws SQLException if the in-memory database cannot be created.
-     *
-     * Sets up the in-memory database, the DAOs and the <code>ArchiveService</code> for the testing environment.
+     *                      <p>
+     *                      Sets up the in-memory database, the DAOs and the <code>ArchiveService</code> for the testing environment.
      */
     @Before
     public void setUp() throws SQLException {
@@ -106,9 +106,7 @@ public class ArchiveServiceTest {
     }
 
     /**
-     * @throws SQLException
-     *
-     * Tears down the in-memory database.
+     * @throws SQLException Tears down the in-memory database.
      */
     @After
     public void tearDown() throws SQLException {
@@ -146,12 +144,12 @@ public class ArchiveServiceTest {
         // this patient is archived for a while but used in a treatment thats not archived -> should not be deleted
         var test2ArchivedPatientWithTreatment =
                 patientDao.create(new PatientCreationData("test2", "stays", convertStringToLocalDate("1954-08-12"), "5", "010", convertStringToLocalDate("2013-06-03")));
-        var test2Treatment = treatmentDao.create(new TreatmentCreationData(test2ArchivedPatientWithTreatment.getId(), convertStringToLocalDate("2023-06-03"), convertStringToLocalTime("11:00"), convertStringToLocalTime("15:00"), "Gespräch", "Test 2 Treatment, should stay", 0, null));
+        var test2Treatment = treatmentDao.create(new TreatmentCreationData(test2ArchivedPatientWithTreatment.getId(), convertStringToLocalDate("2023-06-03"), convertStringToLocalTime("11:00"), convertStringToLocalTime("15:00"), "Gespräch", "Test 2 Treatment, should stay", 0, 0, null));
 
         // this patient is archived for a while and used in a treatment that can also be deleted -> should be deleted
         var test3ArchivedPatientWithTreatment =
                 patientDao.create(new PatientCreationData("test3", "deleted", convertStringToLocalDate("1949-04-16"), "3", "002", convertStringToLocalDate("2013-06-03")));
-        var test3Treatment = treatmentDao.create(new TreatmentCreationData(test3ArchivedPatientWithTreatment.getId(), convertStringToLocalDate("2023-06-03"), convertStringToLocalTime("11:00"), convertStringToLocalTime("15:00"), "Gespräch", "Test 3 Treatment, should be deleted", 0, convertStringToLocalDate("2013-06-03")));
+        var test3Treatment = treatmentDao.create(new TreatmentCreationData(test3ArchivedPatientWithTreatment.getId(), convertStringToLocalDate("2023-06-03"), convertStringToLocalTime("11:00"), convertStringToLocalTime("15:00"), "Gespräch", "Test 3 Treatment, should be deleted", 0, 0, convertStringToLocalDate("2013-06-03")));
 
         //  this caregiver is archived for a while and not used in any treatment -> should be deleted
         var test4OldUnusedCaregiver = caregiverDao.create(new CaregiverCreationData("test4", "deleted", "+49 176 12345678", convertStringToLocalDate("2013-06-03")));
@@ -159,11 +157,11 @@ public class ArchiveServiceTest {
         // this caregiver is archived for a while but used in a treatment thats not archived -> should not be deleted
         var test5ArchivedCaregiverWithTreatment =
                 caregiverDao.create(new CaregiverCreationData("test5", "stays", "+49 176 23456789", convertStringToLocalDate("2013-06-03")));
-        var test5Treatment = treatmentDao.create(new TreatmentCreationData(test2ArchivedPatientWithTreatment.getId(), convertStringToLocalDate("2023-06-03"), convertStringToLocalTime("11:00"), convertStringToLocalTime("15:00"), "Gespräch", "Test 5 Treatment, should stay", test5ArchivedCaregiverWithTreatment.getId(), null));
+        var test5Treatment = treatmentDao.create(new TreatmentCreationData(test2ArchivedPatientWithTreatment.getId(), convertStringToLocalDate("2023-06-03"), convertStringToLocalTime("11:00"), convertStringToLocalTime("15:00"), "Gespräch", "Test 5 Treatment, should stay", test5ArchivedCaregiverWithTreatment.getId(), 0, null));
 
         // this caregiver is archived for a while and used in a treatment that can also be deleted -> should be deleted
         var test6ArchivedCaregiverWithTreatment =
                 caregiverDao.create(new CaregiverCreationData("test6", "deleted", "+49 176 34567890", convertStringToLocalDate("2013-06-03")));
-        var test6Treatment = treatmentDao.create(new TreatmentCreationData(test2ArchivedPatientWithTreatment.getId(), convertStringToLocalDate("2023-06-03"), convertStringToLocalTime("11:00"), convertStringToLocalTime("15:00"), "Gespräch", "Test 6 Treatment, should be deleted", test6ArchivedCaregiverWithTreatment.getId(), convertStringToLocalDate("2013-06-03")));
+        var test6Treatment = treatmentDao.create(new TreatmentCreationData(test2ArchivedPatientWithTreatment.getId(), convertStringToLocalDate("2023-06-03"), convertStringToLocalTime("11:00"), convertStringToLocalTime("15:00"), "Gespräch", "Test 6 Treatment, should be deleted", test6ArchivedCaregiverWithTreatment.getId(), 0, convertStringToLocalDate("2013-06-03")));
     }
 }
