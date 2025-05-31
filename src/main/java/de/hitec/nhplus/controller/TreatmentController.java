@@ -1,10 +1,8 @@
 package de.hitec.nhplus.controller;
 
-import de.hitec.nhplus.datastorage.CaregiverDao;
-import de.hitec.nhplus.datastorage.DaoFactory;
-import de.hitec.nhplus.datastorage.PatientDao;
-import de.hitec.nhplus.datastorage.TreatmentDao;
+import de.hitec.nhplus.datastorage.*;
 import de.hitec.nhplus.model.Caregiver;
+import de.hitec.nhplus.model.Medicine;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
@@ -25,7 +23,10 @@ public class TreatmentController {
     private Label labelCareLevel;
 
     @FXML
-    public Label labelCaregiver;
+    private Label labelCaregiver;
+
+    @FXML
+    private Label labelMedicine;
 
     @FXML
     private TextField textFieldBegin;
@@ -46,9 +47,9 @@ public class TreatmentController {
     private Stage stage;
 
     private TreatmentDao treatmentDao;
-
     private CaregiverDao caregiverDao;
     private PatientDao patientDao;
+    private MedicineDao medicineDao;
 
     private Patient patient;
     private Treatment treatment;
@@ -57,6 +58,7 @@ public class TreatmentController {
         treatmentDao = DaoFactory.getDaoFactory().createTreatmentDao();
         caregiverDao = DaoFactory.getDaoFactory().createCaregiverDAO();
         patientDao = DaoFactory.getDaoFactory().createPatientDAO();
+        medicineDao = DaoFactory.getDaoFactory().createMedicineDAO();
 
         this.stage = stage;
         this.controller = controller;
@@ -68,7 +70,6 @@ public class TreatmentController {
             handleCancel();
             return;
         }
-
 
         this.patient = patient.get();
 
@@ -86,11 +87,16 @@ public class TreatmentController {
         this.textFieldDescription.setText(this.treatment.getDescription());
         this.textAreaRemarks.setText(this.treatment.getRemarks());
 
-        var text = caregiverDao.getById(treatment.getCid())
-                .map(cg -> cg.getFirstName() + " " + cg.getSurname())
+        var caregiverName = caregiverDao.getById(treatment.getCid())
+                .map(Caregiver::getFullName)
                 .orElse(" - ");
 
-        this.labelCaregiver.setText(text);
+        var medicineName = medicineDao.getById(treatment.getMid())
+                .map(Medicine::getName)
+                .orElse(" - ");
+
+        this.labelCaregiver.setText(caregiverName);
+        this.labelMedicine.setText(medicineName);
     }
 
     @FXML
