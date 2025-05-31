@@ -21,3 +21,13 @@ Vermögensstand:
 | remove "Vermögensstand" Column from the table         | ✅              | ✅       |
 | remove the ability to enter assets for patients       | ✅              | ✅       |
 | remove all previous entries of assets in the Database | ✅              | ✅       |
+
+Archiving of Entries:
+
+| Testcase                                                                       | implementation | working |
+|--------------------------------------------------------------------------------|----------------|---------|
+| Entries younger than 10 years cant be deleted                                  | ✅              | ✅       |
+| Entries can be manually archived                                               | ✅              | ✅       |
+| Archived entries are read only                                                 | ✅              | ✅       |
+| Entries older than 10 years can be deleted<br/> **deletion will be automatic** | ❌              | ➖       |
+| Entries older than 10 years will be automatically deleted                      | ✅              | ✅       |
