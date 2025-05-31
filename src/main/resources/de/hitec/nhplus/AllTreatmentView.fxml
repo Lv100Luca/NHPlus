@@ -48,7 +48,7 @@
             <Button  mnemonicParsing="false" onAction="#handleNewTreatment" prefWidth="200.0" text="neue Behandlung anlegen" GridPane.columnIndex="1" />
                   <ComboBox fx:id="comboBoxPatientSelection" minWidth="160.0" onAction="#handleComboBox" prefWidth="200.0" />
                   <Button fx:id="buttonDelete" mnemonicParsing="false" onAction="#handleDelete" prefWidth="200.0" text="Löschen" GridPane.columnIndex="2" />
-                  <CheckBox fx:id="checkBoxShowArchived" mnemonicParsing="false" prefHeight="18.0" prefWidth="273.0" text="CheckBox" GridPane.columnIndex="3" />
+                  <CheckBox fx:id="checkBoxShowArchived" mnemonicParsing="false" prefHeight="18.0" prefWidth="273.0" text="Archivierte Behandlungen anzeigen" GridPane.columnIndex="3" />
             <padding>
                 <Insets right="10.0"/>
             </padding>
