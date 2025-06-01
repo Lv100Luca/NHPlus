@@ -13,6 +13,13 @@ Here are some things to keep in mind with the db setup:
 
 # Logins
 
+| Username    | Password     | 
+|-------------|--------------|
+| Luca        | 15 Hogrider! |
+| Leon        | 420          |
+| Matthes     | Mega Knight  |
+| b.heidemann | NH_PLUS      |
+
 # Tests
 
 # Vermögensstand:
