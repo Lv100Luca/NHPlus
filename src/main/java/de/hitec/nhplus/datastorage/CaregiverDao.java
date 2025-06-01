@@ -110,7 +110,7 @@ public class CaregiverDao extends DaoImp<Caregiver, CaregiverCreationData>{
                                     "firstname = ?, " +
                                     "surname = ?, " +
                                     "phoneNumber = ? " +
-                                    "WHERE caregiverId = ?";
+                                    "WHERE id = ?";
             preparedStatement = this.connection.prepareStatement(SQL);
             preparedStatement.setString(1, caregiver.getFirstName());
             preparedStatement.setString(2, caregiver.getSurname());
