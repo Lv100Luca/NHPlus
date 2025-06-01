@@ -29,5 +29,4 @@ Here are some things to keep in mind with the db setup:
 | Error Message if the wrong password is entered           | ✅              | ✅       |
 | Error Message if User doesnt exist                       | ✅              | ✅       |
 | Login is denied after entering the wrong password thrice | ✅              | ✅       |
-| Login is possible again after denial period is over      | ✅              | 🟨      |
-| If you're an Admin/Geschäftsleiter you can add users     |                |         |
+| Login is possible again after denial period is over      | ✅              | ✅       |

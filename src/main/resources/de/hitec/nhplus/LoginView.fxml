@@ -24,9 +24,7 @@
         <VBox alignment="CENTER" spacing="20.0" BorderPane.alignment="CENTER">
             <TextField fx:id="textFieldUserName" prefHeight="30.0" prefWidth="150.0" promptText="Benutzer"/>
             <TextField fx:id="textFieldPassword" prefHeight="30.0" prefWidth="150.0" promptText="Passwort"/>
-            <Label fx:id="usernameErrorLabel" textFill="red" visible="false"/>
-            <Label fx:id="passwordErrorLabel" textFill="red" visible="false"/>
-            <Label fx:id="multipleWrongPasswordErrorLabel" textFill="red" visible="false"/>
+            <Label fx:id="errorLabel" textFill="red" visible="false"/>
         </VBox>
     </center>
 </BorderPane>
