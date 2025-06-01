@@ -92,6 +92,10 @@ public class AllCaregiverController {
         ChangeListener<String> inputNewCaregiverListener = (observableValue, oldValue, newValue) ->
                 AllCaregiverController.this.buttonAdd.setDisable(!AllCaregiverController.this.areInputDataValid());
 
+        this.textFieldFirstName.textProperty().addListener(inputNewCaregiverListener);
+        this.textFieldSurname.textProperty().addListener(inputNewCaregiverListener);
+        this.textFieldPhoneNumber.textProperty().addListener(inputNewCaregiverListener);
+
         columnFirstName.setOnEditCommit(event -> handleOnEdit(event, Caregiver::setFirstName));
         columnSurname.setOnEditCommit(event -> handleOnEdit(event, Caregiver::setSurname));
         columnPhoneNumber.setOnEditCommit(event -> handleOnEdit(event, Caregiver::setPhoneNumber));
