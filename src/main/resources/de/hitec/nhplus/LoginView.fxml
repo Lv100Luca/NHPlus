@@ -11,7 +11,7 @@
     </ImageView>
     <VBox alignment="TOP_CENTER" layoutX="318.0" layoutY="250.0" prefHeight="167.0" prefWidth="218.0" spacing="10.0">
         <TextField fx:id="textFieldUserName" prefHeight="30.0" prefWidth="150.0" promptText="Benutzer" />
-        <TextField fx:id="textFieldPassword" prefHeight="30.0" prefWidth="49.0" promptText="Passwort" />
+        <PasswordField fx:id="textFieldPassword" prefHeight="30.0" prefWidth="49.0" promptText="Passwort" />
         <Label fx:id="errorLabel" alignment="CENTER" contentDisplay="CENTER" prefHeight="18.0" prefWidth="240.0" textFill="red" visible="false" />
         <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleLogin" prefHeight="20.0" prefWidth="171.0" text="login">
             <VBox.margin>
