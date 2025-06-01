@@ -26,6 +26,10 @@ public class DaoFactory {
         return new CaregiverDao(ConnectionBuilder.getConnection());
     }
 
+    public MedicineDao createMedicineDAO() {
+        return new MedicineDao(ConnectionBuilder.getConnection());
+    }
+
     public UserDao createUserDAO() {
         return new UserDao(ConnectionBuilder.getConnection());
     }
