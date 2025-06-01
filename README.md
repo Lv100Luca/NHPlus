@@ -17,7 +17,7 @@ Here are some things to keep in mind with the db setup:
 
 # Vermögensstand:
 
-| testfall                                              | implementation | working | 
+| Testcase                                              | implementation | working | 
 |-------------------------------------------------------|----------------|---------|
 | remove "Vermögensstand" Column from the table         | ✅              | ✅       |
 | remove the ability to enter assets for patients       | ✅              | ✅       |
@@ -35,7 +35,7 @@ Here are some things to keep in mind with the db setup:
 
 # Login:
 
-| testfall                                                 | implementation | working | 
+| Testcase                                                 | implementation | working | 
 |----------------------------------------------------------|----------------|---------|
 | A valid Caregiver is able to login                       | ✅              | ✅       |
 | Error Message if the wrong password is entered           | ✅              | ✅       |
