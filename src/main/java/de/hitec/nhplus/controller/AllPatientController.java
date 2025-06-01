@@ -132,6 +132,13 @@ public class AllPatientController {
         this.buttonAdd.setDisable(true);
         ChangeListener<String> inputNewPatientListener = (observableValue, oldText, newText) ->
                 AllPatientController.this.buttonAdd.setDisable(!AllPatientController.this.areInputDataValid());
+
+        this.textFieldFirstName.textProperty().addListener(inputNewPatientListener);
+        this.textFieldSurname.textProperty().addListener(inputNewPatientListener);
+        this.textFieldDateOfBirth.textProperty().addListener(inputNewPatientListener);
+        this.textFieldCareLevel.textProperty().addListener(inputNewPatientListener);
+        this.textFieldRoomNumber.textProperty().addListener(inputNewPatientListener);
+
         columnFirstName.setOnEditCommit(event -> handleOnEdit(event, Patient::setFirstName));
         columnSurname.setOnEditCommit(event -> handleOnEdit(event, Patient::setSurname));
         columnDateOfBirth.setOnEditCommit(event -> handleOnEdit(event, Patient::setDateOfBirth));
