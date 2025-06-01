@@ -10,7 +10,7 @@ import java.time.LocalTime;
 /**
  * Represents a treatment in the database.
  */
-public class Treatment implements Entity {
+public class Treatment implements Entity, Archivable {
     private final long id;
     private final long pid;
     private LocalDate date;
@@ -20,6 +20,7 @@ public class Treatment implements Entity {
     private String remarks;
     private long cid;
     private long mid;
+    private LocalDate archivedOn;
 
     /**
      * Private constructor to initiate an object of class <code>Treatment</code> from the database.
@@ -33,7 +34,7 @@ public class Treatment implements Entity {
      * @param remarks     Remarks to the treatment.
      */
     private Treatment(long id, long pid, LocalDate date, LocalTime begin,
-                      LocalTime end, String description, String remarks, long cid, long mid) {
+                      LocalTime end, String description, String remarks, long cid, long mid, LocalDate archivedOn) {
         this.id = id;
         this.pid = pid;
         this.date = date;
@@ -43,14 +44,17 @@ public class Treatment implements Entity {
         this.remarks = remarks;
         this.cid = cid;
         this.mid = mid;
+        this.archivedOn = archivedOn;
     }
 
     public static Treatment fromResultSet(ResultSet result) throws SQLException {
+        var archivedOn = result.getString(10) == null ? null : DateConverter.convertStringToLocalDate(result.getString(10));
+
         return new Treatment(result.getLong(1), result.getLong(2),
                 DateConverter.convertStringToLocalDate(result.getString(3)),
                 DateConverter.convertStringToLocalTime(result.getString(4)),
                 DateConverter.convertStringToLocalTime(result.getString(5)),
-                result.getString(6), result.getString(7), result.getLong(8), result.getLong(9));
+                result.getString(6), result.getString(7), result.getLong(8), result.getLong(9), archivedOn);
     }
 
 
@@ -126,5 +130,18 @@ public class Treatment implements Entity {
                 "\nEnd: " + this.end +
                 "\nDescription: " + this.description +
                 "\nRemarks: " + this.remarks + "\n";
+    }
+
+    @Override
+    public boolean isArchived() {
+        return archivedOn != null;
+    }
+
+    @Override
+    public boolean canBeDeleted() {
+        if (archivedOn == null)
+            return false;
+
+        return archivedOn.isBefore(LocalDate.now().minusYears(10));
     }
 }

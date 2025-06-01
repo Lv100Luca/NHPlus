@@ -6,15 +6,15 @@ import de.hitec.nhplus.model.Caregiver;
 import de.hitec.nhplus.model.CreationData.CaregiverCreationData;
 import de.hitec.nhplus.utils.PhoneNumberUtil;
 import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
+
+import java.util.function.BiConsumer;
 
 public class AllCaregiverController {
 
@@ -41,6 +41,9 @@ public class AllCaregiverController {
     @FXML
     private TextField textFieldPhoneNumber;
 
+    @FXML
+    private CheckBox checkBoxShowArchived;
+
     private final ObservableList<Caregiver> caregivers = FXCollections.observableArrayList();
     private CaregiverDao caregiverDao;
 
@@ -59,41 +62,87 @@ public class AllCaregiverController {
 
         this.tableView.setItems(this.caregivers);
 
+        this.tableView.setRowFactory(tv -> new TableRow<>() {
+            @Override
+            protected void updateItem(Caregiver caregiver, boolean empty) {
+                super.updateItem(caregiver, empty);
+                if (caregiver == null || empty) {
+                    setStyle("");
+                } else if (caregiver.isArchived()) {
+                    // Style for archived caregivers
+                    setStyle("-fx-background-color: lightgray; -fx-font-style: italic;");
+                }
+            }
+        });
+
         this.buttonDelete.setDisable(true);
-        this.tableView.getSelectionModel().selectedItemProperty().addListener((observableValue, caregiver, t1) -> AllCaregiverController.this.buttonDelete.setDisable(t1 == null));
+        this.tableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Caregiver>() {
+            @Override
+            public void changed(ObservableValue<? extends Caregiver> observableValue, Caregiver oldCaregiver, Caregiver newCaregiver) {
+                AllCaregiverController.this.buttonDelete.setDisable(newCaregiver == null);
+
+                if (newCaregiver == null)
+                    return;
+
+                AllCaregiverController.this.buttonDelete.setText(newCaregiver.isArchived() ? "Wiederherstellen" : "Löschen");
+            }
+        });
 
         this.buttonAdd.setDisable(true);
         ChangeListener<String> inputNewCaregiverListener = (observableValue, oldValue, newValue) ->
                 AllCaregiverController.this.buttonAdd.setDisable(!AllCaregiverController.this.areInputDataValid());
+
         this.textFieldFirstName.textProperty().addListener(inputNewCaregiverListener);
         this.textFieldSurname.textProperty().addListener(inputNewCaregiverListener);
         this.textFieldPhoneNumber.textProperty().addListener(inputNewCaregiverListener);
+
+        columnFirstName.setOnEditCommit(event -> handleOnEdit(event, Caregiver::setFirstName));
+        columnSurname.setOnEditCommit(event -> handleOnEdit(event, Caregiver::setSurname));
+        columnPhoneNumber.setOnEditCommit(event -> handleOnEdit(event, Caregiver::setPhoneNumber));
+
+
+        this.checkBoxShowArchived.selectedProperty().addListener((observableValue, oldValue, newValue) -> {
+            this.readAllAndShowInTableView();
+        });
     }
 
     @FXML
-    private void handleOnEditFirstName(TableColumn.CellEditEvent<Caregiver, String> event) {
-        event.getRowValue().setFirstName(event.getNewValue());
-        this.doUpdate(event);
-    }
+    public void handleOnEdit(TableColumn.CellEditEvent<Caregiver, String> event, BiConsumer<Caregiver, String> setter) {
+        var caregiver = event.getRowValue();
 
-    @FXML
-    private void handleOnEditsurname(TableColumn.CellEditEvent<Caregiver, String> event) {
-        event.getRowValue().setSurname(event.getNewValue());
-        this.doUpdate(event);
-    }
+        if (caregiver == null)
+            return;
 
-    @FXML
-    private void handleOnEditPhoneNumber(TableColumn.CellEditEvent<Caregiver, String> event) {
-        event.getRowValue().setPhoneNumber(event.getNewValue());
+        if( caregiver.isArchived()) {
+            var alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Information");
+            alert.setHeaderText("Caregiver ist archiviert!");
+            alert.setContentText("Archivierte Daten können nicht bearbeitet werden!");
+            alert.showAndWait();
+
+            // refresh the view
+            this.readAllAndShowInTableView();
+
+            return;
+        }
+
+        setter.accept(event.getRowValue(), event.getNewValue());
         this.doUpdate(event);
     }
 
     @FXML
     private void handleDelete() {
-        var selectedIndex = this.tableView.getSelectionModel().getSelectedIndex();
-        var deleted = caregiverDao.delete(selectedIndex);
+        var caregiver = this.tableView.getSelectionModel().getSelectedItem();
 
-        deleted.ifPresent(this.caregivers::remove);
+        if (caregiver == null)
+            return;
+
+        if (caregiver.isArchived())
+            caregiverDao.restore(caregiver.getId());
+        else
+            caregiverDao.archive(caregiver.getId());
+
+        readAllAndShowInTableView();
     }
 
     @FXML
@@ -101,7 +150,7 @@ public class AllCaregiverController {
         String firstName = this.textFieldFirstName.getText();
         String surname = this.textFieldSurname.getText();
         String phoneNumber = this.textFieldPhoneNumber.getText();
-        this.caregiverDao.create(new CaregiverCreationData(firstName, surname, phoneNumber));
+        this.caregiverDao.create(new CaregiverCreationData(firstName, surname, phoneNumber, null));
 
         this.readAllAndShowInTableView();
         this.clearTextFields();
@@ -126,7 +175,10 @@ public class AllCaregiverController {
     private void readAllAndShowInTableView() {
         this.caregivers.clear();
 
-        this.caregivers.addAll(this.caregiverDao.getAll());
-    }
+        if (this.checkBoxShowArchived.isSelected())
+            this.caregivers.addAll(this.caregiverDao.getAll());
 
+        else
+            this.caregivers.addAll(this.caregiverDao.getAllNotArchived());
+    }
 }

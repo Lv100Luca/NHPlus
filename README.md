@@ -11,19 +11,31 @@ Here are some things to keep in mind with the db setup:
   program again
 * should there be other issues when creating the database, try to delete the existing `.db` file and repeat the process
 
+# Logins
+
 # Tests
 
 # Vermögensstand:
 
-| testfall                                              | implementation | working | 
+| Testcase                                              | implementation | working | 
 |-------------------------------------------------------|----------------|---------|
 | remove "Vermögensstand" Column from the table         | ✅              | ✅       |
 | remove the ability to enter assets for patients       | ✅              | ✅       |
 | remove all previous entries of assets in the Database | ✅              | ✅       |
 
+# Archiving of Entries:
+
+| Testcase                                                                                     | implementation | working |
+|----------------------------------------------------------------------------------------------|----------------|---------|
+| Entries younger than 10 years cant be deleted                                                | ✅              | ✅       |
+| Entries can be manually archived                                                             | ✅              | ✅       |
+| Archived entries are read only                                                               | ✅              | ✅       |
+| Entries older than 10 years can be deleted<br/> **deletion will be automatic**               | ❌              | ➖       |
+| Entries older than 10 years will be automatically deleted<br/> see `ArchiveServiceTest.java` | ✅              | ✅       |
+
 # Login:
 
-| testfall                                                 | implementation | working | 
+| Testcase                                                 | implementation | working | 
 |----------------------------------------------------------|----------------|---------|
 | A valid Caregiver is able to login                       | ✅              | ✅       |
 | Error Message if the wrong password is entered           | ✅              | ✅       |

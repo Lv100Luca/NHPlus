@@ -1,5 +1,6 @@
 package de.hitec.nhplus;
 
+import de.hitec.nhplus.Services.ArchiveService;
 import de.hitec.nhplus.datastorage.ConnectionBuilder;
 
 import javafx.application.Application;
@@ -44,6 +45,18 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) {
+        var archiveService = ArchiveService.getInstance();
+
+        // delete old archived entries
+        var deletedTreatments = archiveService.deleteOldTreatments();
+        System.out.println("Deleted " + deletedTreatments + " archived treatments.");
+
+        var deletedPatients = archiveService.deleteOldPatients();
+        System.out.println("Deleted " + deletedPatients + " archived patients.");
+
+        var deletedCaregivers = archiveService.deleteOldCaregivers();
+        System.out.println("Deleted " + deletedCaregivers + " archived caregivers.");
+
         launch(args);
     }
 }

@@ -8,16 +8,14 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import de.hitec.nhplus.model.Patient;
 import de.hitec.nhplus.utils.DateConverter;
 
 import java.time.LocalDate;
+import java.util.function.BiConsumer;
 
 
 /**
@@ -67,6 +65,9 @@ public class AllPatientController {
     @FXML
     private TextField textFieldRoomNumber;
 
+    @FXML
+    private CheckBox checkBoxShowArchived;
+
     private final ObservableList<Patient> patients = FXCollections.observableArrayList();
     private PatientDao patientDao;
 
@@ -102,76 +103,74 @@ public class AllPatientController {
         //Anzeigen der Daten
         this.tableView.setItems(this.patients);
 
+        this.tableView.setRowFactory(tv -> new TableRow<>() {
+            @Override
+            protected void updateItem(Patient patient, boolean empty) {
+                super.updateItem(patient, empty);
+                if (patient == null || empty) {
+                    setStyle("");
+                } else if (patient.isArchived()) {
+                    // Style for archived patients
+                    setStyle("-fx-background-color: lightgray; -fx-font-style: italic;");
+                }
+            }
+        });
+
         this.buttonDelete.setDisable(true);
         this.tableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Patient>() {
             @Override
             public void changed(ObservableValue<? extends Patient> observableValue, Patient oldPatient, Patient newPatient) {;
                 AllPatientController.this.buttonDelete.setDisable(newPatient == null);
+
+                if (newPatient == null)
+                    return;
+
+                AllPatientController.this.buttonDelete.setText(newPatient.isArchived() ? "Wiederherstellen" : "Löschen");
             }
         });
 
         this.buttonAdd.setDisable(true);
         ChangeListener<String> inputNewPatientListener = (observableValue, oldText, newText) ->
                 AllPatientController.this.buttonAdd.setDisable(!AllPatientController.this.areInputDataValid());
-        this.textFieldSurname.textProperty().addListener(inputNewPatientListener);
+
         this.textFieldFirstName.textProperty().addListener(inputNewPatientListener);
+        this.textFieldSurname.textProperty().addListener(inputNewPatientListener);
         this.textFieldDateOfBirth.textProperty().addListener(inputNewPatientListener);
         this.textFieldCareLevel.textProperty().addListener(inputNewPatientListener);
         this.textFieldRoomNumber.textProperty().addListener(inputNewPatientListener);
+
+        columnFirstName.setOnEditCommit(event -> handleOnEdit(event, Patient::setFirstName));
+        columnSurname.setOnEditCommit(event -> handleOnEdit(event, Patient::setSurname));
+        columnDateOfBirth.setOnEditCommit(event -> handleOnEdit(event, Patient::setDateOfBirth));
+        columnCareLevel.setOnEditCommit(event -> handleOnEdit(event, Patient::setCareLevel));
+        columnRoomNumber.setOnEditCommit(event -> handleOnEdit(event, Patient::setRoomNumber));
+
+        this.checkBoxShowArchived.selectedProperty().addListener((observableValue, oldValue, newValue) -> {
+            this.readAllAndShowInTableView();
+        });
     }
 
-    /**
-     * When a cell of the column with first names was changed, this method will be called, to persist the change.
-     *
-     * @param event Event including the changed object and the change.
-     */
     @FXML
-    public void handleOnEditFirstname(TableColumn.CellEditEvent<Patient, String> event) {
-        event.getRowValue().setFirstName(event.getNewValue());
-        this.doUpdate(event);
-    }
+    public void handleOnEdit(TableColumn.CellEditEvent<Patient, String> event, BiConsumer<Patient, String> setter) {
+        var patient = event.getRowValue();
 
-    /**
-     * When a cell of the column with surnames was changed, this method will be called, to persist the change.
-     *
-     * @param event Event including the changed object and the change.
-     */
-    @FXML
-    public void handleOnEditSurname(TableColumn.CellEditEvent<Patient, String> event) {
-        event.getRowValue().setSurname(event.getNewValue());
-        this.doUpdate(event);
-    }
+        if (patient == null)
+            return;
 
-    /**
-     * When a cell of the column with dates of birth was changed, this method will be called, to persist the change.
-     *
-     * @param event Event including the changed object and the change.
-     */
-    @FXML
-    public void handleOnEditDateOfBirth(TableColumn.CellEditEvent<Patient, String> event) {
-        event.getRowValue().setDateOfBirth(event.getNewValue());
-        this.doUpdate(event);
-    }
+        if( patient.isArchived()) {
+            var alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Information");
+            alert.setHeaderText("Patient ist archiviert!");
+            alert.setContentText("Archivierte Daten können nicht bearbeitet werden!");
+            alert.showAndWait();
 
-    /**
-     * When a cell of the column with care levels was changed, this method will be called, to persist the change.
-     *
-     * @param event Event including the changed object and the change.
-     */
-    @FXML
-    public void handleOnEditCareLevel(TableColumn.CellEditEvent<Patient, String> event) {
-        event.getRowValue().setCareLevel(event.getNewValue());
-        this.doUpdate(event);
-    }
+            // refresh the view
+            this.readAllAndShowInTableView();
 
-    /**
-     * When a cell of the column with room numbers was changed, this method will be called, to persist the change.
-     *
-     * @param event Event including the changed object and the change.
-     */
-    @FXML
-    public void handleOnEditRoomNumber(TableColumn.CellEditEvent<Patient, String> event){
-        event.getRowValue().setRoomNumber(event.getNewValue());
+            return;
+        }
+
+        setter.accept(event.getRowValue(), event.getNewValue());
         this.doUpdate(event);
     }
 
@@ -191,7 +190,11 @@ public class AllPatientController {
     private void readAllAndShowInTableView() {
         this.patients.clear();
 
-        this.patients.addAll(this.patientDao.getAll());
+        if (this.checkBoxShowArchived.isSelected())
+            this.patients.addAll(this.patientDao.getAll());
+
+        else
+            this.patients.addAll(this.patientDao.getAllNotArchived());
     }
 
     /**
@@ -206,7 +209,12 @@ public class AllPatientController {
         if (selectedItem == null)
             return;
 
-        this.tableView.getItems().remove(selectedItem);
+        if (selectedItem.isArchived())
+            patientDao.restore(selectedItem.getId());
+        else
+            patientDao.archive(selectedItem.getId());
+
+        readAllAndShowInTableView();
     }
 
     /**
@@ -223,7 +231,8 @@ public class AllPatientController {
         String careLevel = this.textFieldCareLevel.getText();
         String roomNumber = this.textFieldRoomNumber.getText();
 
-        var data = new PatientCreationData(firstName, surname, birthDate, careLevel, roomNumber);
+        // pass null for archivedOn, since new patients are not archived
+        var data = new PatientCreationData(firstName, surname, birthDate, careLevel, roomNumber,  null);
         Patient patient = this.patientDao.create(data);
 
         patients.add(patient);
