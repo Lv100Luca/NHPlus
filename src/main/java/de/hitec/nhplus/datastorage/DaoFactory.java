@@ -23,9 +23,9 @@ public class DaoFactory {
     }
 
     /**
-     * Creates a new <code>PatientDao</code> instance.
+     * Creates a new <code>TreatmentDao</code> instance.
      *
-     * @return The <code>PatientDao</code> instance.
+     * @return The <code>TreatmentDao</code> instance.
      */
     public TreatmentDao createTreatmentDao() {
         return new TreatmentDao(ConnectionBuilder.getConnection());
@@ -41,27 +41,27 @@ public class DaoFactory {
     }
 
     /**
-     * Creates a new <code>PatientDao</code> instance.
+     * Creates a new <code>CaregiverDao</code> instance.
      *
-     * @return The <code>PatientDao</code> instance.
+     * @return The <code>CaregiverDao</code> instance.
      */
     public CaregiverDao createCaregiverDAO() {
         return new CaregiverDao(ConnectionBuilder.getConnection());
     }
 
     /**
-     * Creates a new <code>PatientDao</code> instance.
+     * Creates a new <code>MedicineDao</code> instance.
      *
-     * @return The <code>PatientDao</code> instance.
+     * @return The <code>MedicineDao</code> instance.
      */
     public MedicineDao createMedicineDAO() {
         return new MedicineDao(ConnectionBuilder.getConnection());
     }
 
     /**
-     * Creates a new <code>PatientDao</code> instance.
+     * Creates a new <code>UserDao</code> instance.
      *
-     * @return The <code>PatientDao</code> instance.
+     * @return The <code>UserDao</code> instance.
      */
     public UserDao createUserDAO() {
         return new UserDao(ConnectionBuilder.getConnection());
