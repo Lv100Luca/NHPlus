@@ -98,6 +98,11 @@ public class PatientDao extends DaoImp<Patient, PatientCreationData> {
         return statement;
     }
 
+    /**
+     * Gets all archived patients from the database.
+     *
+     * @return All patients that are archived.
+     */
     public ArrayList<Patient> getAllArchived() {
         try {
             final String SQL = "SELECT * FROM patient WHERE archivedOn IS NOT NULL";
@@ -111,6 +116,11 @@ public class PatientDao extends DaoImp<Patient, PatientCreationData> {
         return new ArrayList<>();
     }
 
+    /**
+     * Gets all not archived patients from the database.
+     *
+     * @return All patients that are not archived.
+     */
     public ArrayList<Patient> getAllNotArchived() {
         try {
             final String SQL = "SELECT * FROM patient WHERE archivedOn IS NULL";

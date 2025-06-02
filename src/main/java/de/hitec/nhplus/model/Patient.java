@@ -39,6 +39,14 @@ public class Patient extends Person {
         this.roomNumber = new SimpleStringProperty(roomNumber);
     }
 
+    /**
+     * Creates a new patient from a result set.
+     * Ensures that entities can only be created from result sets that came from the database.
+     *
+     * @param result The result set to create the patient from.
+     * @return The patient created from the result set.
+     * @throws SQLException If the result set is empty.
+     */
     public static Patient fromResultSet(ResultSet result) throws SQLException {
         var archivedOn = result.getString(7) == null ? null : DateConverter.convertStringToLocalDate(result.getString(7));
 

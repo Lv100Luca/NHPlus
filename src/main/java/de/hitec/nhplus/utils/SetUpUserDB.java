@@ -42,6 +42,11 @@ public class SetUpUserDB {
         }
     }
 
+    /**
+     * Creates the user table in the database.
+     *
+     * @param connection The connection to the database.
+     */
     private static void setUpTableUsers(Connection connection) {
         final String SQL = "CREATE TABLE IF NOT EXISTS user (" +
                 "   id INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -55,6 +60,9 @@ public class SetUpUserDB {
         }
     }
 
+    /**
+     * Inserts some test data into the user table.
+     */
     private static void setUpUsers() {
         UserDao dao = DaoFactory.getDaoFactory().createUserDAO();
         if (dao.getAll().isEmpty()) {
@@ -64,6 +72,13 @@ public class SetUpUserDB {
         }
     }
 
+    /**
+     * Main method to run the SetUpUserDB class.
+     * <br>
+     * Sets up the database tables and fills them with some test data.
+     *
+     * @param args Command line arguments.
+     */
     public static void main(String[] args) {
         SetUpUserDB.setUpUserDB();
     }

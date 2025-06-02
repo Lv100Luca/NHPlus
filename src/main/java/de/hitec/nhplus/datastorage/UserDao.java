@@ -10,8 +10,17 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+/**
+ * Implements the Interface <code>DaoImp</code>. Overrides methods to generate specific <code>PreparedStatements</code>,
+ * to execute the specific SQL Statements.
+ */
 public class UserDao extends DaoImp<User, UserCreationData>{
 
+    /**
+     * The constructor initiates an object of <code>UserDao</code> and passes the connection to its super class.
+     *
+     * @param connection current connection to the database
+     */
     public UserDao(final Connection connection) {
         super(connection);
     }
@@ -101,6 +110,12 @@ public class UserDao extends DaoImp<User, UserCreationData>{
         return preparedStatement;
     }
 
+    /**
+     * Checks if a user with the given username exists in the database.
+     *
+     * @param username username to check
+     * @return true if the user exists, false otherwise
+     */
     public boolean doesUserExist(final String username) {
         String SQL = "SELECT 1 FROM user WHERE username = ? LIMIT 1";
 
@@ -115,6 +130,14 @@ public class UserDao extends DaoImp<User, UserCreationData>{
         }
     }
 
+    /**
+     * Checks if the password of a user with the given username is correct.
+     * Uses the MD5 algorithm to hash the password.
+     *
+     * @param username username of the user
+     * @param password password of the user
+     * @return true if the password is correct, false otherwise
+     */
     public boolean isPasswordCorrect(final String username, final String password) {
         String SQL = "SELECT password FROM user WHERE username = ?";
         String hashedPassword = HashPassword.hashPassword(password);

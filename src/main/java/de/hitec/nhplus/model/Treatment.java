@@ -47,6 +47,14 @@ public class Treatment implements Entity, Archivable {
         this.archivedOn = archivedOn;
     }
 
+    /**
+     * Creates a new treatment from a result set.
+     * Ensures that entities can only be created from result sets that came from the database.
+     *
+     * @param result The result set to create the treatment from.
+     * @return The treatment created from the result set.
+     * @throws SQLException If the result set is empty.
+     */
     public static Treatment fromResultSet(ResultSet result) throws SQLException {
         var archivedOn = result.getString(10) == null ? null : DateConverter.convertStringToLocalDate(result.getString(10));
 
