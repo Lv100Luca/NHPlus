@@ -51,7 +51,7 @@
                        promptText="Vorname"/>
             <TextField fx:id="textFieldSurname" minWidth="200.0" prefHeight="26.0" prefWidth="200.0"
                        promptText="Nachname" GridPane.columnIndex="1"/>
-            <TextField fx:id="textFieldDateOfBirth" minWidth="160.0" prefWidth="160.0" promptText="Geburtstag"
+            <DatePicker fx:id="datePickerDateOfBirth" minWidth="160.0" prefWidth="160.0" promptText="Geburtstag"
                        GridPane.columnIndex="2"/>
             <TextField fx:id="textFieldCareLevel" prefHeight="26.0" prefWidth="200.0" promptText="Pflegegrad"
                        GridPane.rowIndex="1"/>
