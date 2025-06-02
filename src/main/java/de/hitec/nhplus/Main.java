@@ -29,7 +29,7 @@ public class Main extends Application {
 
     /**
      * Loads the <code>LoginView</code> in the center of the main window.
-     * Sets thr title and some options of the main window.
+     * Sets the title and some options of the main window.
      */
     public void mainWindow() {
         try {
