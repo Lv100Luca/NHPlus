@@ -72,7 +72,7 @@ public class LoginController {
     /**
      * Handles the event of logging in. It checks if the username and password are correct and logs in the user if they are.
      */
-    private void accessApplication(ActionEvent event) {
+    private void accessApplication(Event event) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/de/hitec/nhplus/MainWindowView.fxml"));
             Parent mainRoot = loader.load();
