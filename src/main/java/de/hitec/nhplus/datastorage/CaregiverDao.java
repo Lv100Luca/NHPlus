@@ -19,6 +19,11 @@ import static de.hitec.nhplus.datastorage.PatientDao.TABLE_NAME;
 public class CaregiverDao extends DaoImp<Caregiver, CaregiverCreationData>{
     public static final String TABLE_NAME = "caregiver";
 
+    /**
+     * The constructor initiates an object of <code>CaregiverDao</code> and passes the connection to its super class.
+     *
+     * @param connection Object of <code>Connection</code> to execute the SQL-statements.
+     */
     public CaregiverDao(Connection connection) {
         super(connection);
     }
@@ -70,6 +75,11 @@ public class CaregiverDao extends DaoImp<Caregiver, CaregiverCreationData>{
         return preparedStatement;
     }
 
+    /**
+     * Gets all archived caregivers from the database.
+     *
+     * @return All caregivers that are archived.
+     */
     public ArrayList<Caregiver> getAllArchived() {
         try {
             final String SQL = "SELECT * FROM caregiver WHERE archivedOn IS NOT NULL";
@@ -83,6 +93,11 @@ public class CaregiverDao extends DaoImp<Caregiver, CaregiverCreationData>{
         return new ArrayList<>();
     }
 
+    /**
+     * Gets all not archived caregivers from the database.
+     *
+     * @return All caregivers that are not archived.
+     */
     public ArrayList<Caregiver> getAllNotArchived() {
         try {
             final String SQL = "SELECT * FROM caregiver WHERE archivedOn IS NULL";
@@ -138,10 +153,20 @@ public class CaregiverDao extends DaoImp<Caregiver, CaregiverCreationData>{
         return preparedStatement;
     }
 
+    /**
+     * Archives a caregiver with the given id.
+     *
+     * @param cid Caregiver id to archive.
+     */
     public void archive(long cid) {
         super.archive(TABLE_NAME, cid);
     }
 
+    /**
+     * Restores a caregiver with the given id.
+     *
+     * @param cid Caregiver id to restore.
+     */
     public void restore(long cid) {
         super.restore(TABLE_NAME, cid);
     }
