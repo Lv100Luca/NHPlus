@@ -14,7 +14,13 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.Optional;
 
+/**
+ * The <code>TreatmentController</code> contains the entire logic of the treatment view. It determines which data is displayed and how to react to events.
+ */
 public class TreatmentController {
+
+    @FXML
+    private Label labelTitle;
 
     @FXML
     private Label labelPatientName;
@@ -54,6 +60,13 @@ public class TreatmentController {
     private Patient patient;
     private Treatment treatment;
 
+    /**
+     * Initializes the controller class. It gets all medicines from the database and displays them in the combo box.
+     *
+     * @param controller The controller of the <code>AllTreatmentView</code>.
+     * @param stage The stage of the <code>AllTreatmentView</code>.
+     * @param treatment The treatment for which the treatment window should be opened.
+     */
     public void initializeController(AllTreatmentController controller, Stage stage, Treatment treatment) {
         treatmentDao = DaoFactory.getDaoFactory().createTreatmentDao();
         caregiverDao = DaoFactory.getDaoFactory().createCaregiverDAO();
@@ -74,8 +87,21 @@ public class TreatmentController {
         this.patient = patient.get();
 
         showData();
+
+        if (this.treatment.isArchived()) {
+            this.labelTitle.setText("Archivierte Behandlung");
+
+            this.textFieldBegin.setDisable(true);
+            this.textFieldEnd.setDisable(true);
+            this.textFieldDescription.setDisable(true);
+            this.textAreaRemarks.setDisable(true);
+            this.datePicker.setDisable(true);
+        }
     }
 
+    /**
+     * Loads the patient's data into the labels.
+     */
     private void showData() {
         LocalDate date = DateConverter.convertStringToLocalDate(treatment.getDate());
 
@@ -99,6 +125,10 @@ public class TreatmentController {
         this.labelMedicine.setText(medicineName);
     }
 
+    /**
+     * Handles the event of changing the treatment.
+     * It updates the treatment by calling the method <code>update()</code> of {@link TreatmentDao}.
+     */
     @FXML
     public void handleChange() {
         this.treatment.setDate(this.datePicker.getValue().toString());
@@ -113,6 +143,9 @@ public class TreatmentController {
         stage.close();
     }
 
+    /**
+     * Handles the event of closing the window.
+     */
     @FXML
     public void handleCancel() {
         stage.close();

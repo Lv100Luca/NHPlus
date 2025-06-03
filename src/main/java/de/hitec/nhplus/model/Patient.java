@@ -31,18 +31,28 @@ public class Patient extends Person {
      * @param careLevel Care level of the patient.
      * @param roomNumber Room number of the patient.
      */
-    private Patient(long id, String firstName, String surname, LocalDate dateOfBirth, String careLevel, String roomNumber) {
-        super(firstName, surname);
+    private Patient(long id, String firstName, String surname, LocalDate dateOfBirth, String careLevel, String roomNumber, LocalDate archivedOn) {
+        super(firstName, surname, archivedOn);
         this.id = new SimpleLongProperty(id);
         this.dateOfBirth = new SimpleStringProperty(DateConverter.convertLocalDateToString(dateOfBirth));
         this.careLevel = new SimpleStringProperty(careLevel);
         this.roomNumber = new SimpleStringProperty(roomNumber);
     }
 
+    /**
+     * Creates a new patient from a result set.
+     * Ensures that entities can only be created from result sets that came from the database.
+     *
+     * @param result The result set to create the patient from.
+     * @return The patient created from the result set.
+     * @throws SQLException If the result set is empty.
+     */
     public static Patient fromResultSet(ResultSet result) throws SQLException {
+        var archivedOn = result.getString(7) == null ? null : DateConverter.convertStringToLocalDate(result.getString(7));
+
         return new Patient(result.getInt(1), result.getString(2),
                 result.getString(3), DateConverter.convertStringToLocalDate(result.getString(4)),
-                result.getString(5), result.getString(6));
+                result.getString(5), result.getString(6), archivedOn);
     }
 
     public long getId() {

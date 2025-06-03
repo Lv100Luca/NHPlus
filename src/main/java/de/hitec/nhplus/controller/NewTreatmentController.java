@@ -19,6 +19,9 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+/**
+ * The <code>NewTreatmentController</code> contains the entire logic of the new treatment view. It determines which data is displayed and how to react to events.
+ */
 public class NewTreatmentController {
 
     @FXML
@@ -64,6 +67,13 @@ public class NewTreatmentController {
     private PatientDao patientDao;
     private MedicineDao medicineDao;
 
+    /**
+     * Initializes the controller class. It gets all medicines from the database and displays them in the combo box.
+     *
+     * @param controller The controller of the <code>AllTreatmentView</code>.
+     * @param stage The stage of the <code>AllTreatmentView</code>.
+     * @param patient The patient for which the new treatment should be created.
+     */
     public void initialize(AllTreatmentController controller, Stage stage, Patient patient) {
         treatmentDao = DaoFactory.getDaoFactory().createTreatmentDao();
         caregiverDao = DaoFactory.getDaoFactory().createCaregiverDAO();
@@ -98,6 +108,10 @@ public class NewTreatmentController {
         this.showPatientMedicine();
     }
 
+    /**
+     * Creates a list of all caregivers.
+     * And adds them to the combo box.
+     */
     private void createComboBoxData() {
         this.caregiverSelection.addAll(caregiverDao.getAll());
 
@@ -118,11 +132,18 @@ public class NewTreatmentController {
         });
     }
 
+    /**
+     * Shows the patient's first name and surname in the labels.
+     */
     private void showPatientMedicine() {
         this.labelFirstName.setText(patient.getFirstName());
         this.labelSurname.setText(patient.getSurname());
     }
 
+    /**
+     * Handles the event of creating a new treatment.
+     * It creates a new treatment object and passes it to the {@link TreatmentDao} to persist the data.
+     */
     @FXML
     public void handleAdd() {
         LocalDate date = this.datePicker.getValue();
@@ -133,18 +154,27 @@ public class NewTreatmentController {
         Caregiver caregiver = comboBoxCaregiver.getSelectionModel().getSelectedItem();
         Medicine medicine = comboBoxMedicine.getSelectionModel().getSelectedItem();
 
-        var data = new TreatmentCreationData(patient.getId(), date, begin, end, description, remarks, caregiver.getId(), medicine.getId());
+        var data = new TreatmentCreationData(patient.getId(), date, begin, end, description, remarks, caregiver.getId(),medicine.getId(), null);
         Treatment treatment = treatmentDao.create(data);
 
         controller.readAllAndShowInTableView();
         stage.close();
     }
 
+    /**
+     * Handles the event of closing the window.
+     * It closes the window.
+     */
     @FXML
     public void handleCancel() {
         stage.close();
     }
 
+    /**
+     * Validates the input data of the <code>TextField</code>s. It checks if the begin and end time are valid.
+     *
+     * @return <code>true</code> if all input fields contain valid data, otherwise <code>false</code>.
+     */
     private boolean areInputDataInvalid() {
         if (this.textFieldBegin.getText() == null || this.textFieldEnd.getText() == null) {
             return true;

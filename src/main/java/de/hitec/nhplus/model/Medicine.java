@@ -32,6 +32,14 @@ public class Medicine implements Entity {
         this.expirationDate = DateConverter.convertStringToLocalDate(expirationDate);
     }
 
+    /**
+     * Creates a new medicine from a result set.
+     * Ensures that entities can only be created from result sets that came from the database.
+     *
+     * @param result The result set to create the medicine from.
+     * @return The medicine created from the result set.
+     * @throws SQLException If the result set is empty.
+     */
     public static Medicine fromResultSet(ResultSet result) throws SQLException {
         long id = result.getLong(1);
         String name = result.getString(2);

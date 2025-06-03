@@ -1,5 +1,6 @@
 package de.hitec.nhplus;
 
+import de.hitec.nhplus.Services.ArchiveService;
 import de.hitec.nhplus.datastorage.ConnectionBuilder;
 
 import javafx.application.Application;
@@ -12,6 +13,10 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
+/**
+ * The <code>Main</code> class is the starting point of the application.
+ * It creates the main window and opens it.
+ */
 public class Main extends Application {
 
     private Stage primaryStage;
@@ -22,6 +27,10 @@ public class Main extends Application {
         mainWindow();
     }
 
+    /**
+     * Loads the <code>LoginView</code> in the center of the main window.
+     * Sets the title and some options of the main window.
+     */
     public void mainWindow() {
         try {
             FXMLLoader loader = new FXMLLoader(Main.class.getResource("/de/hitec/nhplus/LoginView.fxml"));
@@ -43,7 +52,24 @@ public class Main extends Application {
         }
     }
 
+    /**
+     * Launches the application.
+     *
+     * @param args Command line arguments.
+     */
     public static void main(String[] args) {
+        var archiveService = ArchiveService.getInstance();
+
+        // delete old archived entries
+        var deletedTreatments = archiveService.deleteOldTreatments();
+        System.out.println("Deleted " + deletedTreatments + " archived treatments.");
+
+        var deletedPatients = archiveService.deleteOldPatients();
+        System.out.println("Deleted " + deletedPatients + " archived patients.");
+
+        var deletedCaregivers = archiveService.deleteOldCaregivers();
+        System.out.println("Deleted " + deletedCaregivers + " archived caregivers.");
+
         launch(args);
     }
 }
