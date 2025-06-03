@@ -11,7 +11,6 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 
-import javafx.event.ActionEvent;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
@@ -20,7 +19,6 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.IOException;
-import java.util.Objects;
 
 public class LoginController {
 
@@ -105,6 +103,7 @@ public class LoginController {
     private boolean isLoginSuccessful() {
         boolean validUser = userExists(textFieldUserName.getText());
         boolean validPassword = correctPassword(textFieldUserName.getText(), textFieldPassword.getText());
+        errorLabel.setVisible(false);
 
         if (!validUser) {
             errorLabel.setText("Invalid username");
