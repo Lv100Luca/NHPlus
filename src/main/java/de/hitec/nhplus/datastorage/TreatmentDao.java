@@ -102,6 +102,11 @@ public class TreatmentDao extends DaoImp<Treatment, TreatmentCreationData> {
         return statement;
     }
 
+    /**
+     * Gets all archived treatments from the database.
+     *
+     * @return All treatments that are archived.
+     */
     public ArrayList<Treatment> getAllArchived() {
         try {
             final String SQL = "SELECT * FROM treatment WHERE archivedOn IS NOT NULL";
@@ -114,6 +119,11 @@ public class TreatmentDao extends DaoImp<Treatment, TreatmentCreationData> {
         return new ArrayList<>();
     }
 
+    /**
+     * Gets all not archived treatments from the database.
+     *
+     * @return All treatments that are not archived.
+     */
     public ArrayList<Treatment> getAllNotArchived() {
         try {
             final String SQL = "SELECT * FROM treatment WHERE archivedOn IS NULL";
@@ -231,10 +241,20 @@ public class TreatmentDao extends DaoImp<Treatment, TreatmentCreationData> {
         return preparedStatement;
     }
 
+    /**
+     * Archives a treatment with the given id.
+     *
+     * @param tid Treatment id to archive.
+     */
     public void archive(long tid) {
         super.archive(TABLE_NAME, tid);
     }
 
+    /**
+     * Restores a treatment with the given id.
+     *
+     * @param tid Treatment id to restore.
+     */
     public void restore(long tid) {
         super.restore(TABLE_NAME, tid);
     }

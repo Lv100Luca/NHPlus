@@ -18,6 +18,9 @@ import javafx.util.Duration;
 
 import java.io.IOException;
 
+/**
+ * The <code>LoginController</code> contains the entire logic of the login view. It determines which data is displayed and how to react to events.
+ */
 public class LoginController {
 
     @FXML
@@ -37,6 +40,9 @@ public class LoginController {
 
     private UserDao userDao;
 
+    /**
+     * Initializes the controller class. It gets all medicines from the database and displays them in the combo box.
+     */
     public void initialize() {
         userDao = DaoFactory.getDaoFactory().createUserDAO();
 
@@ -44,6 +50,9 @@ public class LoginController {
         errorLabel.setVisible(false);
     }
 
+    /**
+     * Handles the event of logging in. It checks if the username and password are correct and logs in the user if they are.
+     */
     private void accessApplication(ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/de/hitec/nhplus/MainWindowView.fxml"));
@@ -61,6 +70,9 @@ public class LoginController {
         }
     }
 
+    /**
+     * Handles the event of logging in. It checks if the username and password are correct and logs in the user if they are.
+     */
     @FXML
     private void handleLogin(ActionEvent event) {
         errorLabel.setVisible(false);
@@ -81,6 +93,11 @@ public class LoginController {
         }
     }
 
+    /**
+     * Checks if the username and password are correct.
+     *
+     * @return <code>true</code> if the username and password are correct, <code>false</code> otherwise.
+     */
     private boolean isLoginSuccessful() {
         boolean validUser = userExists(textFieldUserName.getText());
         boolean validPassword = correctPassword(textFieldUserName.getText(), textFieldPassword.getText());
@@ -108,18 +125,34 @@ public class LoginController {
         return true;
     }
 
+    /**
+     * Checks if the username exists in the database.
+     *
+     * @param username The username to check.
+     * @return <code>true</code> if the username exists, <code>false</code> otherwise.
+     */
     private boolean userExists(String username) {
         return username != null
                 && !username.isEmpty()
                 && userDao.doesUserExist(username);
     }
 
+    /**
+     * Checks if the password is correct.
+     *
+     * @param username The username of the user.
+     * @param password The password of the user.
+     * @return <code>true</code> if the password is correct, <code>false</code> otherwise.
+     */
     private boolean correctPassword(String username, String password) {
         return password != null
                 && !password.isEmpty()
                 && userDao.isPasswordCorrect(username, password);
     }
 
+    /**
+     * Starts the lockout timer.
+     */
     private void startLockoutTimer() {
         if (lockoutTimer != null) {
             lockoutTimer.stop();
@@ -129,6 +162,9 @@ public class LoginController {
         lockoutTimer.play();
     }
 
+    /**
+     * Resets the lockout timer.
+     */
     private void resetLockout() {
         wrongPasswordCount = 0;
         lockoutStartTime = 0;

@@ -4,11 +4,21 @@ import javafx.beans.property.SimpleStringProperty;
 
 import java.time.LocalDate;
 
+/**
+ * Abstract class for all entities that have a first name, a surname and an archived date.
+ */
 public abstract class Person implements Entity, Archivable {
     private final SimpleStringProperty firstName;
     private final SimpleStringProperty surname;
     private LocalDate archivedOn;
 
+    /**
+     * Creates a new person with the given name and archived date.
+     *
+     * @param firstName first name of the person
+     * @param surname surname of the person
+     * @param archivedOn date when the person was archived
+     */
     public Person(String firstName, String surname, LocalDate archivedOn) {
         this.firstName = new SimpleStringProperty(firstName);
         this.surname = new SimpleStringProperty(surname);

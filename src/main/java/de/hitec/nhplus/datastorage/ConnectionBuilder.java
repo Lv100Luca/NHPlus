@@ -6,6 +6,10 @@ import java.sql.SQLException;
 
 import org.sqlite.SQLiteConfig;
 
+/**
+ * The <code>ConnectionBuilder</code> builds up a connection to the database. It uses the <code>DriverManager</code> to
+ * build up a connection to the database. The connection is stored in a static field.
+ */
 public class ConnectionBuilder {
 
     private static final String DB_NAME = "nursingHome.db";
@@ -13,6 +17,11 @@ public class ConnectionBuilder {
 
     private static Connection connection;
 
+    /**
+     * Gets the connection to the database. If the connection is not yet established, it builds up a new connection.
+     *
+     * @return The connection to the database.
+     */
     synchronized public static Connection getConnection() {
         try {
             if (ConnectionBuilder.connection == null) {
@@ -27,6 +36,9 @@ public class ConnectionBuilder {
         return ConnectionBuilder.connection;
     }
 
+    /**
+     * Closes the connection to the database.
+     */
     synchronized public static void closeConnection() {
         try {
             if (ConnectionBuilder.connection != null) {

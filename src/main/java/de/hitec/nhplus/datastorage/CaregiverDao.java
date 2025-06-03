@@ -13,6 +13,9 @@ import java.util.ArrayList;
 
 import static de.hitec.nhplus.datastorage.PatientDao.TABLE_NAME;
 
+/**
+ * The <code>CaregiverDao</code> extends the {@link DaoImp} class and provides methods to access the caregiver table.
+ */
 public class CaregiverDao extends DaoImp<Caregiver, CaregiverCreationData>{
     public static final String TABLE_NAME = "caregiver";
 

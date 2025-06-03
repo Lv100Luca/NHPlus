@@ -45,7 +45,9 @@ public class SetUpDB {
     }
 
     /**
-     * This method wipes the database by dropping the tables.
+     * Wipes the database by dropping the tables.
+     *
+     * @param connection current connection to the database
      */
     public static void wipeDb(Connection connection) {
         try (Statement statement = connection.createStatement()) {
@@ -57,6 +59,11 @@ public class SetUpDB {
         }
     }
 
+    /**
+     * Creates the patient table in the database.
+     *
+     * @param connection The connection to the database.
+     */
     public static void setUpTablePatient(Connection connection) {
         final String SQL = "CREATE TABLE IF NOT EXISTS patient (" +
                 "   id INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -74,6 +81,11 @@ public class SetUpDB {
         }
     }
 
+    /**
+     * Creates the treatment table in the database.
+     *
+     * @param connection The connection to the database.
+     */
     public static void setUpTableTreatment(Connection connection) {
         final String SQL = "CREATE TABLE IF NOT EXISTS treatment (" +
                 "   id INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -96,6 +108,11 @@ public class SetUpDB {
         }
     }
 
+    /**
+     * Creates the caregiver table in the database.
+     *
+     * @param connection The connection to the database.
+     */
     public static void setUpTableCaregiver(Connection connection) {
         final String SQL = "CREATE TABLE IF NOT EXISTS caregiver (" +
                 "   id INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -131,6 +148,9 @@ public class SetUpDB {
         }
     }
 
+    /**
+     * Inserts some test data into the patient table.
+     */
     private static void setUpPatients() {
         PatientDao dao = DaoFactory.getDaoFactory().createPatientDAO();
         if (dao.getAll().isEmpty()) {
@@ -143,6 +163,9 @@ public class SetUpDB {
         }
     }
 
+    /**
+     * Inserts some test data into the treatment table.
+     */
     private static void setUpTreatments() {
         TreatmentDao dao = DaoFactory.getDaoFactory().createTreatmentDao();
         if (dao.getAll().isEmpty()) {
@@ -150,15 +173,18 @@ public class SetUpDB {
             dao.create(new TreatmentCreationData(1, convertStringToLocalDate("2023-06-05"), convertStringToLocalTime("11:00"), convertStringToLocalTime("12:30"), "Gespräch", "Patient irrt auf der Suche nach gestohlenen Wertsachen durch die Etage und bezichtigt andere Bewohner des Diebstahls.\nPatient wird in seinen Raum zurückbegleitet und erhält Beruhigungsmittel.", 4, 0, null));
             dao.create(new TreatmentCreationData(2, convertStringToLocalDate("2023-06-04"), convertStringToLocalTime("07:30"), convertStringToLocalTime("08:00"), "Waschen", "Patient mit Waschlappen gewaschen und frisch angezogen. Patient gewendet.", 5, 4, null));
             dao.create(new TreatmentCreationData(1, convertStringToLocalDate("2023-06-06"), convertStringToLocalTime("15:10"), convertStringToLocalTime("16:00"), "Spaziergang", "Spaziergang im Park, Patient döst  im Rollstuhl ein", 3, 6, null));
-            dao.create(new TreatmentCreationData(1, convertStringToLocalDate("2023-06-08"), convertStringToLocalTime("15:00"), convertStringToLocalTime("16:00"), "Spaziergang", "Parkspaziergang; Patient ist heute lebhafter und hat klare Momente; erzählt von seiner Tochter", 0,4, null));
-            dao.create(new TreatmentCreationData(2, convertStringToLocalDate("2023-06-07"), convertStringToLocalTime("11:00"), convertStringToLocalTime("11:30"), "Waschen", "Waschen per Dusche auf einem Stuhl; Patientin gewendet;", 2,3, null));
-            dao.create(new TreatmentCreationData(5, convertStringToLocalDate("2023-06-08"), convertStringToLocalTime("15:00"), convertStringToLocalTime("15:30"), "Physiotherapie", "Übungen zur Stabilisation und Mobilisierung der Rückenmuskulatur", 0,7, null));
-            dao.create(new TreatmentCreationData(4, convertStringToLocalDate("2023-08-24"), convertStringToLocalTime("09:30"), convertStringToLocalTime("10:15"), "KG", "Lympfdrainage", 3,7, null));
+            dao.create(new TreatmentCreationData(1, convertStringToLocalDate("2023-06-08"), convertStringToLocalTime("15:00"), convertStringToLocalTime("16:00"), "Spaziergang", "Parkspaziergang; Patient ist heute lebhafter und hat klare Momente; erzählt von seiner Tochter", 0, 4, null));
+            dao.create(new TreatmentCreationData(2, convertStringToLocalDate("2023-06-07"), convertStringToLocalTime("11:00"), convertStringToLocalTime("11:30"), "Waschen", "Waschen per Dusche auf einem Stuhl; Patientin gewendet;", 2, 3, null));
+            dao.create(new TreatmentCreationData(5, convertStringToLocalDate("2023-06-08"), convertStringToLocalTime("15:00"), convertStringToLocalTime("15:30"), "Physiotherapie", "Übungen zur Stabilisation und Mobilisierung der Rückenmuskulatur", 0, 7, null));
+            dao.create(new TreatmentCreationData(4, convertStringToLocalDate("2023-08-24"), convertStringToLocalTime("09:30"), convertStringToLocalTime("10:15"), "KG", "Lympfdrainage", 3, 7, null));
             dao.create(new TreatmentCreationData(6, convertStringToLocalDate("2023-08-31"), convertStringToLocalTime("13:30"), convertStringToLocalTime("13:45"), "Toilettengang", "Hilfe beim Toilettengang; Patientin klagt über Schmerzen beim Stuhlgang. Gabe von Iberogast", 5, 3, null));
-            dao.create(new TreatmentCreationData(6, convertStringToLocalDate("2023-09-01"), convertStringToLocalTime("16:00"), convertStringToLocalTime("17:00"), "KG", "Massage der Extremitäten zur Verbesserung der Durchblutung", 5,1, null));
+            dao.create(new TreatmentCreationData(6, convertStringToLocalDate("2023-09-01"), convertStringToLocalTime("16:00"), convertStringToLocalTime("17:00"), "KG", "Massage der Extremitäten zur Verbesserung der Durchblutung", 5, 1, null));
         }
     }
 
+    /**
+     * Inserts some test data into the caregiver table.
+     */
     private static void setUpCaregivers() {
         CaregiverDao dao = DaoFactory.getDaoFactory().createCaregiverDAO();
         if (dao.getAll().isEmpty()) {
@@ -186,6 +212,13 @@ public class SetUpDB {
         dao.create(new MedicineCreationData("Prednisone 5mg", "Shelf A", convertStringToLocalDate("2025-09-22")));
     }
 
+    /**
+     * Main method to run the SetUpDB class.
+     * <br>
+     * Sets up the database tables and fills them with some test data.
+     *
+     * @param args Command line arguments.
+     */
     public static void main(String[] args) {
         SetUpDB.setUpDb();
     }

@@ -8,11 +8,17 @@ import javafx.scene.layout.BorderPane;
 
 import java.io.IOException;
 
+/**
+ * The <code>MainWindowController</code> contains the entire logic of the main window view. It determines which data is displayed and how to react to events.
+ */
 public class MainWindowController {
 
     @FXML
     private BorderPane mainBorderPane;
 
+    /**
+     * Loads the <code>AllPatientView</code> in the center of the main window.
+     */
     @FXML
     private void handleShowAllPatient(ActionEvent event) {
         FXMLLoader loader = new FXMLLoader(Main.class.getResource("/de/hitec/nhplus/AllPatientView.fxml"));
@@ -23,6 +29,9 @@ public class MainWindowController {
         }
     }
 
+    /**
+     * Loads the <code>AllTreatmentView</code> in the center of the main window.
+     */
     @FXML
     private void handleShowAllTreatments(ActionEvent event) {
         FXMLLoader loader = new FXMLLoader(Main.class.getResource("/de/hitec/nhplus/AllTreatmentView.fxml"));
@@ -33,6 +42,9 @@ public class MainWindowController {
         }
     }
 
+    /**
+     * Loads the <code>AllCaregiverView</code> in the center of the main window.
+     */
     @FXML
     private void handleShowAllCaregivers(ActionEvent event) {
         FXMLLoader loader = new FXMLLoader(Main.class.getResource("/de/hitec/nhplus/AllCaregiverView.fxml"));
@@ -43,6 +55,9 @@ public class MainWindowController {
         }
     }
 
+    /**
+     * Loads the <code>AllMedicineView</code> in the center of the main window.
+     */
     @FXML
     private void handleShowAllMedicine(ActionEvent actionEvent) {
         FXMLLoader loader = new FXMLLoader(Main.class.getResource("/de/hitec/nhplus/AllMedicineView.fxml"));

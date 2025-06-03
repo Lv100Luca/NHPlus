@@ -150,6 +150,12 @@ public class AllPatientController {
         });
     }
 
+    /**
+     * Handles the event of editing a patient. It updates the patient by calling the method <code>update()</code> of {@link PatientDao}.
+     *
+     * @param event Event including the changed object and the change.
+     * @param setter Consumer to set the new value.
+     */
     @FXML
     public void handleOnEdit(TableColumn.CellEditEvent<Patient, String> event, BiConsumer<Patient, String> setter) {
         var patient = event.getRowValue();
@@ -251,6 +257,11 @@ public class AllPatientController {
         this.textFieldRoomNumber.clear();
     }
 
+    /**
+     * Validates the input data of the <code>TextField</code>s. It checks if the date of birth is a valid date.
+     *
+     * @return <code>true</code> if all input fields contain valid data, otherwise <code>false</code>.
+     */
     private boolean areInputDataValid() {
         if (!this.textFieldDateOfBirth.getText().isBlank()) {
             try {

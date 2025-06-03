@@ -16,6 +16,10 @@ import javafx.scene.control.cell.TextFieldTableCell;
 
 import java.util.function.BiConsumer;
 
+/**
+ * The <code>AllCaregiverController</code> contains the entire logic of the caregiver view.
+ * It determines which data is displayed and how to react to events.
+ */
 public class AllCaregiverController {
 
     @FXML
@@ -47,6 +51,9 @@ public class AllCaregiverController {
     private final ObservableList<Caregiver> caregivers = FXCollections.observableArrayList();
     private CaregiverDao caregiverDao;
 
+    /**
+     * Initializes the controller class. It gets all caregivers from the database and displays them in the table view.
+     */
     public void initialize() {
         caregiverDao = DaoFactory.getDaoFactory().createCaregiverDAO();
 
@@ -106,6 +113,12 @@ public class AllCaregiverController {
         });
     }
 
+    /**
+     * Handles the event of editing a caregiver. It updates the caregiver by calling the method <code>update()</code> of {@link CaregiverDao}.
+     *
+     * @param event Event including the changed object and the change.
+     * @param setter Consumer to set the new value.
+     */
     @FXML
     public void handleOnEdit(TableColumn.CellEditEvent<Caregiver, String> event, BiConsumer<Caregiver, String> setter) {
         var caregiver = event.getRowValue();
@@ -130,6 +143,10 @@ public class AllCaregiverController {
         this.doUpdate(event);
     }
 
+    /**
+     * Handles the event of deleting a caregiver. It deletes the caregiver from the database and removes it from the
+     * list, which is the data source of the <code>TableView</code>.
+     */
     @FXML
     private void handleDelete() {
         var caregiver = this.tableView.getSelectionModel().getSelectedItem();
@@ -145,6 +162,10 @@ public class AllCaregiverController {
         readAllAndShowInTableView();
     }
 
+    /**
+     * Handles the event of adding a caregiver. It collects the data from the text fields and passes it to the
+     * {@link CaregiverDao} to persist the data.
+     */
     @FXML
     private void handleAdd() {
         String firstName = this.textFieldFirstName.getText();
@@ -156,22 +177,39 @@ public class AllCaregiverController {
         this.clearTextFields();
     }
 
+    /**
+     * Clears all contents from all <code>TextField</code>'s.
+     */
     private void clearTextFields() {
         this.textFieldFirstName.clear();
         this.textFieldSurname.clear();
         this.textFieldPhoneNumber.clear();
     }
 
+    /**
+     * Updates a caregiver by calling the method <code>update()</code> of {@link CaregiverDao}.
+     *
+     * @param event Event including the changed object and the change.
+     */
     private void doUpdate(TableColumn.CellEditEvent<Caregiver, String> event) {
         this.caregiverDao.update(event.getRowValue());
     }
 
+    /**
+     * Validates the input data of the <code>TextField</code>s. It checks if the phone number is a valid phone number.
+     *
+     * @return <code>true</code> if all input fields contain valid data, otherwise <code>false</code>.
+     */
     private boolean areInputDataValid() {
         return PhoneNumberUtil.isValidPhoneNumber(this.textFieldPhoneNumber.getText())
                 && !this.textFieldFirstName.getText().isEmpty()
                 && !this.textFieldSurname.getText().isEmpty();
     }
 
+    /**
+     * Reloads all caregivers to the table by clearing the list of all caregivers and filling it again by all persisted
+     * caregivers, delivered by {@link CaregiverDao}.
+     */
     private void readAllAndShowInTableView() {
         this.caregivers.clear();
 

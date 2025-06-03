@@ -20,6 +20,11 @@ import java.util.Optional;
 public abstract class DaoImp<T extends Entity, TCreationData> implements Dao<T, TCreationData> {
     protected Connection connection;
 
+    /**
+     * Initializes the DAO class. It gets the connection from the <code>ConnectionBuilder</code>.
+     *
+     * @param connection Current connection to the database.
+     */
     public DaoImp(Connection connection) {
         this.connection = connection;
     }
@@ -94,20 +99,68 @@ public abstract class DaoImp<T extends Entity, TCreationData> implements Dao<T, 
         return Optional.empty();
     }
 
+    /**
+     * Returns the instance of <code>T</code> from the result set.
+     *
+     * @param set Result set to get the instance from.
+     * @return Instance of <code>T</code> from the result set.
+     * @throws SQLException If the result set is empty.
+     */
     protected abstract T getInstanceFromResultSet(ResultSet set) throws SQLException;
 
+    /**
+     * Returns a list of <code>T</code> from the result set.
+     *
+     * @param set Result set to get the list from.
+     * @return List of <code>T</code> from the result set.
+     * @throws SQLException If the result set is empty.
+     */
     protected abstract ArrayList<T> getListFromResultSet(ResultSet set) throws SQLException;
 
+    /**
+     * Returns the prepared statement for creating a new object.
+     *
+     * @param t The object to create.
+     * @return The prepared statement for creating a new object.
+     */
     protected abstract PreparedStatement getCreateStatement(TCreationData t);
 
+    /**
+     * Returns the prepared statement for reading an object by its id.
+     *
+     * @param key The id of the object to read.
+     * @return The prepared statement for reading an object by its id.
+     */
     protected abstract PreparedStatement getReadByIDStatement(long key);
 
+    /**
+     * Returns the prepared statement for reading all objects.
+     *
+     * @return The prepared statement for reading all objects.
+     */
     protected abstract PreparedStatement getReadAllStatement();
 
+    /**
+     * Returns the prepared statement for updating an object.
+     *
+     * @param t The object to update.
+     * @return The prepared statement for updating an object.
+     */
     protected abstract PreparedStatement getUpdateStatement(T t);
 
+    /**
+     * Returns the prepared statement for deleting an object.
+     *
+     * @param key The id of the object to delete.
+     * @return The prepared statement for deleting an object.
+     */
     protected abstract PreparedStatement getDeleteStatement(long key);
 
+    /**
+     * Helper method to get the last inserted id.
+     *
+     * @return The id of the last inserted entity into the database.
+     */
     private int getLastInsertedId() {
         try {
             return this.connection.prepareStatement("SELECT last_insert_rowid();").executeQuery().getInt(1);
