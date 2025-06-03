@@ -4,6 +4,7 @@ Running the application
 To run the application, select (preferably) the OpenJDK 24 SDK and run `Main`.
 
 Should this be the first run, the database will be created using the `SetUpDB` class.
+Users for the login will be created using the `SetUpUserDB` class.
 Here are some things to keep in mind with the db setup:
 
 * ensure a folder called `db` exists in the root of the project
