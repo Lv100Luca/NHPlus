@@ -4,15 +4,17 @@ import de.hitec.nhplus.datastorage.DaoFactory;
 import de.hitec.nhplus.datastorage.UserDao;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 
-import javafx.event.ActionEvent;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -48,12 +50,29 @@ public class LoginController {
 
         errorLabel.setText("");
         errorLabel.setVisible(false);
+
+        // Add key event handler for the Enter key
+        textFieldUserName.setOnKeyPressed(this::loginOnEnter);
+
+        textFieldPassword.setOnKeyPressed(this::loginOnEnter);
+    }
+
+    /**
+     * Handles the event of pressing the Enter key.
+     * It calls the method <code>handleLogin</code> if the Enter key was pressed.
+     *
+     * @param event Event including the pressed key.
+     */
+    private void loginOnEnter(KeyEvent event) {
+        if (event.getCode() == KeyCode.ENTER) {
+            handleLogin(event);
+        }
     }
 
     /**
      * Handles the event of logging in. It checks if the username and password are correct and logs in the user if they are.
      */
-    private void accessApplication(ActionEvent event) {
+    private void accessApplication(Event event) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/de/hitec/nhplus/MainWindowView.fxml"));
             Parent mainRoot = loader.load();
@@ -74,7 +93,7 @@ public class LoginController {
      * Handles the event of logging in. It checks if the username and password are correct and logs in the user if they are.
      */
     @FXML
-    private void handleLogin(ActionEvent event) {
+    private void handleLogin(Event event) {
         errorLabel.setVisible(false);
         if (wrongPasswordCount >= 3) {
             long currentTime = System.currentTimeMillis();
@@ -101,6 +120,7 @@ public class LoginController {
     private boolean isLoginSuccessful() {
         boolean validUser = userExists(textFieldUserName.getText());
         boolean validPassword = correctPassword(textFieldUserName.getText(), textFieldPassword.getText());
+        errorLabel.setVisible(false);
 
         if (!validUser) {
             errorLabel.setText("Invalid username");
