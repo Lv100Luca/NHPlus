@@ -69,6 +69,7 @@ public class SetUpUserDB {
             dao.create(new UserCreationData("Luca", HashPassword.hashPassword("15 Hogrider!")));
             dao.create(new UserCreationData("Leon", HashPassword.hashPassword("420")));
             dao.create(new UserCreationData("Matthes", HashPassword.hashPassword("Mega Knight")));
+            dao.create(new UserCreationData("b.heidemann", HashPassword.hashPassword("NH_PLUS")));
         }
     }
 

@@ -13,13 +13,20 @@ Here are some things to keep in mind with the db setup:
 
 # Logins
 
+| Username    | Password     | 
+|-------------|--------------|
+| Luca        | 15 Hogrider! |
+| Leon        | 420          |
+| Matthes     | Mega Knight  |
+| b.heidemann | NH_PLUS      |
+
 # Tests
 
-# Vermögensstand:
+# Wealth:
 
 | Testcase                                              | implementation | working | 
 |-------------------------------------------------------|----------------|---------|
-| remove "Vermögensstand" Column from the table         | ✅              | ✅       |
+| remove `Vermögensstand` Column from the table         | ✅              | ✅       |
 | remove the ability to enter assets for patients       | ✅              | ✅       |
 | remove all previous entries of assets in the Database | ✅              | ✅       |
 
@@ -42,3 +49,20 @@ Here are some things to keep in mind with the db setup:
 | Error Message if User doesnt exist                       | ✅              | ✅       |
 | Login is denied after entering the wrong password thrice | ✅              | ✅       |
 | Login is possible again after denial period is over      | ✅              | ✅       |
+
+# New View for Caregivers:
+
+| Testcase                                     | implementation | working | 
+|----------------------------------------------|----------------|---------|
+| Menu option is visible in sidebar            | ✅              | ✅       |
+| User can change view to caregiver list       | ✅              | ✅       |
+| List contains all caregivers in the database | ✅              | ✅       |
+| List only shows active caregivers            | ✅              | ✅       |
+
+# Add caregiver to Treatment:
+
+| Testcase                                | implementation | working | 
+|-----------------------------------------|----------------|---------|
+| `New Treatment` button is selectable    | ✅              | ✅       |
+| Caregiver can be added to new treatment | ✅              | ✅       |
+|                                         |                |         |
