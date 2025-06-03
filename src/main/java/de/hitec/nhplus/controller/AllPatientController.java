@@ -57,7 +57,7 @@ public class AllPatientController {
     private TextField textFieldFirstName;
 
     @FXML
-    private TextField textFieldDateOfBirth;
+    private DatePicker datePickerDateOfBirth;
 
     @FXML
     private TextField textFieldCareLevel;
@@ -119,7 +119,8 @@ public class AllPatientController {
         this.buttonDelete.setDisable(true);
         this.tableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Patient>() {
             @Override
-            public void changed(ObservableValue<? extends Patient> observableValue, Patient oldPatient, Patient newPatient) {;
+            public void changed(ObservableValue<? extends Patient> observableValue, Patient oldPatient, Patient newPatient) {
+                ;
                 AllPatientController.this.buttonDelete.setDisable(newPatient == null);
 
                 if (newPatient == null)
@@ -135,7 +136,10 @@ public class AllPatientController {
 
         this.textFieldFirstName.textProperty().addListener(inputNewPatientListener);
         this.textFieldSurname.textProperty().addListener(inputNewPatientListener);
-        this.textFieldDateOfBirth.textProperty().addListener(inputNewPatientListener);
+        this.datePickerDateOfBirth.valueProperty().addListener(
+                (observableValue, oldValue, newValue) ->
+                        AllPatientController.this.buttonAdd.setDisable(!AllPatientController.this.areInputDataValid())
+        );
         this.textFieldCareLevel.textProperty().addListener(inputNewPatientListener);
         this.textFieldRoomNumber.textProperty().addListener(inputNewPatientListener);
 
@@ -163,7 +167,7 @@ public class AllPatientController {
         if (patient == null)
             return;
 
-        if( patient.isArchived()) {
+        if (patient.isArchived()) {
             var alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Information");
             alert.setHeaderText("Patient ist archiviert!");
@@ -232,13 +236,13 @@ public class AllPatientController {
     public void handleAdd() {
         String firstName = this.textFieldFirstName.getText();
         String surname = this.textFieldSurname.getText();
-        String birthday = this.textFieldDateOfBirth.getText();
+        String birthday = this.datePickerDateOfBirth.getValue().toString();
         LocalDate birthDate = DateConverter.convertStringToLocalDate(birthday);
         String careLevel = this.textFieldCareLevel.getText();
         String roomNumber = this.textFieldRoomNumber.getText();
 
         // pass null for archivedOn, since new patients are not archived
-        var data = new PatientCreationData(firstName, surname, birthDate, careLevel, roomNumber,  null);
+        var data = new PatientCreationData(firstName, surname, birthDate, careLevel, roomNumber, null);
         Patient patient = this.patientDao.create(data);
 
         patients.add(patient);
@@ -252,7 +256,7 @@ public class AllPatientController {
     private void clearTextfields() {
         this.textFieldFirstName.clear();
         this.textFieldSurname.clear();
-        this.textFieldDateOfBirth.clear();
+        this.datePickerDateOfBirth.setValue(null);
         this.textFieldCareLevel.clear();
         this.textFieldRoomNumber.clear();
     }
@@ -263,16 +267,19 @@ public class AllPatientController {
      * @return <code>true</code> if all input fields contain valid data, otherwise <code>false</code>.
      */
     private boolean areInputDataValid() {
-        if (!this.textFieldDateOfBirth.getText().isBlank()) {
-            try {
-                DateConverter.convertStringToLocalDate(this.textFieldDateOfBirth.getText());
-            } catch (Exception exception) {
-                return false;
-            }
+        if (this.datePickerDateOfBirth.getValue() == null) {
+            return false;
         }
 
-        return !this.textFieldFirstName.getText().isBlank() && !this.textFieldSurname.getText().isBlank() &&
-                !this.textFieldDateOfBirth.getText().isBlank() && !this.textFieldCareLevel.getText().isBlank() &&
+        try {
+            DateConverter.convertStringToLocalDate(this.datePickerDateOfBirth.getValue().toString());
+        } catch (Exception exception) {
+            return false;
+        }
+
+        return !this.textFieldFirstName.getText().isBlank() &&
+                !this.textFieldSurname.getText().isBlank() &&
+                !this.textFieldCareLevel.getText().isBlank() &&
                 !this.textFieldRoomNumber.getText().isBlank();
     }
 }
